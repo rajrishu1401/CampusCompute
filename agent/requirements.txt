@@ -1,0 +1,26 @@
+# CampusCompute Agent Dependencies
+
+# Docker SDK
+docker>=7.0.0
+
+# WebSocket client
+websockets>=12.0
+
+# System monitoring
+psutil>=5.9.0
+
+# Configuration
+PyYAML>=6.0
+
+# SSL/TLS
+certifi>=2023.0.0
+cryptography>=41.0.0
+
+# Logging
+coloredlogs>=15.0
+
+# JSON processing
+ujson>=5.9.0
+
+# Async utilities
+aiofiles>=23.0.0

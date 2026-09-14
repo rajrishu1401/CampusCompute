@@ -1,0 +1,294 @@
+# CampusCompute - Campus-Aware Cloud Resource Pooling System
+
+# ============================================
+# Backend (Java/Spring Boot)
+# ============================================
+
+# Maven
+backend/target/
+backend/pom.xml.tag
+backend/pom.xml.releaseBackup
+backend/pom.xml.versionsBackup
+backend/pom.xml.next
+backend/release.properties
+backend/dependency-reduced-pom.xml
+backend/buildNumber.properties
+backend/.mvn/timing.properties
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Eclipse
+backend/.apt_generated
+backend/.classpath
+backend/.factorypath
+backend/.project
+backend/.settings
+backend/.springBeans
+backend/.sts4-cache
+
+# IntelliJ IDEA
+backend/.idea
+backend/*.iws
+backend/*.iml
+backend/*.ipr
+
+# NetBeans
+backend/nbproject/private/
+backend/nbbuild/
+backend/dist/
+backend/nbdist/
+backend/.nb-gradle/
+backend/build/
+backend/!**/src/main/**/build/
+backend/!**/src/test/**/build/
+
+# VS Code
+backend/.vscode/
+
+# ============================================
+# Agent (Python)
+# ============================================
+
+# Python
+agent/__pycache__/
+agent/*.py[cod]
+agent/*$py.class
+agent/*.so
+agent/.Python
+agent/build/
+agent/develop-eggs/
+agent/dist/
+agent/downloads/
+agent/eggs/
+agent/.eggs/
+agent/lib/
+agent/lib64/
+agent/parts/
+agent/sdist/
+agent/var/
+agent/wheels/
+agent/share/python-wheels/
+agent/*.egg-info/
+agent/.installed.cfg
+agent/*.egg
+agent/MANIFEST
+
+# Virtual Environment
+agent/venv/
+agent/env/
+agent/ENV/
+agent/env.bak/
+agent/venv.bak/
+
+# PyCharm
+agent/.idea/
+agent/*.iws
+agent/*.iml
+
+# ============================================
+# Frontend (React/Vite)
+# ============================================
+
+# Dependencies
+frontend/node_modules/
+frontend/.pnp
+frontend/.pnp.js
+
+# Testing
+frontend/coverage/
+
+# Production
+frontend/build/
+frontend/dist/
+
+# Misc
+frontend/.DS_Store
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+# Editor
+frontend/.vscode/*
+frontend/!.vscode/extensions.json
+frontend/.idea
+frontend/*.suo
+frontend/*.ntvs*
+frontend/*.njsproj
+frontend/*.sln
+frontend/*.sw?
+
+# ============================================
+# Database & Secrets
+# ============================================
+
+# Environment files (NEVER commit secrets!)
+.env
+.env.local
+.env.production
+*.env
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# PostgreSQL
+*.dump
+
+# Certificates (NEVER commit!)
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+truststore.jks
+keystore.jks
+
+# ============================================
+# Operating System
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================
+# IDEs & Editors
+# ============================================
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Visual Studio Code
+.vscode/
+.history/
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# ============================================
+# LaTeX
+# ============================================
+
+*.aux
+*.log
+*.out
+*.toc
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.bbl
+*.blg
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+
+# ============================================
+# Logs
+# ============================================
+
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ============================================
+# Temporary Files
+# ============================================
+
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# ============================================
+# Project Specific
+# ============================================
+
+# Docker volumes (if using named volumes)
+data/
+volumes/
+
+# Test coverage reports
+coverage/
+*.cover
+.coverage
+.coverage.*
+htmlcov/
+
+# Documentation builds
+docs/_build/
+docs/.doctrees/
+
+# Compiled class files
+*.class
+
+# Package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# ============================================
+# Keep These Files (Override ignores)
+# ============================================
+
+# Allow specific documentation
+!README.md
+!IMPLEMENTATION_PLAN.md
+!PROJECT_STRUCTURE.md
+!DEVELOPMENT_SETUP.md
+
+# Allow config templates (no secrets)
+!config.yaml.template
+!.env.example

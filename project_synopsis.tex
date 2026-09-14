@@ -1,0 +1,1638 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Set line spacing to 1.15
+\setstretch{1.15}
+
+% Main heading formatting (14pt, all caps)
+\titleformat{\section}
+  {\normalfont\fontsize{14}{16}\selectfont\bfseries\uppercase}{\thesection}{1em}{}
+  
+% Sub-heading formatting (12pt, underlined)
+\titleformat{\subsection}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries}{\thesubsection}{1em}{\underline}
+
+% Caption formatting
+\captionsetup{font={small,stretch=1.15},labelfont=bf}
+
+% Justified alignment
+\raggedright
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+% Title Page
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\fontsize{16}{20}\selectfont\bfseries Project Synopsis\par}
+    \vspace{1.5cm}
+    
+    {\fontsize{14}{18}\selectfont\bfseries For\par}
+    \vspace{1cm}
+    
+    {\fontsize{14}{18}\selectfont\bfseries CampusCompute: Campus-Aware Cloud Resource Pooling System\par}
+    \vspace{1cm}
+    
+    {\fontsize{12}{16}\selectfont\bfseries \today\par}
+    \vspace{3cm}
+    
+    {\fontsize{12}{16}\selectfont\bfseries Prepared by\par}
+    \vspace{1cm}
+    
+    \begin{tabular}{|p{4cm}|p{3cm}|p{5cm}|}
+        \hline
+        \textbf{Specialization} & \textbf{SAP ID} & \textbf{Name} \\
+        \hline
+        Computer Science & XXXXXXXXXX & Member 1 (Backend) \\
+        \hline
+        Computer Science & XXXXXXXXXX & Member 2 (Scheduling) \\
+        \hline
+        Computer Science & XXXXXXXXXX & Member 3 (Infrastructure) \\
+        \hline
+        Computer Science & XXXXXXXXXX & Member 4 (Full-Stack) \\
+        \hline
+    \end{tabular}
+    
+    \vfill
+    
+    {\fontsize{12}{16}\selectfont\bfseries School Of Computer Science\par}
+    {\fontsize{12}{16}\selectfont\bfseries UNIVERSITY OF PETROLEUM \& ENERGY STUDIES,\par}
+    {\fontsize{12}{16}\selectfont\bfseries DEHRADUN- 248007. Uttarakhand\par}
+    
+\end{titlepage}
+
+\newpage
+
+% Table of Contents
+\section*{TABLE OF CONTENTS}
+\addcontentsline{toc}{section}{Table of Contents}
+
+\begin{longtable}{|p{1.5cm}|p{8.5cm}|p{3cm}|}
+    \hline
+    \textbf{No.} & \textbf{Topic} & \textbf{Page No} \\
+    \hline
+    & Table of Content & \pageref{toc} \\
+    \hline
+    & Revision History & \pageref{revision} \\
+    \hline
+    1 & Introduction & \pageref{sec:intro} \\
+    \hline
+    1.1 & Purpose of the Project & \pageref{sec:purpose} \\
+    \hline
+    1.2 & Target Beneficiary & \pageref{sec:beneficiary} \\
+    \hline
+    1.3 & Project Scope & \pageref{sec:scope} \\
+    \hline
+    1.4 & References & \pageref{sec:references} \\
+    \hline
+    2 & Project Description & \pageref{sec:description} \\
+    \hline
+    2.1 & Reference Algorithm & \pageref{sec:algorithm} \\
+    \hline
+    2.2 & Characteristic of Data & \pageref{sec:data} \\
+    \hline
+    2.3 & SWOT Analysis & \pageref{sec:swot} \\
+    \hline
+    2.4 & Project Features & \pageref{sec:features} \\
+    \hline
+    2.5 & User Classes and Characteristics & \pageref{sec:users} \\
+    \hline
+    2.6 & Design and Implementation Constraints & \pageref{sec:constraints} \\
+    \hline
+    2.7 & Design Diagrams & \pageref{sec:diagrams} \\
+    \hline
+    2.8 & Assumption and Dependencies & \pageref{sec:assumptions} \\
+    \hline
+    3 & System Requirements & \pageref{sec:sysreq} \\
+    \hline
+    3.1 & User Interface & \pageref{sec:ui} \\
+    \hline
+    3.2 & Software Interface & \pageref{sec:softint} \\
+    \hline
+    3.3 & Database Interface & \pageref{sec:dbint} \\
+    \hline
+    3.4 & Protocols & \pageref{sec:protocols} \\
+    \hline
+    4 & Non-functional Requirements & \pageref{sec:nonfunc} \\
+    \hline
+    4.1 & Performance Requirements & \pageref{sec:performance} \\
+    \hline
+    4.2 & Security Requirements & \pageref{sec:security} \\
+    \hline
+    4.3 & Software Quality Attributes & \pageref{sec:quality} \\
+    \hline
+    5 & Other Requirements & \pageref{sec:other} \\
+    \hline
+    App. A & Glossary & \pageref{app:glossary} \\
+    \hline
+    App. B & Analysis Model & \pageref{app:analysis} \\
+    \hline
+    App. C & Issues List & \pageref{app:issues} \\
+    \hline
+\end{longtable}
+
+\label{toc}
+\newpage
+
+% Revision History
+\section*{REVISION HISTORY}
+\label{revision}
+\addcontentsline{toc}{section}{Revision History}
+
+\begin{longtable}{|p{2.5cm}|p{3.5cm}|p{5cm}|p{2.5cm}|}
+    \hline
+    \textbf{Date} & \textbf{Change} & \textbf{Reason for Changes} & \textbf{Mentor Signature} \\
+    \hline
+    & & & \\
+    \hline
+    & & & \\
+    \hline
+    & & & \\
+    \hline
+    & & & \\
+    \hline
+\end{longtable}
+
+\newpage
+
+% Section 1: Introduction
+\section{INTRODUCTION}
+\label{sec:intro}
+
+\subsection{Purpose of the Project}
+\label{sec:purpose}
+
+College computer laboratories represent a significant capital investment, yet they experience dramatic utilization patterns. During scheduled lab sessions, machines operate at 80-100\% capacity, while outside these hours—evenings, weekends, and holidays—utilization drops to as low as 5-20\%. This represents substantial wasted computing capacity that could benefit students requiring computational resources for coursework, projects, and research.
+
+The purpose of CampusCompute is to transform underutilized campus lab computers into a shared cloud computing platform. By intelligently pooling idle computational resources and providing on-demand access through isolated Docker containers, the system maximizes the return on investment of existing infrastructure while democratizing access to computing resources.
+
+The project addresses three key challenges:
+
+\textbf{Resource Underutilization:} Converting idle lab machines into productive assets during off-peak hours.
+
+\textbf{Access Inequality:} Providing students without personal high-performance computers equal access to computational resources.
+\textbf{Academic Integration:} Respecting institutional schedules and lab reservations while optimizing resource allocation.
+
+The motivation for this project stems from the observation that educational institutions maintain expensive computing infrastructure that remains idle for significant periods, while students often lack adequate computing resources for demanding academic work. CampusCompute bridges this gap through a campus-aware resource scheduling system.
+
+\subsection{Target Beneficiary}
+\label{sec:beneficiary}
+
+The prime beneficiaries of CampusCompute are:
+
+\textbf{Students:} Undergraduate and graduate students gain on-demand access to isolated development environments from any location. Students working on resource-intensive projects—machine learning, data analysis, software development, simulation—can request computing resources without purchasing personal hardware.
+
+\textbf{Faculty:} Instructors can allocate computational resources for assignments, projects, and research without managing individual machine access. Faculty conducting research can leverage pooled resources for computational experiments.
+
+\textbf{IT Administrators:} Centralized management of computing resources across multiple labs. Improved resource utilization metrics and reduced pressure to purchase additional hardware.
+
+\textbf{Institution:} Maximized return on infrastructure investment. Enhanced student satisfaction and academic outcomes. Competitive advantage in attracting students through modern computing facilities.
+\subsection{Project Scope}
+\label{sec:scope}
+
+CampusCompute is a distributed cloud resource management system designed specifically for educational institutions. The system aggregates computational resources from campus lab computers and provisions isolated containerized environments to authenticated users.
+
+\textbf{Application Area:} Educational cloud computing, resource pooling, distributed systems, container orchestration.
+
+\textbf{Key Objectives:}
+
+\begin{itemize}
+    \item Develop a three-layer architecture: web interface, central broker, and distributed agents
+    \item Implement secure authentication and role-based access control
+    \item Create an adaptive scheduler that respects academic schedules and lab reservations
+    \item Provide browser-based terminal access to containerized environments
+    \item Enforce resource quotas and usage policies
+    \item Monitor system health and resource utilization
+    \item Ensure container isolation and security
+\end{itemize}
+
+\textbf{Deliverables:}
+
+\begin{enumerate}
+    \item React-based web application (student and admin portals)
+    \item Spring Boot central broker with RESTful APIs
+    \item Python agent software for lab computers
+    \item PostgreSQL database schema and migrations
+    \item Docker container security policies
+    \item System documentation and deployment guides
+    \item Performance evaluation and research findings
+\end{enumerate}
+\textbf{Benefits:}
+
+\begin{itemize}
+    \item Increased lab utilization from approximately 18\% to 50-70\%
+    \item Reduced need for additional hardware purchases
+    \item Equitable access to computing resources
+    \item Support for resource-intensive academic work
+    \item Privacy-preserving resource sharing model
+\end{itemize}
+
+\subsection{References}
+\label{sec:references}
+
+\begin{enumerate}
+    \item Docker Documentation: \url{https://docs.docker.com/}
+    \item Spring Boot Reference Guide: \url{https://spring.io/projects/spring-boot}
+    \item React Documentation: \url{https://react.dev/}
+    \item PostgreSQL Documentation: \url{https://www.postgresql.org/docs/}
+    \item Kubernetes Documentation: \url{https://kubernetes.io/docs/}
+    \item Burns, B., et al. (2016). \textit{Borg, Omega, and Kubernetes}. ACM Queue, 14(1).
+    \item Merkel, D. (2014). \textit{Docker: lightweight linux containers for consistent development and deployment}. Linux Journal.
+    \item Schwarzkopf, M., et al. (2013). \textit{Omega: flexible, scalable schedulers for large compute clusters}. EuroSys.
+    \item WebSocket Protocol: RFC 6455
+    \item JSON Web Tokens: RFC 7519
+\end{enumerate}
+
+\newpage
+\section{PROJECT DESCRIPTION}
+\label{sec:description}
+
+\subsection{Reference Algorithm}
+\label{sec:algorithm}
+
+The core scheduling algorithm for CampusCompute is an \textbf{Adaptive Campus-Aware Resource Scheduler}. Unlike traditional cloud schedulers that optimize solely for resource availability, this algorithm incorporates institutional context.
+
+\textbf{Algorithm: Adaptive Campus Scheduler}
+
+\texttt{Input:} Container request $R$ with CPU $c$, memory $m$, duration $d$
+
+\texttt{Output:} Selected device $D^*$ or queue placement
+
+\begin{enumerate}
+    \item \textbf{Filter Phase:}
+    \begin{itemize}
+        \item $D_{candidates} \leftarrow \{d \in Devices \mid status = ONLINE\}$
+        \item $D_{candidates} \leftarrow \{d \in D_{candidates} \mid dockerHealthy = true\}$
+        \item $D_{candidates} \leftarrow \{d \in D_{candidates} \mid availableCPU \geq c\}$
+        \item $D_{candidates} \leftarrow \{d \in D_{candidates} \mid availableRAM \geq m\}$
+        \item $D_{candidates} \leftarrow \{d \in D_{candidates} \mid noConflictingReservation(d, d)\}$
+    \end{itemize}
+    
+    \item \textbf{Scoring Phase:}
+    
+    For each $d \in D_{candidates}$:
+    
+    \begin{align*}
+    Score(d) = & w_1 \cdot \frac{availableCPU(d)}{totalCPU(d)} \\
+             & + w_2 \cdot \frac{availableRAM(d)}{totalRAM(d)} \\
+             & + w_3 \cdot (1 - currentLoad(d)) \\
+             & + w_4 \cdot reservationProximity(d, d) \\
+             & + w_5 \cdot reliability(d) \\
+             & + w_6 \cdot networkQuality(d)
+    \end{align*}
+    
+    Where $w_1 + w_2 + ... + w_6 = 1.0$
+    
+    \item \textbf{Selection Phase:}
+    
+    $D^* \leftarrow \arg\max_{d \in D_{candidates}} Score(d)$
+    
+    \item \textbf{Reservation Phase:}
+    
+    \textbf{BEGIN TRANSACTION}
+    
+    \quad Lock device resources for $D^*$
+    
+    \quad Verify availability still holds
+    
+    \quad Reserve $c$ CPU and $m$ RAM on $D^*$
+    
+    \quad \textbf{COMMIT}
+    
+    \item \textbf{Provisioning:}
+    
+    Send CREATE\_CONTAINER command to agent on $D^*$
+\end{enumerate}
+
+\textbf{Novel Contribution: Reservation Proximity Function}
+
+The $reservationProximity(d, duration)$ function penalizes devices that have upcoming lab reservations within the requested duration window. This prevents scheduling long-running containers on machines that will soon be needed for classroom instruction.
+
+$$reservationProximity(d, dur) = \begin{cases} 
+0.0 & \text{if reservation within } dur \\
+1.0 - \frac{1}{timeTo NextReservation(d)} & \text{otherwise}
+\end{cases}$$
+
+\textbf{Data Structures:}
+
+\begin{itemize}
+    \item \textbf{Priority Queue:} For pending container requests
+    \item \textbf{Hash Map:} Device ID to device state mapping
+    \item \textbf{Interval Tree:} Efficient reservation conflict detection
+    \item \textbf{Time Series Database:} Historical resource utilization
+\end{itemize}
+\subsection{Characteristic of Data}
+\label{sec:data}
+
+CampusCompute manages several categories of data:
+
+\textbf{User Data:}
+
+\begin{itemize}
+    \item \textit{Source:} Primary - University authentication system
+    \item \textit{Attributes:} User ID, email, role, department, quota allocation
+    \item \textit{Volume:} Estimated 5,000-10,000 users (students and faculty)
+    \item \textit{Growth:} Approximately 2,000 new users per academic year
+\end{itemize}
+
+\textbf{Device Data:}
+
+\begin{itemize}
+    \item \textit{Source:} Primary - Agent heartbeat messages
+    \item \textit{Attributes:} Device ID, lab location, CPU cores, RAM capacity, storage, status, Docker health
+    \item \textit{Volume:} 100-500 devices across campus labs
+    \item \textit{Frequency:} Heartbeat every 10 seconds
+\end{itemize}
+
+\textbf{Resource Utilization Metrics:}
+
+\begin{itemize}
+    \item \textit{Source:} Primary - Agent monitoring
+    \item \textit{Attributes:} Timestamp, device ID, CPU usage, RAM usage, network I/O, disk I/O
+    \item \textit{Sampling:} Every 10 seconds per device
+    \item \textit{Storage:} Time-series database with 30-day retention
+    \item \textit{Volume:} Approximately 4.3 million data points per day (500 devices $\times$ 8,640 samples/day)
+\end{itemize}
+
+\textbf{Container Metadata:}
+
+\begin{itemize}
+    \item \textit{Source:} Primary - Backend container management service
+    \item \textit{Attributes:} Container ID, user ID, device ID, image, resource allocation, status, creation time, expiration time
+    \item \textit{Volume:} Estimated 100-500 active containers at peak times
+\end{itemize}
+\textbf{Audit Logs:}
+
+\begin{itemize}
+    \item \textit{Source:} Primary - All system components
+    \item \textit{Attributes:} Timestamp, user ID, action type, resource type, result
+    \item \textit{Retention:} 1 year for compliance
+\end{itemize}
+
+\textbf{Statistical Methods:}
+
+\begin{itemize}
+    \item \textit{Moving Average:} For smoothing resource utilization metrics
+    \item \textit{Exponential Weighted Moving Average (EWMA):} For device reliability scoring
+    \item \textit{Percentile Analysis:} P95, P99 latency calculations for performance monitoring
+    \item \textit{Anomaly Detection:} Identifying unusual resource usage patterns
+\end{itemize}
+
+\subsection{SWOT Analysis}
+\label{sec:swot}
+
+\textbf{Strengths:}
+
+\begin{itemize}
+    \item Novel academic-aware scheduling algorithm
+    \item Utilizes existing infrastructure without additional hardware costs
+    \item Browser-based access requires no client-side software installation
+    \item Strong isolation through Docker containerization
+    \item Scalable architecture supporting hundreds of devices
+    \item Privacy-preserving design protecting student data
+\end{itemize}
+
+\textbf{Weaknesses:}
+
+\begin{itemize}
+    \item Dependency on lab computer availability and network connectivity
+    \item Requires Docker installation and agent deployment on all participating machines
+    \item Limited to institutions with existing computer lab infrastructure
+    \item Resource availability fluctuates with academic schedules
+    \item Browser terminal performance inferior to native SSH clients
+\end{itemize}
+\textbf{Opportunities:}
+
+\begin{itemize}
+    \item Expansion to multiple campuses within a university system
+    \item Integration with learning management systems (Canvas, Moodle)
+    \item Support for GPU-accelerated workloads for AI/ML courses
+    \item Partnership with cloud providers for hybrid resource pooling
+    \item Commercial licensing to other educational institutions
+    \item Research opportunities in campus computing optimization
+\end{itemize}
+
+\textbf{Threats:}
+
+\begin{itemize}
+    \item Commercial cloud providers offering education discounts (AWS Educate, Azure for Students)
+    \item Security incidents could undermine institutional confidence
+    \item Budget constraints limiting infrastructure maintenance
+    \item Resistance from IT departments regarding security and management overhead
+    \item Rapid technology changes requiring continuous system updates
+\end{itemize}
+
+\subsection{Project Features}
+\label{sec:features}
+
+\textbf{Core Features:}
+
+\begin{enumerate}
+    \item \textbf{User Authentication and Authorization}
+    \begin{itemize}
+        \item JWT-based secure authentication
+        \item Role-based access control (Student, Faculty, Lab Admin, Super Admin)
+        \item Integration with university SSO systems
+    \end{itemize}
+    
+    \item \textbf{Resource Discovery and Scheduling}
+    \begin{itemize}
+        \item Automatic device registration and heartbeat monitoring
+        \item Adaptive campus-aware scheduler
+        \item Real-time resource availability tracking
+        \item Queue management for pending requests
+    \end{itemize}
+    \item \textbf{Container Lifecycle Management}
+    \begin{itemize}
+        \item On-demand container provisioning
+        \item Start, stop, restart, delete operations
+        \item Automatic container expiration
+        \item Resource limit enforcement (CPU, RAM, storage, PIDs)
+    \end{itemize}
+    
+    \item \textbf{Browser-Based Terminal}
+    \begin{itemize}
+        \item Real-time terminal access via WebSocket
+        \item xterm.js-powered terminal emulator
+        \item Multiple concurrent sessions
+        \item Session persistence and reconnection
+    \end{itemize}
+    
+    \item \textbf{Persistent Storage Management}
+    \begin{itemize}
+        \item Docker volume creation and management
+        \item File upload and download capabilities
+        \item Storage quota enforcement
+        \item Graceful data retention after container deletion
+    \end{itemize}
+    
+    \item \textbf{Lab Reservation System}
+    \begin{itemize}
+        \item Schedule-aware resource allocation
+        \item Lab-specific reservation creation
+        \item Automatic scheduling conflict prevention
+        \item Calendar integration
+    \end{itemize}
+    
+    \item \textbf{Quota Management}
+    \begin{itemize}
+        \item Per-user and per-role resource limits
+        \item CPU, memory, storage, and time quotas
+        \item Automatic quota enforcement
+        \item Admin quota adjustment interface
+    \end{itemize}
+    \item \textbf{Monitoring and Analytics}
+    \begin{itemize}
+        \item Real-time resource utilization dashboards
+        \item Device health monitoring
+        \item Container performance metrics
+        \item Historical usage analysis
+        \item Prometheus and Grafana integration
+    \end{itemize}
+    
+    \item \textbf{Administrative Controls}
+    \begin{itemize}
+        \item Device enable/disable/drain operations
+        \item User management
+        \item System-wide configuration
+        \item Audit log viewing
+    \end{itemize}
+    
+    \item \textbf{Security and Isolation}
+    \begin{itemize}
+        \item Container security policies
+        \item Network isolation
+        \item mTLS agent authentication
+        \item Ownership verification for all operations
+        \item Comprehensive audit logging
+    \end{itemize}
+\end{enumerate}
+
+\subsection{User Classes and Characteristics}
+\label{sec:users}
+
+\textbf{1. Students (Primary Users)}
+
+\textit{Characteristics:}
+\begin{itemize}
+    \item Basic to intermediate technical proficiency
+    \item Require computing resources for coursework and projects
+    \item Access system from various locations and devices
+    \item Need simple, intuitive interfaces
+\end{itemize}
+
+\textit{Use Cases:}
+\begin{itemize}
+    \item Request containerized development environment
+    \item Access terminal for command-line work
+    \item Upload/download project files
+    \item Monitor resource usage
+\end{itemize}
+\textbf{2. Faculty (Secondary Users)}
+
+\textit{Characteristics:}
+\begin{itemize}
+    \item Variable technical proficiency
+    \item Require resources for teaching and research
+    \item May need to allocate resources to student groups
+    \item Higher resource quotas than students
+\end{itemize}
+
+\textit{Use Cases:}
+\begin{itemize}
+    \item Provision environments for research projects
+    \item Create shared resources for course assignments
+    \item Monitor student resource usage (if authorized)
+\end{itemize}
+
+\textbf{3. Lab Administrators}
+
+\textit{Characteristics:}
+\begin{itemize}
+    \item High technical proficiency
+    \item Responsible for specific labs or departments
+    \item Need granular control over assigned resources
+    \item Monitor lab-specific metrics
+\end{itemize}
+
+\textit{Use Cases:}
+\begin{itemize}
+    \item Register and configure lab devices
+    \item Create lab reservations
+    \item Monitor lab utilization
+    \item Manage device maintenance windows
+\end{itemize}
+
+\textbf{4. System Administrators (Super Admins)}
+
+\textit{Characteristics:}
+\begin{itemize}
+    \item Expert technical proficiency
+    \item Responsible for entire campus deployment
+    \item Security and compliance oversight
+    \item System configuration and policy management
+\end{itemize}
+
+\textit{Use Cases:}
+\begin{itemize}
+    \item Manage all devices across campus
+    \item Configure system-wide policies and quotas
+    \item Monitor system health and performance
+    \item Review audit logs
+    \item Handle security incidents
+\end{itemize}
+\subsection{Design and Implementation Constraints}
+\label{sec:constraints}
+
+\textbf{Hardware Constraints:}
+
+\begin{itemize}
+    \item \textit{Lab Computers:} Must have sufficient resources (minimum 4 CPU cores, 8 GB RAM) to share resources while maintaining host functionality
+    \item \textit{Network:} Stable campus network connectivity required for agent-broker communication
+    \item \textit{Central Server:} Must handle 500+ concurrent WebSocket connections and database transactions
+    \item \textit{Storage:} Each device requires adequate storage for Docker images and container volumes
+\end{itemize}
+
+\textbf{Software Constraints:}
+
+\begin{itemize}
+    \item \textit{Docker Engine:} Version 24.0 or higher required on all agent machines
+    \item \textit{Java Runtime:} JDK 17 or higher for Spring Boot backend
+    \item \textit{Python:} Version 3.11 or higher for agent software
+    \item \textit{PostgreSQL:} Version 15 or higher for relational database
+    \item \textit{Modern Browser:} Chrome 90+, Firefox 88+, Safari 14+, or Edge 90+ for frontend
+\end{itemize}
+
+\textbf{Security Constraints:}
+
+\begin{itemize}
+    \item All network communication must use TLS 1.3
+    \item Agent-broker communication requires mutual TLS authentication
+    \item Container must enforce strict resource limits and dropped capabilities
+    \item No privileged containers permitted
+    \item Audit logging mandatory for all administrative actions
+    \item Password storage must use BCrypt or Argon2
+\end{itemize}
+
+\textbf{Performance Constraints:}
+
+\begin{itemize}
+    \item Container startup time: < 10 seconds (P95)
+    \item Scheduling decision time: < 2 seconds
+    \item Terminal latency: < 100ms (P95)
+    \item API response time: < 500ms (P95)
+    \item Heartbeat interval: 10 seconds maximum
+\end{itemize}
+\textbf{Technology Stack Requirements:}
+
+\begin{itemize}
+    \item \textit{Frontend:} React 18, TypeScript, Vite, Tailwind CSS, xterm.js
+    \item \textit{Backend:} Spring Boot 3.2, Spring Security, Spring Data JPA
+    \item \textit{Agent:} Python 3.11, Docker SDK, websocket-client, psutil
+    \item \textit{Database:} PostgreSQL 15 with JSON support
+    \item \textit{Cache/Queue:} Redis 7
+    \item \textit{Reverse Proxy:} Nginx with WebSocket support
+\end{itemize}
+
+\textbf{Design Standards:}
+
+\begin{itemize}
+    \item RESTful API design following OpenAPI 3.0 specification
+    \item JSON Web Tokens (JWT) for stateless authentication
+    \item WebSocket for real-time bidirectional communication
+    \item Docker container security best practices
+    \item Responsive web design for mobile and desktop
+\end{itemize}
+
+\textbf{Operational Constraints:}
+
+\begin{itemize}
+    \item System must respect academic schedules and lab reservations
+    \item Agent must not interfere with normal lab computer usage
+    \item Graceful degradation when devices go offline
+    \item Automatic recovery from network interruptions
+    \item Zero-downtime deployment capability
+\end{itemize}
+
+\subsection{Design Diagrams}
+\label{sec:diagrams}
+
+\textit{Note: The following diagrams provide high-level views of system architecture and interactions. Detailed UML diagrams (Use Case, Class, Sequence, Activity, State, Data Flow, Deployment, and Collaboration diagrams) will be included in the final project documentation.}
+
+\textbf{System Architecture Diagram:}
+
+[Placeholder: High-level three-layer architecture showing Frontend, Broker, and Agent layers with communication protocols]
+\textbf{Key Diagrams to be Developed:}
+
+\begin{enumerate}
+    \item \textbf{Use Case Diagram (Level 2):} Showing all user interactions including student container operations, admin device management, and system monitoring
+    
+    \item \textbf{Class Diagram:} Core entities including User, Device, Container, Volume, Reservation, Quota, and their relationships
+    
+    \item \textbf{Sequence Diagrams:}
+    \begin{itemize}
+        \item Container creation workflow
+        \item Terminal session establishment
+        \item Device registration and heartbeat
+        \item Scheduler decision process
+    \end{itemize}
+    
+    \item \textbf{Activity Diagrams:}
+    \begin{itemize}
+        \item Resource scheduling algorithm
+        \item Container lifecycle management
+        \item Authentication and authorization flow
+    \end{itemize}
+    
+    \item \textbf{State Diagram:} Container state transitions (REQUESTED, ALLOCATING, PROVISIONING, RUNNING, STOPPED, DELETED)
+    
+    \item \textbf{Data Flow Diagram:} Information flow from user request through broker to agent and container
+    
+    \item \textbf{Deployment Diagram:} Physical distribution of components across central server and lab computers
+    
+    \item \textbf{Collaboration Diagram:} Object interactions during critical operations
+\end{enumerate}
+
+\subsection{Assumption and Dependencies}
+\label{sec:assumptions}
+
+\textbf{Assumptions:}
+
+\begin{enumerate}
+    \item Lab computers remain powered on during hours when resource sharing is enabled
+    \item Campus network provides stable connectivity with reasonable latency (< 50ms between buildings)
+    \item Docker Engine is properly configured and maintained on agent machines
+    \item Users have valid university credentials for authentication
+    \item Lab administrators create accurate reservation schedules
+    \item Students respect resource quotas and acceptable use policies
+    \item Operating systems on lab computers are kept up-to-date
+\end{enumerate}
+\textbf{Dependencies:}
+
+\begin{enumerate}
+    \item \textbf{Infrastructure:}
+    \begin{itemize}
+        \item Availability of central server for broker deployment
+        \item Campus network infrastructure and firewall configurations
+        \item IT department cooperation for agent deployment
+    \end{itemize}
+    
+    \item \textbf{External Software:}
+    \begin{itemize}
+        \item Docker Engine stability and API compatibility
+        \item PostgreSQL database reliability
+        \item Nginx reverse proxy capabilities
+        \item Browser WebSocket support
+    \end{itemize}
+    
+    \item \textbf{Third-Party Libraries:}
+    \begin{itemize}
+        \item Spring Boot framework maintenance and security updates
+        \item React and npm package ecosystem stability
+        \item Python Docker SDK continued support
+        \item xterm.js library development
+    \end{itemize}
+    
+    \item \textbf{Institutional:}
+    \begin{itemize}
+        \item University authentication system availability
+        \item Compliance with institutional IT security policies
+        \item Academic schedule data accessibility
+        \item Support from faculty and administration
+    \end{itemize}
+    
+    \item \textbf{Development:}
+    \begin{itemize}
+        \item Team member availability throughout project timeline
+        \item Access to development and testing infrastructure
+        \item Mentor guidance and approval at key milestones
+    \end{itemize}
+\end{enumerate}
+
+\newpage
+\section{SYSTEM REQUIREMENTS}
+\label{sec:sysreq}
+
+\subsection{User Interface}
+\label{sec:ui}
+
+\textbf{Student Portal Components:}
+
+\begin{enumerate}
+    \item \textbf{Login Page:}
+    \begin{itemize}
+        \item Email and password input fields
+        \item "Remember Me" option
+        \item "Forgot Password" link
+        \item University SSO integration button
+    \end{itemize}
+    
+    \item \textbf{Dashboard:}
+    \begin{itemize}
+        \item Campus resource availability overview (CPU, RAM, storage)
+        \item Personal quota status visualization
+        \item Active container list with status indicators
+        \item Quick action buttons (Create Environment, View All)
+    \end{itemize}
+    
+    \item \textbf{Container Management:}
+    \begin{itemize}
+        \item Container creation form with image selection, resource sliders, duration picker
+        \item Container list table with status, resources, location, actions
+        \item Container detail view with metrics, logs, terminal access
+        \item Control buttons (Start, Stop, Delete, Open Terminal)
+    \end{itemize}
+    
+    \item \textbf{Browser Terminal:}
+    \begin{itemize}
+        \item Full-screen xterm.js terminal emulator
+        \item Theme customization (dark/light mode)
+        \item Font size adjustment
+        \item Copy/paste functionality
+        \item Session reconnection handling
+    \end{itemize}
+    
+    \item \textbf{File Manager:}
+    \begin{itemize}
+        \item Directory tree navigation
+        \item File upload with drag-and-drop
+        \item File download
+        \item Delete confirmation dialogs
+        \item Storage usage indicator
+    \end{itemize}
+\end{enumerate}
+\textbf{Admin Portal Components:}
+
+\begin{enumerate}
+    \item \textbf{Dashboard:}
+    \begin{itemize}
+        \item Campus-wide resource utilization charts
+        \item Device status overview (online, offline, maintenance)
+        \item Active container count and distribution
+        \item Recent system events feed
+    \end{itemize}
+    
+    \item \textbf{Device Management:}
+    \begin{itemize}
+        \item Device list with status, location, resources, actions
+        \item Device enrollment interface with token generation
+        \item Device detail view with real-time metrics
+        \item Control buttons (Enable, Disable, Drain, Maintenance Mode)
+    \end{itemize}
+    
+    \item \textbf{Lab Management:}
+    \begin{itemize}
+        \item Lab list with department, building, device count
+        \item Lab creation and configuration forms
+        \item Lab-level resource allocation policies
+    \end{itemize}
+    
+    \item \textbf{Reservation Management:}
+    \begin{itemize}
+        \item Calendar view of lab reservations
+        \item Reservation creation form with lab selection, time range, recurrence
+        \item Conflict detection and warnings
+        \item Edit and delete capabilities
+    \end{itemize}
+    
+    \item \textbf{User Management:}
+    \begin{itemize}
+        \item User list with search and filter
+        \item Role assignment interface
+        \item Quota configuration per user or role
+        \item User activity history
+    \end{itemize}
+    
+    \item \textbf{Monitoring:}
+    \begin{itemize}
+        \item Real-time resource utilization graphs
+        \item Container distribution heatmaps
+        \item Performance metrics (P95, P99 latencies)
+        \item Grafana dashboard integration
+    \end{itemize}
+    
+    \item \textbf{Audit Logs:}
+    \begin{itemize}
+        \item Searchable log viewer with date range filter
+        \item Action type filtering
+        \item User and resource filtering
+        \item Export functionality
+    \end{itemize}
+\end{enumerate}
+\textbf{UI Requirements:}
+
+\begin{itemize}
+    \item Responsive design supporting desktop (1920x1080), tablet (768x1024), and mobile (375x667) viewports
+    \item WCAG 2.1 Level AA accessibility compliance
+    \item Loading states and progress indicators for async operations
+    \item Error messages with clear remediation instructions
+    \item Confirmation dialogs for destructive actions
+    \item Real-time status updates via WebSocket
+    \item Dark mode support
+\end{itemize}
+
+\subsection{Software Interface}
+\label{sec:softint}
+
+\textbf{Frontend to Backend Interface:}
+
+\begin{itemize}
+    \item \textit{Protocol:} HTTPS REST API and WebSocket (WSS)
+    \item \textit{Authentication:} Bearer token (JWT) in Authorization header
+    \item \textit{Data Format:} JSON for request/response bodies
+    \item \textit{API Versioning:} URL path versioning (e.g., /api/v1/)
+    \item \textit{Error Handling:} Standard HTTP status codes with JSON error objects
+\end{itemize}
+
+\textbf{Backend to Agent Interface:}
+
+\begin{itemize}
+    \item \textit{Protocol:} WebSocket over mutual TLS (mTLS)
+    \item \textit{Authentication:} X.509 certificates (device certificates)
+    \item \textit{Message Format:} JSON with command type and payload
+    \item \textit{Message Types:}
+    \begin{itemize}
+        \item HEARTBEAT: Agent $\rightarrow$ Broker
+        \item CREATE\_CONTAINER: Broker $\rightarrow$ Agent
+        \item START\_CONTAINER: Broker $\rightarrow$ Agent
+        \item STOP\_CONTAINER: Broker $\rightarrow$ Agent
+        \item DELETE\_CONTAINER: Broker $\rightarrow$ Agent
+        \item EXEC\_TERMINAL: Broker $\rightarrow$ Agent
+        \item STATUS\_UPDATE: Agent $\rightarrow$ Broker
+    \end{itemize}
+    \item \textit{Connection:} Persistent WebSocket initiated by agent (outbound)
+    \item \textit{Reconnection:} Exponential backoff (1s, 2s, 4s, ..., max 60s)
+\end{itemize}
+\textbf{Backend to Docker Interface (via Agent):}
+
+\begin{itemize}
+    \item \textit{Library:} Docker SDK for Python (docker-py)
+    \item \textit{Connection:} Unix socket (/var/run/docker.sock) or TCP with TLS
+    \item \textit{Operations:}
+    \begin{itemize}
+        \item Container create, start, stop, remove
+        \item Volume create, remove
+        \item Resource inspection and statistics
+        \item Exec session creation for terminal access
+    \end{itemize}
+\end{itemize}
+
+\textbf{Backend to Database Interface:}
+
+\begin{itemize}
+    \item \textit{ORM:} Hibernate via Spring Data JPA
+    \item \textit{Connection Pool:} HikariCP (default Spring Boot)
+    \item \textit{Transaction Management:} Spring @Transactional annotations
+    \item \textit{Migration:} Flyway or Liquibase for schema versioning
+\end{itemize}
+
+\textbf{Backend to Cache Interface:}
+
+\begin{itemize}
+    \item \textit{Client:} Spring Data Redis
+    \item \textit{Protocol:} RESP (Redis Serialization Protocol)
+    \item \textit{Use Cases:}
+    \begin{itemize}
+        \item JWT token blacklist for logout
+        \item Temporary resource allocation state
+        \item WebSocket session routing information
+        \item Rate limiting counters
+    \end{itemize}
+\end{itemize}
+
+\textbf{External Authentication Interface:}
+
+\begin{itemize}
+    \item \textit{Protocol:} OAuth 2.0 / SAML 2.0 (for university SSO)
+    \item \textit{Fallback:} Local authentication with BCrypt password hashing
+\end{itemize}
+
+\subsection{Database Interface}
+\label{sec:dbint}
+
+\textbf{Database Management System:} PostgreSQL 15
+
+\textbf{Connection Configuration:}
+
+\begin{itemize}
+    \item \textit{Driver:} JDBC PostgreSQL Driver (org.postgresql:postgresql)
+    \item \textit{Connection String:} jdbc:postgresql://localhost:5432/campuscompute
+    \item \textit{Pool Size:} 20 connections (adjustable based on load)
+    \item \textit{Connection Timeout:} 30 seconds
+\end{itemize}
+\textbf{Core Database Tables:}
+
+\begin{enumerate}
+    \item \textbf{users:} User accounts with authentication credentials
+    \item \textbf{departments:} Organizational units within university
+    \item \textbf{labs:} Physical computer labs with metadata
+    \item \textbf{devices:} Individual lab computers registered with system
+    \item \textbf{device\_resources:} Resource capacity for each device
+    \item \textbf{containers:} Active and historical container records
+    \item \textbf{volumes:} Persistent storage volumes
+    \item \textbf{resource\_allocations:} CPU, memory, storage assigned to containers
+    \item \textbf{reservations:} Lab reservation schedules
+    \item \textbf{quotas:} Resource limits per user or role
+    \item \textbf{heartbeats:} Device health status (time-series, partitioned)
+    \item \textbf{resource\_usage:} Container utilization metrics (time-series)
+    \item \textbf{audit\_logs:} System action audit trail
+\end{enumerate}
+
+\textbf{Database Features Utilized:}
+
+\begin{itemize}
+    \item \textit{JSON/JSONB:} For flexible metadata storage
+    \item \textit{Indexes:} B-tree and GIN indexes for query optimization
+    \item \textit{Partitioning:} Table partitioning for time-series data
+    \item \textit{Constraints:} Foreign keys, unique constraints, check constraints
+    \item \textit{Triggers:} For automatic timestamp updates
+    \item \textit{Views:} Materialized views for complex analytics queries
+\end{itemize}
+
+\textbf{Backup and Recovery:}
+
+\begin{itemize}
+    \item \textit{Strategy:} Daily automated backups with 30-day retention
+    \item \textit{Method:} pg\_dump for logical backups
+    \item \textit{Point-in-Time Recovery:} WAL archiving enabled
+\end{itemize}
+\subsection{Protocols}
+\label{sec:protocols}
+
+\textbf{HTTPS (HTTP/1.1 over TLS 1.3):}
+
+\begin{itemize}
+    \item \textit{Purpose:} Secure REST API communication between frontend and backend
+    \item \textit{Port:} 443 (standard HTTPS)
+    \item \textit{Cipher Suites:} TLS\_AES\_256\_GCM\_SHA384, TLS\_CHACHA20\_POLY1305\_SHA256
+    \item \textit{Certificate:} Let's Encrypt or institutional CA-signed certificate
+    \item \textit{HSTS:} Strict-Transport-Security header enforced
+\end{itemize}
+
+\textbf{WebSocket Secure (WSS):}
+
+\begin{itemize}
+    \item \textit{Purpose:} Real-time bidirectional communication for terminal sessions and agent connections
+    \item \textit{Protocol:} RFC 6455 WebSocket over TLS 1.3
+    \item \textit{Handshake:} HTTP Upgrade with Sec-WebSocket-Key validation
+    \item \textit{Frames:} Text frames for JSON messages, Binary frames for terminal data
+    \item \textit{Keep-Alive:} Ping/Pong frames every 30 seconds
+    \item \textit{Closure:} Graceful close with 1000 (Normal Closure) or 1001 (Going Away) codes
+\end{itemize}
+
+\textbf{Mutual TLS (mTLS):}
+
+\begin{itemize}
+    \item \textit{Purpose:} Agent authentication to broker
+    \item \textit{Mechanism:} Both server and client present X.509 certificates
+    \item \textit{Server Certificate:} Identifies broker to agents
+    \item \textit{Client Certificate:} Identifies specific agent device
+    \item \textit{Verification:} Certificate chain validation against trusted CA
+    \item \textit{Revocation:} CRL or OCSP for compromised certificates
+\end{itemize}
+
+\textbf{JWT (JSON Web Token - RFC 7519):}
+
+\begin{itemize}
+    \item \textit{Purpose:} Stateless user authentication
+    \item \textit{Algorithm:} HS256 (HMAC with SHA-256) or RS256 (RSA with SHA-256)
+    \item \textit{Claims:} sub (user ID), role, department, iat (issued at), exp (expiration)
+    \item \textit{Expiration:} 24 hours for access tokens
+    \item \textit{Refresh:} Refresh tokens with 7-day expiration
+    \item \textit{Storage:} HttpOnly, Secure cookies (preferred) or localStorage with XSS mitigation
+\end{itemize}
+\textbf{Docker API:}
+
+\begin{itemize}
+    \item \textit{Purpose:} Container and volume management on agent machines
+    \item \textit{Protocol:} RESTful HTTP API (Engine API v1.43)
+    \item \textit{Transport:} Unix socket (/var/run/docker.sock) or TCP with TLS
+    \item \textit{Authentication:} Client certificate authentication for remote access
+\end{itemize}
+
+\textbf{Security Considerations:}
+
+\begin{itemize}
+    \item All network communication encrypted with TLS 1.3
+    \item No plaintext transmission of credentials
+    \item Certificate pinning for agent-broker connections
+    \item Rate limiting on API endpoints (100 requests/minute per user)
+    \item CORS policy restricting frontend origin
+    \item WebSocket origin validation
+\end{itemize}
+
+\textbf{Data Transfer:}
+
+\begin{itemize}
+    \item \textit{File Upload:} Multipart form data with size limit (100 MB per file)
+    \item \textit{File Download:} Streaming response with Content-Disposition header
+    \item \textit{Terminal Data:} UTF-8 encoded text in WebSocket text frames
+    \item \textit{Compression:} Gzip compression for HTTP responses > 1KB
+\end{itemize}
+
+\textbf{Synchronization:}
+
+\begin{itemize}
+    \item \textit{Heartbeat:} Agent sends status every 10 seconds
+    \item \textit{State Reconciliation:} On agent reconnection, broker queries actual container states
+    \item \textit{Clock Synchronization:} NTP required on all devices for accurate scheduling
+    \item \textit{Event Ordering:} Sequence numbers in WebSocket messages
+\end{itemize}
+
+\newpage
+\section{NON-FUNCTIONAL REQUIREMENTS}
+\label{sec:nonfunc}
+
+\subsection{Performance Requirements}
+\label{sec:performance}
+
+\textbf{Response Time Requirements:}
+
+\begin{itemize}
+    \item \textit{API Response:} 95\% of requests < 500ms, 99\% < 1s
+    \item \textit{Container Startup:} P95 < 10s, P99 < 15s
+    \item \textit{Scheduling Decision:} < 2s for 95\% of requests
+    \item \textit{Terminal Latency:} < 100ms for keystroke echo (P95)
+    \item \textit{Page Load:} Initial load < 3s, subsequent navigation < 1s
+    \item \textit{WebSocket Connection:} Establishment < 500ms
+\end{itemize}
+
+\textbf{Throughput Requirements:}
+
+\begin{itemize}
+    \item \textit{Concurrent Users:} Support 500 simultaneous active users
+    \item \textit{Container Requests:} Process 50 container creation requests/minute
+    \item \textit{Terminal Sessions:} Support 200 concurrent terminal sessions
+    \item \textit{Heartbeats:} Process 50 heartbeat messages/second (500 devices × 10s interval)
+    \item \textit{File Transfers:} Support 20 concurrent file uploads/downloads
+\end{itemize}
+
+\textbf{Capacity Requirements:}
+
+\begin{itemize}
+    \item \textit{Devices:} Scale to 500 registered lab computers
+    \item \textit{Users:} Support 10,000 user accounts
+    \item \textit{Containers:} Manage up to 1,000 concurrent containers
+    \item \textit{Database:} 100 million rows (with partitioning for time-series data)
+    \item \textit{Storage:} 10 TB aggregate student workspace storage
+\end{itemize}
+
+\textbf{Resource Utilization:}
+
+\begin{itemize}
+    \item \textit{Backend Memory:} < 4 GB under normal load
+    \item \textit{Backend CPU:} < 50\% of 4-core processor under normal load
+    \item \textit{Agent Memory:} < 200 MB per agent
+    \item \textit{Agent CPU:} < 5\% of host CPU when idle
+    \item \textit{Database:} Query execution time < 100ms for 95\% of queries
+\end{itemize}
+\textbf{Scalability:}
+
+\begin{itemize}
+    \item \textit{Horizontal Scaling:} Backend should support load balancing across multiple instances
+    \item \textit{Database:} Read replicas for analytics queries
+    \item \textit{Stateless Design:} No session affinity required for API servers
+    \item \textit{Resource Limits:} Graceful degradation when approaching capacity
+\end{itemize}
+
+\subsection{Security Requirements}
+\label{sec:security}
+
+\textbf{Authentication Requirements:}
+
+\begin{itemize}
+    \item Strong password policy (minimum 12 characters, mixed case, numbers, symbols)
+    \item Multi-factor authentication (MFA) support for administrative accounts
+    \item Account lockout after 5 failed login attempts
+    \item Password reset via email verification
+    \item Integration with university Single Sign-On (SSO) system
+    \item Device certificate-based authentication for agents
+\end{itemize}
+
+\textbf{Authorization Requirements:}
+
+\begin{itemize}
+    \item Role-Based Access Control (RBAC) with four roles: Student, Faculty, Lab Admin, Super Admin
+    \item Ownership verification for all resource operations (containers, volumes)
+    \item Principle of least privilege enforced throughout system
+    \item Administrative actions require elevated privileges
+    \item API endpoint protection with role-based guards
+\end{itemize}
+
+\textbf{Data Protection:}
+
+\begin{itemize}
+    \item All passwords hashed using BCrypt (cost factor 12) or Argon2
+    \item Sensitive data encrypted at rest in database
+    \item TLS 1.3 for all network communication
+    \item No logging of passwords or authentication tokens
+    \item Automatic session termination after 24 hours
+\end{itemize}
+\textbf{Container Security:}
+
+\begin{itemize}
+    \item No privileged containers allowed
+    \item Docker socket never mounted in student containers
+    \item Dropped Linux capabilities (ALL except CHOWN, SETUID, SETGID)
+    \item Resource limits enforced (CPU, memory, PIDs, storage)
+    \item Read-only root filesystem where possible
+    \item Security option: no-new-privileges flag
+    \item Network isolation between containers
+    \item Regular base image security scanning
+\end{itemize}
+
+\textbf{Audit and Monitoring:}
+
+\begin{itemize}
+    \item Comprehensive audit logging of administrative actions
+    \item Login/logout events logged with IP addresses
+    \item Container creation, modification, deletion logged
+    \item Failed authentication attempts tracked
+    \item Anomalous resource usage detection
+    \item Security incident alerting
+    \item Log retention for 1 year minimum
+\end{itemize}
+
+\textbf{Network Security:}
+
+\begin{itemize}
+    \item Firewall rules limiting exposed ports
+    \item Rate limiting on public API endpoints
+    \item DDoS protection at Nginx layer
+    \item CORS policy restricting frontend origins
+    \item Content Security Policy (CSP) headers
+    \item X-Frame-Options to prevent clickjacking
+\end{itemize}
+
+\textbf{Compliance:}
+
+\begin{itemize}
+    \item FERPA compliance for student educational records
+    \item Institutional data governance policies
+    \item Regular security audits and penetration testing
+    \item Incident response plan documentation
+\end{itemize}
+\subsection{Software Quality Attributes}
+\label{sec:quality}
+
+\textbf{Reliability:}
+
+\begin{itemize}
+    \item \textit{Availability:} 99\% uptime excluding scheduled maintenance
+    \item \textit{MTBF:} Mean Time Between Failures > 720 hours
+    \item \textit{MTTR:} Mean Time To Recovery < 1 hour
+    \item \textit{Fault Tolerance:} Graceful degradation when devices go offline
+    \item \textit{Data Integrity:} Database transactions ensure consistency
+    \item \textit{Error Recovery:} Automatic reconnection for agent-broker communication
+\end{itemize}
+
+\textbf{Availability:}
+
+\begin{itemize}
+    \item System accessible 24/7 except scheduled maintenance windows
+    \item Scheduled maintenance limited to 4 hours/month during low-usage periods
+    \item Redundant components where practical (database, cache)
+    \item Health check endpoints for monitoring
+    \item Automated restart on component failure
+\end{itemize}
+
+\textbf{Maintainability:}
+
+\begin{itemize}
+    \item \textit{Modularity:} Clear separation of concerns (auth, scheduling, containers)
+    \item \textit{Documentation:} Comprehensive code comments and API documentation
+    \item \textit{Code Standards:} Consistent formatting and naming conventions
+    \item \textit{Version Control:} Git with feature branch workflow
+    \item \textit{Testing:} Minimum 70\% code coverage
+    \item \textit{Logging:} Structured logging with log levels
+    \item \textit{Configuration:} Externalized configuration files
+\end{itemize}
+
+\textbf{Portability:}
+
+\begin{itemize}
+    \item \textit{Cross-Platform:} Backend runs on Linux and Windows Server
+    \item \textit{Browser Support:} Chrome, Firefox, Safari, Edge (latest 2 versions)
+    \item \textit{Containerized Deployment:} Docker Compose for easy setup
+    \item \textit{Database Independence:} JPA abstraction (though PostgreSQL recommended)
+    \item \textit{Cloud-Agnostic:} Deployable on-premises or cloud providers
+\end{itemize}
+\textbf{Usability:}
+
+\begin{itemize}
+    \item \textit{Learnability:} New users can create container within 5 minutes
+    \item \textit{Efficiency:} Power users can perform common tasks quickly
+    \item \textit{Memorability:} Infrequent users can remember how to use system
+    \item \textit{Error Prevention:} Confirmation dialogs for destructive actions
+    \item \textit{Error Recovery:} Clear error messages with remediation steps
+    \item \textit{Satisfaction:} Intuitive interface following modern design patterns
+    \item \textit{Accessibility:} WCAG 2.1 Level AA compliance
+\end{itemize}
+
+\textbf{Testability:}
+
+\begin{itemize}
+    \item Unit tests for service layer logic
+    \item Integration tests for API endpoints
+    \item End-to-end tests for critical user workflows
+    \item Performance tests for load scenarios
+    \item Security tests for vulnerability scanning
+    \item Continuous Integration (CI) pipeline
+    \item Test data generation utilities
+\end{itemize}
+
+\textbf{Flexibility:}
+
+\begin{itemize}
+    \item Configurable scheduling weights
+    \item Pluggable authentication providers
+    \item Extensible quota policies
+    \item Customizable container images
+    \item Configurable resource limits
+\end{itemize}
+
+\textbf{Reusability:}
+
+\begin{itemize}
+    \item RESTful API enables third-party integration
+    \item Modular architecture supports component reuse
+    \item Library abstractions for Docker, WebSocket, authentication
+    \item Open API specification for client generation
+\end{itemize}
+
+\textbf{Robustness:}
+
+\begin{itemize}
+    \item Input validation on all API endpoints
+    \item SQL injection prevention via parameterized queries
+    \item XSS prevention via output encoding
+    \item CSRF protection with tokens
+    \item Resource exhaustion prevention (rate limiting, quotas)
+    \item Graceful handling of unexpected inputs
+\end{itemize}
+\textbf{Correctness:}
+
+\begin{itemize}
+    \item Adherence to specifications throughout implementation
+    \item Accurate resource accounting and quota enforcement
+    \item Consistent state management across distributed components
+    \item Validation of all user inputs
+    \item Comprehensive testing of business logic
+\end{itemize}
+
+\textbf{Interoperability:}
+
+\begin{itemize}
+    \item Standard REST API following OpenAPI specification
+    \item WebSocket protocol compliance (RFC 6455)
+    \item Docker API compatibility
+    \item OAuth 2.0 / SAML 2.0 for SSO integration
+    \item Prometheus metrics format for monitoring integration
+    \item Standard SQL database interface
+\end{itemize}
+
+\newpage
+
+\section{OTHER REQUIREMENTS}
+\label{sec:other}
+
+\textbf{Legal and Licensing:}
+
+\begin{itemize}
+    \item Compliance with university acceptable use policies
+    \item Open source license compatibility (Apache 2.0, MIT)
+    \item Third-party library license review
+    \item Terms of service and privacy policy for users
+    \item Data retention and deletion policies
+\end{itemize}
+
+\textbf{Documentation Requirements:}
+
+\begin{itemize}
+    \item User manual for students
+    \item Administrator guide for IT staff
+    \item API reference documentation
+    \item Architecture and design documentation
+    \item Deployment and installation guide
+    \item Security policies and procedures
+    \item Troubleshooting and FAQ
+\end{itemize}
+\textbf{Training Requirements:}
+
+\begin{itemize}
+    \item Training sessions for system administrators
+    \item Video tutorials for student onboarding
+    \item Documentation for faculty integration
+    \item Help desk support materials
+\end{itemize}
+
+\textbf{Operational Requirements:}
+
+\begin{itemize}
+    \item Automated backup procedures
+    \item System monitoring and alerting
+    \item Log aggregation and analysis
+    \item Capacity planning and forecasting
+    \item Disaster recovery procedures
+    \item Regular security updates
+\end{itemize}
+
+\textbf{Research and Evaluation:}
+
+\begin{itemize}
+    \item Experimental design for scheduler evaluation
+    \item Metrics collection for performance analysis
+    \item User satisfaction surveys
+    \item Comparative analysis with traditional approaches
+    \item Publication of research findings
+\end{itemize}
+
+\textbf{Future Enhancements:}
+
+\begin{itemize}
+    \item GPU resource sharing for AI/ML workloads
+    \item Multi-campus federation
+    \item Integration with learning management systems
+    \item Mobile application development
+    \item Advanced container orchestration (Kubernetes)
+    \item Hybrid cloud bursting to public cloud
+\end{itemize}
+
+\newpage
+
+\section*{APPENDIX A: GLOSSARY}
+\label{app:glossary}
+\addcontentsline{toc}{section}{Appendix A: Glossary}
+
+\begin{description}
+    \item[Agent:] Python software deployed on lab computers that manages Docker containers and communicates resource availability to the broker.
+    
+    \item[Broker:] Central Spring Boot application that orchestrates resource allocation, scheduling, and container management across campus.
+    
+    \item[Container:] Isolated Docker environment provisioned for a user with dedicated resource allocation.
+    \item[Device:] A physical lab computer registered with CampusCompute that can host containers.
+    
+    \item[Drain:] Administrative action that prevents new container allocation on a device while allowing existing containers to complete.
+    
+    \item[Heartbeat:] Periodic status message sent by agent to broker indicating device health and resource availability.
+    
+    \item[JWT (JSON Web Token):] Stateless authentication token containing user identity and authorization claims.
+    
+    \item[Lab:] Physical computer laboratory within a department containing multiple devices.
+    
+    \item[mTLS (Mutual TLS):] Authentication protocol where both client and server present certificates to establish identity.
+    
+    \item[Quota:] Resource limit assigned to a user or role defining maximum CPU, memory, storage, and container count.
+    
+    \item[Reservation:] Scheduled time period during which a lab is unavailable for container allocation due to classes or maintenance.
+    
+    \item[Scheduler:] Component responsible for selecting optimal device for container placement based on resource availability and institutional context.
+    
+    \item[Volume:] Persistent Docker storage volume mounted in container for user workspace data.
+    
+    \item[WebSocket:] Protocol enabling full-duplex communication between client and server over a single TCP connection.
+    
+    \item[xterm.js:] JavaScript library providing terminal emulation in web browsers.
+    \item[RBAC (Role-Based Access Control):] Authorization model granting permissions based on user roles rather than individual identities.
+    
+    \item[BCrypt:] Password hashing algorithm designed to be computationally expensive to resist brute-force attacks.
+    
+    \item[Docker:] Platform for developing, shipping, and running applications in isolated containers.
+    
+    \item[Spring Boot:] Java framework for building production-ready applications with minimal configuration.
+    
+    \item[React:] JavaScript library for building user interfaces with component-based architecture.
+    
+    \item[PostgreSQL:] Open-source relational database management system.
+    
+    \item[Redis:] In-memory data structure store used for caching and message queuing.
+    
+    \item[Prometheus:] Open-source monitoring and alerting toolkit.
+    
+    \item[Grafana:] Open-source analytics and visualization platform.
+    
+    \item[REST (Representational State Transfer):] Architectural style for distributed systems based on stateless client-server communication.
+    
+    \item[API (Application Programming Interface):] Set of protocols and tools for building software applications.
+    
+    \item[SSO (Single Sign-On):] Authentication scheme allowing users to log in once and access multiple systems.
+    
+    \item[FERPA:] Family Educational Rights and Privacy Act - U.S. federal law protecting student education records.
+    \item[WCAG (Web Content Accessibility Guidelines):] Set of recommendations for making web content more accessible to people with disabilities.
+    
+    \item[ORM (Object-Relational Mapping):] Programming technique for converting data between incompatible type systems (objects and relational databases).
+    
+    \item[JPA (Java Persistence API):] Java specification for accessing, persisting, and managing data between Java objects and relational databases.
+    
+    \item[CORS (Cross-Origin Resource Sharing):] Mechanism allowing web applications to access resources from different origins.
+    
+    \item[CSP (Content Security Policy):] Security standard helping prevent cross-site scripting and other code injection attacks.
+\end{description}
+
+\newpage
+
+\section*{APPENDIX B: ANALYSIS MODEL}
+\label{app:analysis}
+\addcontentsline{toc}{section}{Appendix B: Analysis Model}
+
+\textbf{Resource Utilization Model:}
+
+The system tracks resource utilization at multiple levels:
+
+\begin{align*}
+U_{campus} &= \frac{\sum_{i=1}^{n} (CPU_{allocated,i} + RAM_{allocated,i})}{\sum_{i=1}^{n} (CPU_{total,i} + RAM_{total,i})} \\
+U_{device} &= \frac{CPU_{allocated} + RAM_{allocated}}{CPU_{total} + RAM_{total}}
+\end{align*}
+
+Where $n$ is the number of devices and utilization is measured as percentage of available resources.
+
+\textbf{Scheduling Score Model:}
+
+The adaptive scheduler uses a weighted scoring function:
+
+\begin{align*}
+Score(d) = \sum_{i=1}^{6} w_i \cdot f_i(d)
+\end{align*}
+
+Where:
+\begin{itemize}
+    \item $f_1(d)$ = CPU availability factor
+    \item $f_2(d)$ = RAM availability factor
+    \item $f_3(d)$ = Current load factor (inverse)
+    \item $f_4(d)$ = Reservation proximity factor
+    \item $f_5(d)$ = Reliability factor (EWMA)
+    \item $f_6(d)$ = Network quality factor
+    \item $\sum w_i = 1.0$
+\end{itemize}
+\textbf{Quota Enforcement Model:}
+
+For each user $u$ and resource type $r$:
+
+\begin{align*}
+allocated_r(u) &= \sum_{c \in containers(u)} resource_r(c) \\
+allowed(u,r) &\Leftrightarrow allocated_r(u) + requested_r \leq quota_r(u)
+\end{align*}
+
+\textbf{Reliability Model:}
+
+Device reliability is calculated using Exponential Weighted Moving Average (EWMA):
+
+\begin{align*}
+reliability_t &= \alpha \cdot success_t + (1-\alpha) \cdot reliability_{t-1}
+\end{align*}
+
+Where $\alpha = 0.3$ (smoothing factor) and $success_t \in \{0,1\}$ based on operation outcomes.
+
+\textbf{Performance Model:}
+
+Expected container startup time:
+
+\begin{align*}
+T_{startup} = T_{scheduling} + T_{provisioning} + T_{docker\_create} + T_{docker\_start}
+\end{align*}
+
+Target: $T_{startup} < 10s$ for P95.
+
+\textbf{Capacity Planning Model:}
+
+Maximum concurrent containers:
+
+\begin{align*}
+C_{max} = \frac{\sum_{i=1}^{n} CPU_{total,i}}{CPU_{avg\_per\_container}}
+\end{align*}
+
+With safety margin: $C_{target} = 0.85 \times C_{max}$
+
+\textbf{Cost-Benefit Analysis:}
+
+\begin{itemize}
+    \item \textit{Infrastructure Cost Avoidance:} \$500/student for personal hardware vs. \$50/student for CampusCompute deployment
+    \item \textit{Utilization Improvement:} 18\% $\rightarrow$ 60\% average lab utilization
+    \item \textit{ROI Timeline:} Expected payback period of 18 months
+\end{itemize}
+
+\newpage
+\section*{APPENDIX C: ISSUES LIST}
+\label{app:issues}
+\addcontentsline{toc}{section}{Appendix C: Issues List}
+
+This section maintains a dynamic list of open requirements issues to be resolved during project execution.
+
+\begin{longtable}{|p{1cm}|p{5cm}|p{4cm}|p{2.5cm}|}
+    \hline
+    \textbf{ID} & \textbf{Issue Description} & \textbf{Impact} & \textbf{Status} \\
+    \hline
+    \endhead
+    
+    1 & Determine optimal Docker image approval workflow for student-requested custom images & Security vs. flexibility tradeoff & Open \\
+    \hline
+    
+    2 & Define specific thresholds for adaptive scheduler weight adjustment based on time-of-day patterns & Scheduling effectiveness & Open \\
+    \hline
+    
+    3 & Clarify GPU resource sharing requirements and feasibility for future phases & Feature scope & Open \\
+    \hline
+    
+    4 & Establish maximum container duration limits balancing student needs and fair resource access & Policy definition & Open \\
+    \hline
+    
+    5 & Define disaster recovery RTO and RPO targets for database and persistent volumes & Operational requirements & Open \\
+    \hline
+    
+    6 & Determine integration requirements with university's existing authentication system (LDAP, OAuth, SAML) & Technical integration & Open \\
+    \hline
+    
+    7 & Clarify network policies for container internet access (unrestricted, whitelist, or isolated) & Security policy & Open \\
+    \hline
+    
+    8 & Define metrics collection strategy: push vs. pull model for Prometheus integration & Monitoring architecture & Open \\
+    \hline
+    9 & Establish testing environment requirements: dedicated test lab or shared development resources & Testing infrastructure & Open \\
+    \hline
+    
+    10 & Define automatic container cleanup policy for abandoned or expired containers & Resource management & Open \\
+    \hline
+    
+    11 & Clarify performance monitoring dashboard requirements for students vs. administrators & UI requirements & Open \\
+    \hline
+    
+    12 & Determine approach for handling agent software updates across hundreds of devices & Deployment strategy & Open \\
+    \hline
+    
+    13 & Define scheduling behavior when no devices meet minimum requirements: queue vs. rejection & User experience & Open \\
+    \hline
+    
+    14 & Establish data retention policies for audit logs, metrics, and deleted container volumes & Compliance & Open \\
+    \hline
+    
+    15 & Clarify whether file sharing between users is required or explicitly prohibited & Feature scope & Open \\
+    \hline
+    
+    16 & Define notification system requirements: email, in-app, push notifications for container status & Communication channels & Open \\
+    \hline
+    
+    17 & Determine multi-tenancy model if system will serve multiple departments with isolation requirements & Architecture decision & Open \\
+    \hline
+    
+    18 & Establish criteria for measuring project success beyond technical metrics & Evaluation framework & Open \\
+    \hline
+\end{longtable}
+
+\textit{Note: This issues list will be updated throughout the project lifecycle as requirements are clarified and new issues emerge.}
+
+\end{document}
