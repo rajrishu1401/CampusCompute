@@ -129,7 +129,20 @@ public class DeviceService {
     }
 
     /**
-     * Update device status
+     * Update device status (by ID)
+     */
+    public void updateDeviceStatus(Long deviceId, Device.DeviceStatus status) {
+        log.info("Updating device {} status to {}", deviceId, status);
+        
+        Device device = deviceRepository.findById(deviceId)
+            .orElseThrow(() -> new IllegalArgumentException("Device not found: " + deviceId));
+        
+        device.setStatus(status);
+        deviceRepository.save(device);
+    }
+    
+    /**
+     * Update device status (by device ID string)
      */
     public void updateDeviceStatus(String deviceId, Device.DeviceStatus status) {
         log.info("Updating device {} status to {}", deviceId, status);
@@ -138,6 +151,19 @@ public class DeviceService {
             .orElseThrow(() -> new IllegalArgumentException("Device not found: " + deviceId));
         
         device.setStatus(status);
+        deviceRepository.save(device);
+    }
+    
+    /**
+     * Update last heartbeat timestamp
+     */
+    public void updateLastHeartbeat(Long deviceId) {
+        log.debug("Updating heartbeat for device ID: {}", deviceId);
+        
+        Device device = deviceRepository.findById(deviceId)
+            .orElseThrow(() -> new IllegalArgumentException("Device not found: " + deviceId));
+        
+        device.setLastHeartbeat(LocalDateTime.now());
         deviceRepository.save(device);
     }
 

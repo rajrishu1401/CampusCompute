@@ -26,10 +26,12 @@ public class ContainerService {
     private final ContainerRepository containerRepository;
     private final DeviceService deviceService;
     private final UserService userService;
+    private final QuotaService quotaService;
+    private final SchedulerService schedulerService;
 
     /**
-     * Create a container request
-     * This creates a PENDING container that needs to be scheduled
+     * Create a container request with integrated quota checking and scheduling
+     * This creates a PENDING container, checks quota, schedules it, and assigns to device
      */
     public Container createContainerRequest(Long userId, String image, 
                                            Integer cpuCores, Long ramBytes, Long diskBytes,
@@ -39,23 +41,11 @@ public class ContainerService {
         User user = userService.getUserById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
         
-        // Check user quota
-        long runningContainers = containerRepository.countByUserIdAndStatus(
-            userId, Container.ContainerStatus.RUNNING
-        );
+        // STEP 1: Check user quota (using QuotaService)
+        log.info("Checking quota for user {}", userId);
+        quotaService.checkQuota(user, cpuCores, ramBytes);
         
-        if (runningContainers >= user.getMaxContainers()) {
-            throw new IllegalArgumentException(
-                "User has reached max container limit: " + user.getMaxContainers()
-            );
-        }
-        
-        // Check resource quota
-        if (!userService.hasQuotaAvailable(userId, cpuCores, ramBytes)) {
-            throw new IllegalArgumentException("Requested resources exceed user quota");
-        }
-        
-        // Create container entity
+        // STEP 2: Create container entity (PENDING state)
         Container container = new Container();
         container.setContainerId(UUID.randomUUID().toString());
         container.setContainerName("container-" + userId + "-" + System.currentTimeMillis());
@@ -69,7 +59,34 @@ public class ContainerService {
             java.time.Duration.ofMillis(lifetimeMs)
         ));
         
-        return containerRepository.save(container);
+        container = containerRepository.save(container);
+        log.info("Created container {} in PENDING state", container.getId());
+        
+        // STEP 3: Schedule container to a device
+        try {
+            com.campuscompute.dto.ContainerRequest request = new com.campuscompute.dto.ContainerRequest();
+            request.setImage(image);
+            request.setCpuCores(cpuCores);
+            request.setRamBytes(ramBytes);
+            request.setDiskBytes(diskBytes);
+            request.setLifetimeMs(lifetimeMs);
+            
+            Device selectedDevice = schedulerService.selectBestDevice(request);
+            log.info("Scheduler selected device {} for container {}", selectedDevice.getId(), container.getId());
+            
+            // STEP 4: Assign container to device
+            container = assignContainerToDevice(container.getId(), selectedDevice.getId());
+            
+            // TODO: STEP 5: Send CREATE_CONTAINER message to agent via WebSocket
+            // This will be implemented when we integrate AgentWebSocketHandler
+            
+            return container;
+            
+        } catch (Exception e) {
+            log.error("Failed to schedule/assign container {}: {}", container.getId(), e.getMessage());
+            markContainerFailed(container.getId());
+            throw e;
+        }
     }
 
     /**
