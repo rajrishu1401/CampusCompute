@@ -13,6 +13,7 @@ from typing import Dict, Any, Optional
 from config import Config
 from docker_manager import DockerManager
 from system_monitor import SystemMonitor
+from websocket_client import BrokerWebSocketClient
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +29,8 @@ class CampusComputeAgent:
         self.docker_manager = DockerManager(config.docker_socket)
         self.system_monitor = SystemMonitor()
         
-        # Connection state
-        self.connected = False
-        self.websocket = None
+        # WebSocket client
+        self.ws_client = None
         
         # Containers managed by this agent
         self.containers: Dict[str, Dict[str, Any]] = {}
@@ -52,13 +52,105 @@ class CampusComputeAgent:
         logger.info(f"RAM: {metrics['memory']['total_bytes'] / (1024**3):.2f} GB")
         logger.info(f"Docker: {self.docker_manager.get_docker_version()}")
         
+        # Initialize WebSocket client
+        broker_url = self.config.get('broker.url', 'ws://localhost:8081/ws/agent')
+        device_id = self.config.get('device.id')
+        
+        if not device_id:
+            logger.error("Device ID not configured! Please set device.id in config.yaml")
+            return
+        
+        logger.info(f"Connecting to broker: {broker_url} (Device ID: {device_id})")
+        
+        self.ws_client = BrokerWebSocketClient(
+            broker_url=broker_url,
+            device_id=device_id,
+            message_handler=self._handle_broker_message
+        )
+        
         # Start background tasks
         self.heartbeat_task = asyncio.create_task(self._heartbeat_loop())
         self.metrics_task = asyncio.create_task(self._metrics_loop())
         self.container_check_task = asyncio.create_task(self._container_check_loop())
         
-        # TODO: Connect to broker via WebSocket
-        logger.info("Agent started (broker connection not implemented yet)")
+        # Connect to broker (this will run in background and auto-reconnect)
+        asyncio.create_task(self.ws_client.connect())
+        
+        logger.info("✅ Agent started successfully")
+    
+    async def _handle_broker_message(self, message_type: str, payload: Dict[str, Any], 
+                                     request_id: Optional[str]) -> Optional[Dict[str, Any]]:
+        """
+        Handle messages from broker
+        
+        Args:
+            message_type: Type of message
+            payload: Message payload
+            request_id: Request ID for tracking
+            
+        Returns:
+            Response dict with type, payload, and optional error
+        """
+        logger.info(f"Handling broker message: {message_type}")
+        
+        try:
+            if message_type == 'CREATE_CONTAINER':
+                result = await self.handle_create_container(payload)
+                
+                if result['success']:
+                    return {
+                        'type': 'CONTAINER_CREATED',
+                        'payload': {
+                            'container_id': result['container_id'],
+                            'status': 'running'
+                        }
+                    }
+                else:
+                    return {
+                        'type': 'CONTAINER_FAILED',
+                        'payload': {},
+                        'error': result.get('error', 'Unknown error')
+                    }
+            
+            elif message_type == 'STOP_CONTAINER':
+                result = await self.handle_stop_container(payload)
+                return {
+                    'type': 'CONTAINER_STOPPED',
+                    'payload': result
+                }
+            
+            elif message_type == 'DELETE_CONTAINER':
+                result = await self.handle_delete_container(payload)
+                return {
+                    'type': 'CONTAINER_DELETED',
+                    'payload': result
+                }
+            
+            elif message_type == 'PING':
+                return {
+                    'type': 'PONG',
+                    'payload': {'timestamp': datetime.utcnow().isoformat()}
+                }
+            
+            elif message_type == 'ACK':
+                logger.debug("Received ACK from broker")
+                return None
+            
+            else:
+                logger.warning(f"Unknown message type: {message_type}")
+                return {
+                    'type': 'ERROR',
+                    'payload': {},
+                    'error': f'Unknown message type: {message_type}'
+                }
+                
+        except Exception as e:
+            logger.error(f"Error handling message: {e}", exc_info=True)
+            return {
+                'type': 'ERROR',
+                'payload': {},
+                'error': str(e)
+            }
     
     async def stop(self):
         """Stop the agent"""
@@ -74,8 +166,8 @@ class CampusComputeAgent:
             self.container_check_task.cancel()
         
         # Close WebSocket
-        if self.websocket:
-            await self.websocket.close()
+        if self.ws_client:
+            await self.ws_client.disconnect()
         
         logger.info("Agent stopped")
     
@@ -118,41 +210,37 @@ class CampusComputeAgent:
     
     async def _send_heartbeat(self):
         """Send heartbeat message to broker"""
+        if not self.ws_client or not self.ws_client.is_connected():
+            logger.debug("Skipping heartbeat - not connected")
+            return
+        
         metrics = self.system_monitor.get_all_metrics()
         
-        message = {
-            'type': 'HEARTBEAT',
-            'device_id': self.config.device_id,
-            'timestamp': datetime.utcnow().isoformat(),
-            'data': {
-                'hostname': self.config.hostname,
-                'lab_name': self.config.lab_name,
-                'status': 'ONLINE',
-                'cpu': metrics['cpu'],
-                'memory': metrics['memory'],
-                'disk': metrics['disk'],
-                'docker_version': self.docker_manager.get_docker_version(),
-                'agent_version': '1.0.0',
-                'container_count': len(self.containers),
-            }
+        payload = {
+            'hostname': self.config.hostname,
+            'lab_name': self.config.lab_name,
+            'status': 'ONLINE',
+            'cpu_percent': metrics['cpu']['current_load_percent'],
+            'ram_used_bytes': metrics['memory']['used_bytes'],
+            'disk_used_bytes': metrics['disk']['used_bytes'],
+            'container_count': len(self.containers),
+            'docker_version': self.docker_manager.get_docker_version(),
+            'agent_version': '1.0.0',
         }
         
-        # TODO: Send via WebSocket
-        logger.debug(f"Heartbeat: CPU={metrics['cpu']['current_load_percent']:.1f}% "
+        await self.ws_client.send_message('HEARTBEAT', payload)
+        
+        logger.debug(f"Heartbeat sent: CPU={metrics['cpu']['current_load_percent']:.1f}% "
                     f"RAM={metrics['memory']['used_percent']:.1f}%")
     
     async def _send_metrics(self):
         """Send detailed metrics to broker"""
+        if not self.ws_client or not self.ws_client.is_connected():
+            return
+        
         metrics = self.system_monitor.get_all_metrics()
+        await self.ws_client.send_message('METRICS_UPDATE', metrics)
         
-        message = {
-            'type': 'METRICS',
-            'device_id': self.config.device_id,
-            'timestamp': datetime.utcnow().isoformat(),
-            'data': metrics,
-        }
-        
-        # TODO: Send via WebSocket
         logger.info("Metrics sent to broker")
     
     async def _check_containers(self):
@@ -174,32 +262,33 @@ class CampusComputeAgent:
     
     async def _send_container_status(self, container_id: str, status: str):
         """Send container status update to broker"""
-        message = {
-            'type': 'CONTAINER_STATUS',
-            'device_id': self.config.device_id,
-            'timestamp': datetime.utcnow().isoformat(),
-            'data': {
-                'container_id': container_id,
-                'status': status,
-            }
+        if not self.ws_client or not self.ws_client.is_connected():
+            return
+        
+        payload = {
+            'container_id': container_id,
+            'status': status,
         }
         
-        # TODO: Send via WebSocket
+        await self.ws_client.send_message('CONTAINER_STATUS', payload)
         logger.debug(f"Container status update: {container_id[:12]} = {status}")
     
     async def handle_create_container(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Handle CREATE_CONTAINER command from broker"""
         try:
-            container_name = data['container_name']
-            image = data['image']
-            cpu_cores = data['cpu_cores']
-            ram_bytes = data['ram_bytes']
-            disk_bytes = data['disk_bytes']
+            # Extract container spec from payload
+            container_name = data.get('containerName')
+            image = data.get('image')
+            cpu_cores = data.get('cpuCores')
+            ram_bytes = data.get('ramBytes')
+            disk_bytes = data.get('diskBytes')
             
-            logger.info(f"Creating container: {container_name}")
+            logger.info(f"Creating container: {container_name} (image: {image})")
+            logger.info(f"Resources: {cpu_cores} cores, {ram_bytes / (1024**3):.2f} GB RAM")
             
             # Check resource availability
             if not self.system_monitor.is_resource_available(cpu_cores, ram_bytes):
+                logger.warning("Insufficient resources available")
                 return {
                     'success': False,
                     'error': 'Insufficient resources available'
@@ -222,7 +311,7 @@ class CampusComputeAgent:
                 'created_at': datetime.utcnow().isoformat(),
             }
             
-            logger.info(f"Container created successfully: {result['container_id'][:12]}")
+            logger.info(f"✅ Container created successfully: {result['container_id'][:12]}")
             
             return {
                 'success': True,
@@ -230,7 +319,7 @@ class CampusComputeAgent:
             }
             
         except Exception as e:
-            logger.error(f"Failed to create container: {e}")
+            logger.error(f"❌ Failed to create container: {e}", exc_info=True)
             return {
                 'success': False,
                 'error': str(e)

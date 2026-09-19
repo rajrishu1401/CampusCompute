@@ -2,19 +2,20 @@
 
 # Broker connection
 broker:
-  url: "wss://localhost:8080/ws/agent"  # Change to production URL
+  url: "ws://localhost:8081/ws/agent"  # WebSocket URL (change ws to wss for production)
   reconnect_interval: 5  # seconds
   max_reconnect_attempts: -1  # -1 for infinite
   
 # Device information
 device:
+  id: 1  # Device ID from database (MUST be registered in backend first!)
   device_id: "LAB-PC-001"  # Unique identifier (change per machine)
   lab_name: "Computer Science Lab"  # Lab location
   hostname: ""  # Auto-detected if empty
   
-# mTLS Authentication
+# mTLS Authentication (optional - not implemented yet)
 mtls:
-  enabled: true
+  enabled: false  # Set to true in production
   cert_file: "certs/agent-cert.pem"
   key_file: "certs/agent-key.pem"
   ca_file: "certs/ca-cert.pem"

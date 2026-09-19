@@ -28,6 +28,8 @@ public class ContainerService {
     private final UserService userService;
     private final QuotaService quotaService;
     private final SchedulerService schedulerService;
+    private final com.campuscompute.websocket.WebSocketSessionManager webSocketSessionManager;
+    private final com.campuscompute.websocket.AgentWebSocketHandler agentWebSocketHandler;
 
     /**
      * Create a container request with integrated quota checking and scheduling
@@ -77,8 +79,13 @@ public class ContainerService {
             // STEP 4: Assign container to device
             container = assignContainerToDevice(container.getId(), selectedDevice.getId());
             
-            // TODO: STEP 5: Send CREATE_CONTAINER message to agent via WebSocket
-            // This will be implemented when we integrate AgentWebSocketHandler
+            // STEP 5: Send CREATE_CONTAINER message to agent via WebSocket
+            try {
+                sendCreateContainerToAgent(container, selectedDevice);
+            } catch (Exception e) {
+                log.error("Failed to send CREATE_CONTAINER to agent: {}", e.getMessage());
+                // Don't fail the request - agent might reconnect and pick up PENDING containers
+            }
             
             return container;
             
@@ -87,6 +94,44 @@ public class ContainerService {
             markContainerFailed(container.getId());
             throw e;
         }
+    }
+    
+    /**
+     * Send CREATE_CONTAINER message to agent via WebSocket
+     */
+    private void sendCreateContainerToAgent(Container container, Device device) {
+        log.info("Sending CREATE_CONTAINER message to device {} for container {}", 
+            device.getId(), container.getId());
+        
+        // Build container specification
+        java.util.Map<String, Object> containerSpec = new java.util.HashMap<>();
+        containerSpec.put("containerId", container.getId().toString());
+        containerSpec.put("containerName", container.getContainerName());
+        containerSpec.put("image", container.getImage());
+        containerSpec.put("cpuCores", container.getAllocatedCpuCores());
+        containerSpec.put("ramBytes", container.getAllocatedRamBytes());
+        containerSpec.put("diskBytes", container.getAllocatedDiskBytes());
+        
+        // Create message
+        com.campuscompute.dto.AgentMessage message = 
+            com.campuscompute.dto.AgentMessage.createContainer(
+                device.getId(),
+                container.getId().toString(),
+                containerSpec
+            );
+        
+        // Get agent session and send message
+        webSocketSessionManager.getSession(device.getId()).ifPresentOrElse(
+            session -> {
+                try {
+                    agentWebSocketHandler.sendMessage(session, message);
+                    log.info("CREATE_CONTAINER message sent successfully to device {}", device.getId());
+                } catch (Exception e) {
+                    log.error("Failed to send message to agent: {}", e.getMessage());
+                }
+            },
+            () -> log.error("No WebSocket session found for device {}", device.getId())
+        );
     }
 
     /**

@@ -6,6 +6,8 @@ import com.campuscompute.service.DeviceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -20,13 +22,25 @@ import java.util.Map;
  * Processes heartbeats, container lifecycle events, and metrics
  */
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class AgentWebSocketHandler extends TextWebSocketHandler {
     
     private final WebSocketSessionManager sessionManager;
     private final DeviceService deviceService;
     private final ObjectMapper objectMapper;
+    
+    // Lazy injection to avoid circular dependency
+    @Autowired
+    @Lazy
+    private com.campuscompute.service.ContainerService containerService;
+    
+    public AgentWebSocketHandler(WebSocketSessionManager sessionManager,
+                                 DeviceService deviceService,
+                                 ObjectMapper objectMapper) {
+        this.sessionManager = sessionManager;
+        this.deviceService = deviceService;
+        this.objectMapper = objectMapper;
+    }
     
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -152,8 +166,21 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
         
         log.info("Container created - requestId: {}, payload: {}", requestId, payload);
         
-        // TODO: Update container status in database
-        // This will be handled by ContainerService
+        try {
+            // Extract container info
+            Long containerId = Long.parseLong(requestId);
+            String dockerContainerId = (String) payload.get("container_id");
+            
+            // Update container status in database
+            if (containerService != null) {
+                containerService.markContainerRunning(containerId, dockerContainerId);
+                log.info("Container {} marked as RUNNING in database", containerId);
+            } else {
+                log.warn("ContainerService not available, cannot update container status");
+            }
+        } catch (Exception e) {
+            log.error("Error handling container created: {}", e.getMessage(), e);
+        }
     }
     
     /**
@@ -165,7 +192,19 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
         
         log.error("Container creation failed - requestId: {}, error: {}", requestId, error);
         
-        // TODO: Update container status to FAILED in database
+        try {
+            // Update container status to FAILED
+            Long containerId = Long.parseLong(requestId);
+            
+            if (containerService != null) {
+                containerService.markContainerFailed(containerId);
+                log.info("Container {} marked as FAILED in database", containerId);
+            } else {
+                log.warn("ContainerService not available, cannot update container status");
+            }
+        } catch (Exception e) {
+            log.error("Error handling container failed: {}", e.getMessage(), e);
+        }
     }
     
     /**
@@ -175,7 +214,16 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
         String requestId = message.getRequestId();
         log.info("Container stopped - requestId: {}", requestId);
         
-        // TODO: Update container status in database
+        try {
+            Long containerId = Long.parseLong(requestId);
+            
+            if (containerService != null) {
+                containerService.stopContainer(containerId);
+                log.info("Container {} marked as STOPPED in database", containerId);
+            }
+        } catch (Exception e) {
+            log.error("Error handling container stopped: {}", e.getMessage(), e);
+        }
     }
     
     /**
@@ -185,7 +233,16 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
         String requestId = message.getRequestId();
         log.info("Container deleted - requestId: {}", requestId);
         
-        // TODO: Update container status in database
+        try {
+            Long containerId = Long.parseLong(requestId);
+            
+            if (containerService != null) {
+                containerService.deleteContainer(containerId);
+                log.info("Container {} marked as DELETED in database", containerId);
+            }
+        } catch (Exception e) {
+            log.error("Error handling container deleted: {}", e.getMessage(), e);
+        }
     }
     
     /**
