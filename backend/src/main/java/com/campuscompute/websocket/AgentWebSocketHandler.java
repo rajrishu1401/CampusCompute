@@ -1,6 +1,7 @@
 package com.campuscompute.websocket;
 
 import com.campuscompute.dto.AgentMessage;
+import com.campuscompute.entity.Container;
 import com.campuscompute.entity.Device;
 import com.campuscompute.service.DeviceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,6 +34,13 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
     @Autowired
     @Lazy
     private com.campuscompute.service.ContainerService containerService;
+    
+    @Autowired
+    private com.campuscompute.repository.ContainerRepository containerRepository;
+    
+    @Autowired
+    @Lazy
+    private TerminalWebSocketHandler terminalWebSocketHandler;
     
     public AgentWebSocketHandler(WebSocketSessionManager sessionManager,
                                  DeviceService deviceService,
@@ -136,6 +144,7 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
             case CONTAINER_STOPPED -> handleContainerStopped(message);
             case CONTAINER_DELETED -> handleContainerDeleted(message);
             case METRICS_UPDATE -> handleMetricsUpdate(deviceId, message.getPayload());
+            case TERMINAL_OUTPUT -> handleTerminalOutput(message);
             case PONG -> log.debug("Received PONG from device {}", deviceId);
             case ERROR -> log.error("Agent error: {}", message.getError());
             default -> log.warn("Unknown message type: {}", message.getType());
@@ -217,9 +226,33 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
         try {
             Long containerId = Long.parseLong(requestId);
             
+            // Agent confirms container is stopped - just update database
+            // Don't call stopContainer() as it would send another WebSocket message
             if (containerService != null) {
-                containerService.stopContainer(containerId);
-                log.info("Container {} marked as STOPPED in database", containerId);
+                containerService.getContainerById(containerId).ifPresent(container -> {
+                    if (container.getStatus() != Container.ContainerStatus.STOPPED) {
+                        container.setStatus(Container.ContainerStatus.STOPPED);
+                        container.setStoppedAt(java.time.LocalDateTime.now());
+                        
+                        // Release resources
+                        if (container.getDevice() != null) {
+                            try {
+                                deviceService.releaseResources(
+                                    container.getDevice().getId(),
+                                    container.getAllocatedCpuCores(),
+                                    container.getAllocatedRamBytes(),
+                                    container.getAllocatedDiskBytes()
+                                );
+                            } catch (Exception e) {
+                                log.error("Error releasing resources: {}", e.getMessage());
+                            }
+                        }
+                        
+                        // Save directly to repository
+                        containerRepository.save(container);
+                        log.info("Container {} marked as STOPPED in database", containerId);
+                    }
+                });
             }
         } catch (Exception e) {
             log.error("Error handling container stopped: {}", e.getMessage(), e);
@@ -236,9 +269,32 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
         try {
             Long containerId = Long.parseLong(requestId);
             
+            // Agent confirms container is deleted - just update database
+            // Don't call deleteContainer() as it would send another WebSocket message
             if (containerService != null) {
-                containerService.deleteContainer(containerId);
-                log.info("Container {} marked as DELETED in database", containerId);
+                containerService.getContainerById(containerId).ifPresent(container -> {
+                    if (container.getStatus() != Container.ContainerStatus.DELETED) {
+                        // Release resources if not already released
+                        if (container.getStatus() == Container.ContainerStatus.RUNNING && container.getDevice() != null) {
+                            try {
+                                deviceService.releaseResources(
+                                    container.getDevice().getId(),
+                                    container.getAllocatedCpuCores(),
+                                    container.getAllocatedRamBytes(),
+                                    container.getAllocatedDiskBytes()
+                                );
+                            } catch (Exception e) {
+                                log.error("Error releasing resources: {}", e.getMessage());
+                            }
+                        }
+                        
+                        container.setStatus(Container.ContainerStatus.DELETED);
+                        
+                        // Save directly to repository
+                        containerRepository.save(container);
+                        log.info("Container {} marked as DELETED in database", containerId);
+                    }
+                });
             }
         } catch (Exception e) {
             log.error("Error handling container deleted: {}", e.getMessage(), e);
@@ -340,5 +396,17 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
             return ((Number) value).intValue();
         }
         return null;
+    }
+    
+    /**
+     * Handle terminal output from agent
+     */
+    private void handleTerminalOutput(AgentMessage message) {
+        String terminalSessionId = (String) message.getPayload().get("terminal_session_id");
+        String output = (String) message.getPayload().get("output");
+        
+        if (terminalSessionId != null && output != null && terminalWebSocketHandler != null) {
+            terminalWebSocketHandler.sendTerminalOutput(terminalSessionId, output);
+        }
     }
 }

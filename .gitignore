@@ -50,6 +50,7 @@ backend/.vscode/
 
 # Python
 agent/__pycache__/
+agent/src/__pycache__/
 agent/*.py[cod]
 agent/*$py.class
 agent/*.so

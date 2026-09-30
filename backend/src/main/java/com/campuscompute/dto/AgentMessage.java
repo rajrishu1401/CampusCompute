@@ -31,6 +31,7 @@ public class AgentMessage {
         CONTAINER_STOPPED,      // Container stopped
         CONTAINER_DELETED,      // Container deleted
         METRICS_UPDATE,         // Resource usage metrics
+        TERMINAL_OUTPUT,        // Terminal output from container
         
         // Broker → Agent
         CREATE_CONTAINER,       // Request to create container
@@ -39,6 +40,10 @@ public class AgentMessage {
         RESTART_CONTAINER,      // Request to restart container
         GET_CONTAINER_STATS,    // Request container statistics
         GET_CONTAINER_LOGS,     // Request container logs
+        TERMINAL_ATTACH,        // Attach to container terminal
+        TERMINAL_DETACH,        // Detach from container terminal
+        TERMINAL_INPUT,         // Input to container terminal
+        TERMINAL_RESIZE,        // Resize terminal dimensions
         
         // Bidirectional
         PING,                   // Keepalive ping
@@ -84,7 +89,7 @@ public class AgentMessage {
             requestId,
             deviceId,
             LocalDateTime.now(),
-            Map.of("containerId", containerId),
+            Map.of("container_id", containerId),  // Use snake_case for Python agent
             null
         );
     }
@@ -98,7 +103,7 @@ public class AgentMessage {
             requestId,
             deviceId,
             LocalDateTime.now(),
-            Map.of("containerId", containerId),
+            Map.of("container_id", containerId),  // Use snake_case for Python agent
             null
         );
     }

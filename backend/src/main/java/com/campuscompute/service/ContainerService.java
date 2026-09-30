@@ -133,6 +133,66 @@ public class ContainerService {
             () -> log.error("No WebSocket session found for device {}", device.getId())
         );
     }
+    
+    /**
+     * Send STOP_CONTAINER message to agent via WebSocket
+     */
+    private void sendStopContainerToAgent(Container container) {
+        Device device = container.getDevice();
+        log.info("Sending STOP_CONTAINER message to device {} for container {}", 
+            device.getId(), container.getId());
+        
+        // Create message using factory method
+        com.campuscompute.dto.AgentMessage message = 
+            com.campuscompute.dto.AgentMessage.stopContainer(
+                device.getId(),
+                container.getId().toString(),
+                container.getContainerId() // Docker container ID
+            );
+        
+        // Send message
+        webSocketSessionManager.getSession(device.getId()).ifPresentOrElse(
+            session -> {
+                try {
+                    agentWebSocketHandler.sendMessage(session, message);
+                    log.info("STOP_CONTAINER message sent successfully to device {}", device.getId());
+                } catch (Exception e) {
+                    log.error("Failed to send STOP_CONTAINER to agent: {}", e.getMessage());
+                }
+            },
+            () -> log.error("No WebSocket session found for device {}", device.getId())
+        );
+    }
+    
+    /**
+     * Send DELETE_CONTAINER message to agent via WebSocket
+     */
+    private void sendDeleteContainerToAgent(Container container) {
+        Device device = container.getDevice();
+        log.info("Sending DELETE_CONTAINER message to device {} for container {}", 
+            device.getId(), container.getId());
+        
+        // Create message using factory method
+        com.campuscompute.dto.AgentMessage message = 
+            com.campuscompute.dto.AgentMessage.deleteContainer(
+                device.getId(),
+                container.getId().toString(),
+                container.getContainerId() // Docker container ID
+            );
+        
+        // Send message
+        webSocketSessionManager.getSession(device.getId()).ifPresentOrElse(
+            session -> {
+                try {
+                    agentWebSocketHandler.sendMessage(session, message);
+                    log.info("DELETE_CONTAINER message sent successfully to device {}", device.getId());
+                } catch (Exception e) {
+                    log.error("Failed to send DELETE_CONTAINER to agent: {}", e.getMessage());
+                }
+            },
+            () -> log.error("No WebSocket session found for device {}", device.getId())
+        );
+    }
 
     /**
      * Assign container to a device (after scheduling)
@@ -213,6 +273,16 @@ public class ContainerService {
             throw new IllegalStateException("Container is not running: " + containerId);
         }
         
+        // Send STOP_CONTAINER message to agent
+        if (container.getDevice() != null && container.getContainerId() != null) {
+            try {
+                sendStopContainerToAgent(container);
+            } catch (Exception e) {
+                log.error("Failed to send STOP_CONTAINER to agent: {}", e.getMessage());
+                // Continue with database update even if WebSocket fails
+            }
+        }
+        
         container.setStatus(Container.ContainerStatus.STOPPED);
         container.setStoppedAt(LocalDateTime.now());
         
@@ -238,9 +308,27 @@ public class ContainerService {
         Container container = containerRepository.findById(containerId)
             .orElseThrow(() -> new IllegalArgumentException("Container not found: " + containerId));
         
+        // Send DELETE_CONTAINER message to agent if container is running or stopped
+        if (container.getDevice() != null && container.getContainerId() != null) {
+            try {
+                sendDeleteContainerToAgent(container);
+            } catch (Exception e) {
+                log.error("Failed to send DELETE_CONTAINER to agent: {}", e.getMessage());
+                // Continue with database update even if WebSocket fails
+            }
+        }
+        
         // Stop if running
         if (container.getStatus() == Container.ContainerStatus.RUNNING) {
-            stopContainer(containerId);
+            // Release resources without sending stop message (already sent delete)
+            if (container.getDevice() != null) {
+                deviceService.releaseResources(
+                    container.getDevice().getId(),
+                    container.getAllocatedCpuCores(),
+                    container.getAllocatedRamBytes(),
+                    container.getAllocatedDiskBytes()
+                );
+            }
         }
         
         container.setStatus(Container.ContainerStatus.DELETED);

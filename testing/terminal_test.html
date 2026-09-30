@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Container Terminal Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #4fc3f7;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #2d2d2d;
+            border-radius: 4px;
+        }
+        
+        label {
+            display: inline-block;
+            margin-right: 10px;
+            color: #cccccc;
+        }
+        
+        input {
+            padding: 8px;
+            margin-right: 10px;
+            background: #3c3c3c;
+            border: 1px solid #555;
+            color: #d4d4d4;
+            border-radius: 3px;
+        }
+        
+        button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            background: #0e639c;
+            border: none;
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #1177bb;
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        
+        .terminal-container {
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            min-height: 400px;
+            max-height: 600px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .terminal-output {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #0f0;
+        }
+        
+        .terminal-input-container {
+            margin-top: 10px;
+            display: flex;
+        }
+        
+        .terminal-input {
+            flex: 1;
+            padding: 10px;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            border-radius: 3px;
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            background: #2d2d2d;
+            border-radius: 3px;
+        }
+        
+        .status.connected {
+            border-left: 4px solid #4caf50;
+        }
+        
+        .status.disconnected {
+            border-left: 4px solid #f44336;
+        }
+        
+        .status.connecting {
+            border-left: 4px solid #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖥️ Container Terminal Test</h1>
+        
+        <div class="controls">
+            <label>Container ID:</label>
+            <input type="number" id="containerId" placeholder="e.g., 6" value="6">
+            
+            <label>Backend URL:</label>
+            <input type="text" id="backendUrl" placeholder="ws://localhost:8081" value="ws://localhost:8081" style="width: 200px;">
+            
+            <button id="connectBtn" onclick="connectTerminal()">Connect</button>
+            <button id="disconnectBtn" onclick="disconnectTerminal()" disabled>Disconnect</button>
+            <button onclick="clearTerminal()">Clear</button>
+        </div>
+        
+        <div class="terminal-container" id="terminal">
+            <div class="terminal-output" id="output">Waiting for connection...</div>
+        </div>
+        
+        <div class="terminal-input-container">
+            <input type="text" id="commandInput" class="terminal-input" 
+                   placeholder="Type command and press Enter..." 
+                   onkeypress="handleKeyPress(event)" disabled>
+        </div>
+        
+        <div id="status" class="status disconnected">
+            Status: <span id="statusText">Disconnected</span>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        let containerId = null;
+        
+        function updateStatus(status, text) {
+            const statusDiv = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            
+            statusDiv.className = 'status ' + status;
+            statusText.textContent = text;
+        }
+        
+        function appendOutput(text) {
+            const output = document.getElementById('output');
+            output.textContent += text;
+            
+            // Auto-scroll to bottom
+            const terminal = document.getElementById('terminal');
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+        
+        function clearOutput() {
+            document.getElementById('output').textContent = '';
+        }
+        
+        function connectTerminal() {
+            containerId = document.getElementById('containerId').value;
+            const backendUrl = document.getElementById('backendUrl').value;
+            
+            if (!containerId) {
+                alert('Please enter a container ID');
+                return;
+            }
+            
+            updateStatus('connecting', 'Connecting...');
+            clearOutput();
+            appendOutput(`Connecting to container ${containerId}...\n`);
+            
+            // Create WebSocket connection
+            const wsUrl = `${backendUrl}/ws/terminal/${containerId}`;
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = () => {
+                updateStatus('connected', 'Connected');
+                appendOutput('Connected! Terminal session started.\n\n');
+                
+                document.getElementById('connectBtn').disabled = true;
+                document.getElementById('disconnectBtn').disabled = false;
+                document.getElementById('commandInput').disabled = false;
+                document.getElementById('commandInput').focus();
+            };
+            
+            ws.onmessage = (event) => {
+                // Receive terminal output
+                appendOutput(event.data);
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                appendOutput('\n[ERROR] WebSocket connection error\n');
+                updateStatus('disconnected', 'Error');
+            };
+            
+            ws.onclose = (event) => {
+                updateStatus('disconnected', 'Disconnected');
+                appendOutput(`\n[Connection closed: ${event.code} - ${event.reason || 'Normal closure'}]\n`);
+                
+                document.getElementById('connectBtn').disabled = false;
+                document.getElementById('disconnectBtn').disabled = true;
+                document.getElementById('commandInput').disabled = true;
+                
+                ws = null;
+            };
+        }
+        
+        function disconnectTerminal() {
+            if (ws) {
+                ws.close();
+            }
+        }
+        
+        function clearTerminal() {
+            clearOutput();
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('commandInput');
+                const command = input.value;
+                
+                if (command && ws && ws.readyState === WebSocket.OPEN) {
+                    // Send command with newline
+                    ws.send(command + '\n');
+                    input.value = '';
+                }
+            }
+        }
+        
+        // Handle Ctrl+C, Ctrl+D, etc.
+        document.getElementById('commandInput').addEventListener('keydown', (event) => {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                // Ctrl+C (copy or interrupt)
+                if (event.ctrlKey && event.key === 'c' && document.getElementById('commandInput').value === '') {
+                    event.preventDefault();
+                    ws.send('\x03'); // Send Ctrl+C
+                    return;
+                }
+                
+                // Ctrl+D (EOF)
+                if (event.ctrlKey && event.key === 'd') {
+                    event.preventDefault();
+                    ws.send('\x04'); // Send Ctrl+D
+                    return;
+                }
+                
+                // Ctrl+Z
+                if (event.ctrlKey && event.key === 'z') {
+                    event.preventDefault();
+                    ws.send('\x1a'); // Send Ctrl+Z
+                    return;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

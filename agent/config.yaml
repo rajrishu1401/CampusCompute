@@ -22,8 +22,8 @@ mtls:
   
 # Docker configuration
 docker:
-  socket: "unix:///var/run/docker.sock"  # Linux/Mac
-  # socket: "npipe:////./pipe/docker_engine"  # Windows
+  socket: "npipe:////./pipe/docker_engine"  # Windows
+  # socket: "unix:///var/run/docker.sock"  # Linux/Mac
   default_network: "campuscompute"
   image_pull_timeout: 300  # seconds
   

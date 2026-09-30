@@ -72,6 +72,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/health", "/api/ping").permitAll()
                 
+                // WebSocket endpoints (for agent connections)
+                .requestMatchers("/ws/**").permitAll()
+                
                 // Admin-only endpoints
                 .requestMatchers("/api/devices/**").hasRole("ADMIN")
                 

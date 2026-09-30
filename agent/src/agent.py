@@ -14,6 +14,7 @@ from config import Config
 from docker_manager import DockerManager
 from system_monitor import SystemMonitor
 from websocket_client import BrokerWebSocketClient
+from terminal_manager import TerminalManager
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,7 @@ class CampusComputeAgent:
         # Initialize managers
         self.docker_manager = DockerManager(config.docker_socket)
         self.system_monitor = SystemMonitor()
+        self.terminal_manager = TerminalManager(self.docker_manager.client)
         
         # WebSocket client
         self.ws_client = None
@@ -125,6 +127,22 @@ class CampusComputeAgent:
                     'type': 'CONTAINER_DELETED',
                     'payload': result
                 }
+            
+            elif message_type == 'TERMINAL_ATTACH':
+                result = await self.handle_terminal_attach(payload)
+                return None  # Terminal outputs sent separately
+            
+            elif message_type == 'TERMINAL_DETACH':
+                result = await self.handle_terminal_detach(payload)
+                return None
+            
+            elif message_type == 'TERMINAL_INPUT':
+                result = await self.handle_terminal_input(payload)
+                return None
+            
+            elif message_type == 'TERMINAL_RESIZE':
+                result = await self.handle_terminal_resize(payload)
+                return None
             
             elif message_type == 'PING':
                 return {
@@ -366,3 +384,108 @@ class CampusComputeAgent:
                 'success': False,
                 'error': str(e)
             }
+
+    async def handle_terminal_attach(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle TERMINAL_ATTACH command from broker"""
+        try:
+            container_id = data['container_id']
+            terminal_session_id = data['terminal_session_id']
+            cols = data.get('cols', 80)
+            rows = data.get('rows', 24)
+            
+            logger.info(f"Attaching terminal session {terminal_session_id} to container {container_id[:12]}")
+            
+            # Create callback for terminal output
+            async def on_terminal_output(session_id: str, output: str):
+                """Send terminal output to broker"""
+                await self._send_terminal_output(session_id, output)
+            
+            success = await self.terminal_manager.attach_terminal(
+                container_id,
+                terminal_session_id,
+                cols,
+                rows,
+                on_terminal_output
+            )
+            
+            return {'success': success}
+            
+        except Exception as e:
+            logger.error(f"Failed to attach terminal: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    async def handle_terminal_detach(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle TERMINAL_DETACH command from broker"""
+        try:
+            terminal_session_id = data['terminal_session_id']
+            
+            logger.info(f"Detaching terminal session {terminal_session_id}")
+            
+            success = await self.terminal_manager.detach_terminal(terminal_session_id)
+            
+            return {'success': success}
+            
+        except Exception as e:
+            logger.error(f"Failed to detach terminal: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    async def handle_terminal_input(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle TERMINAL_INPUT command from broker"""
+        try:
+            terminal_session_id = data['terminal_session_id']
+            input_data = data['input']
+            
+            success = await self.terminal_manager.send_input(terminal_session_id, input_data)
+            
+            return {'success': success}
+            
+        except Exception as e:
+            logger.error(f"Failed to send terminal input: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    async def handle_terminal_resize(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle TERMINAL_RESIZE command from broker"""
+        try:
+            terminal_session_id = data['terminal_session_id']
+            cols = data.get('cols', 80)
+            rows = data.get('rows', 24)
+            
+            logger.info(f"Resizing terminal {terminal_session_id} to {cols}x{rows}")
+            
+            success = await self.terminal_manager.resize_terminal(terminal_session_id, cols, rows)
+            
+            return {'success': success}
+            
+        except Exception as e:
+            logger.error(f"Failed to resize terminal: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    async def _send_terminal_output(self, terminal_session_id: str, output: str):
+        """Send terminal output to broker"""
+        try:
+            if self.ws_client and self.ws_client.connected:
+                message = {
+                    'type': 'TERMINAL_OUTPUT',
+                    'deviceId': self.config.device_id,
+                    'timestamp': datetime.utcnow().isoformat(),
+                    'payload': {
+                        'terminal_session_id': terminal_session_id,
+                        'output': output
+                    }
+                }
+                
+                await self.ws_client.send_message(message)
+        except Exception as e:
+            logger.error(f"Failed to send terminal output: {e}")
