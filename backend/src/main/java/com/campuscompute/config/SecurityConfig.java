@@ -70,6 +70,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/organizations/register").permitAll()
                 .requestMatchers("/api/health", "/api/ping").permitAll()
                 
                 // WebSocket endpoints (for agent connections)
