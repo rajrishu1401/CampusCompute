@@ -45,6 +45,11 @@ public interface ContainerRepository extends JpaRepository<Container, Long> {
     List<Container> findByUserId(Long userId);
 
     /**
+     * Count all containers by user ID
+     */
+    Long countByUserId(Long userId);
+
+    /**
      * Find running containers for a user
      */
     List<Container> findByUserAndStatus(User user, Container.ContainerStatus status);

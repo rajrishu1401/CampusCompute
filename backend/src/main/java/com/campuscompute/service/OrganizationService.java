@@ -8,6 +8,8 @@ import com.campuscompute.entity.User;
 import com.campuscompute.exception.ResourceNotFoundException;
 import com.campuscompute.repository.OrganizationRepository;
 import com.campuscompute.repository.UserRepository;
+import com.campuscompute.repository.DeviceRepository;
+import com.campuscompute.repository.ContainerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +33,8 @@ public class OrganizationService {
 
     private final OrganizationRepository organizationRepository;
     private final UserRepository userRepository;
+    private final DeviceRepository deviceRepository;
+    private final ContainerRepository containerRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${app.backend-url:http://localhost:8081}")
@@ -324,5 +328,171 @@ public class OrganizationService {
      */
     public List<Organization> getAllOrganizations() {
         return organizationRepository.findAll();
+    }
+
+    /**
+     * Get organization statistics for dashboard
+     */
+    public com.campuscompute.dto.OrganizationStatsResponse getOrganizationStats(Long organizationId) {
+        log.info("Getting statistics for organization {}", organizationId);
+
+        Organization org = getOrganizationById(organizationId);
+
+        // Get device statistics
+        Long totalDevices = deviceRepository.countByOrganizationId(organizationId);
+        Long onlineDevices = deviceRepository.countByOrganizationIdAndStatus(
+            organizationId, com.campuscompute.entity.Device.DeviceStatus.ONLINE
+        );
+        Long offlineDevices = deviceRepository.countByOrganizationIdAndStatus(
+            organizationId, com.campuscompute.entity.Device.DeviceStatus.OFFLINE
+        );
+        Long busyDevices = deviceRepository.countByOrganizationIdAndStatus(
+            organizationId, com.campuscompute.entity.Device.DeviceStatus.BUSY
+        );
+        Long maintenanceDevices = deviceRepository.countByOrganizationIdAndStatus(
+            organizationId, com.campuscompute.entity.Device.DeviceStatus.MAINTENANCE
+        );
+
+        // Get student statistics
+        Long totalStudents = userRepository.countByOrganizationIdAndUserType(
+            organizationId, com.campuscompute.entity.User.UserType.STUDENT
+        );
+        Long approvedStudents = userRepository.countByOrganizationIdAndUserTypeAndApprovedTrue(
+            organizationId, com.campuscompute.entity.User.UserType.STUDENT
+        );
+        Long pendingStudents = totalStudents - approvedStudents;
+
+        // Get container statistics
+        Long totalContainers = containerRepository.countByOrganizationIdAndStatus(
+            organizationId, com.campuscompute.entity.Container.ContainerStatus.RUNNING
+        ) + containerRepository.countByOrganizationIdAndStatus(
+            organizationId, com.campuscompute.entity.Container.ContainerStatus.STOPPED
+        ) + containerRepository.countByOrganizationIdAndStatus(
+            organizationId, com.campuscompute.entity.Container.ContainerStatus.PENDING
+        );
+
+        Long runningContainers = containerRepository.countByOrganizationIdAndStatus(
+            organizationId, com.campuscompute.entity.Container.ContainerStatus.RUNNING
+        );
+        Long stoppedContainers = containerRepository.countByOrganizationIdAndStatus(
+            organizationId, com.campuscompute.entity.Container.ContainerStatus.STOPPED
+        );
+        Long pendingContainers = containerRepository.countByOrganizationIdAndStatus(
+            organizationId, com.campuscompute.entity.Container.ContainerStatus.PENDING
+        );
+        Long failedContainers = containerRepository.countByOrganizationIdAndStatus(
+            organizationId, com.campuscompute.entity.Container.ContainerStatus.FAILED
+        );
+
+        // Get resource statistics
+        List<com.campuscompute.entity.Device> devices = deviceRepository.findByOrganizationId(organizationId);
+        
+        Long totalCpu = devices.stream()
+            .mapToLong(d -> d.getTotalCpuCores() != null ? d.getTotalCpuCores() : 0)
+            .sum();
+        Long usedCpu = devices.stream()
+            .mapToLong(d -> d.getUsedCpuCores() != null ? d.getUsedCpuCores() : 0)
+            .sum();
+        Long totalRam = devices.stream()
+            .mapToLong(d -> d.getTotalRamBytes() != null ? d.getTotalRamBytes() : 0)
+            .sum();
+        Long usedRam = devices.stream()
+            .mapToLong(d -> d.getUsedRamBytes() != null ? d.getUsedRamBytes() : 0)
+            .sum();
+
+        Double cpuUtil = totalCpu > 0 ? (usedCpu * 100.0 / totalCpu) : 0.0;
+        Double ramUtil = totalRam > 0 ? (usedRam * 100.0 / totalRam) : 0.0;
+
+        // Build response
+        com.campuscompute.dto.OrganizationStatsResponse response = new com.campuscompute.dto.OrganizationStatsResponse();
+        response.setOrganizationId(org.getId());
+        response.setOrganizationName(org.getName());
+        response.setOrganizationCode(org.getCode());
+
+        response.setDevices(new com.campuscompute.dto.OrganizationStatsResponse.DeviceStats(
+            totalDevices, onlineDevices, offlineDevices, busyDevices, maintenanceDevices
+        ));
+
+        response.setStudents(new com.campuscompute.dto.OrganizationStatsResponse.StudentStats(
+            totalStudents, approvedStudents, approvedStudents, pendingStudents
+        ));
+
+        response.setContainers(new com.campuscompute.dto.OrganizationStatsResponse.ContainerStats(
+            totalContainers, runningContainers, stoppedContainers, pendingContainers, failedContainers
+        ));
+
+        response.setResources(new com.campuscompute.dto.OrganizationStatsResponse.ResourceStats(
+            totalCpu, usedCpu, totalCpu - usedCpu,
+            totalRam, usedRam, totalRam - usedRam,
+            cpuUtil, ramUtil
+        ));
+
+        return response;
+    }
+
+    /**
+     * Get organization devices with statistics
+     */
+    public java.util.List<com.campuscompute.dto.DeviceDetailsResponse> getOrganizationDevicesWithStats(Long organizationId) {
+        log.info("Getting devices with stats for organization {}", organizationId);
+
+        java.util.List<com.campuscompute.entity.Device> devices = deviceRepository.findByOrganizationId(organizationId);
+        java.util.List<com.campuscompute.dto.DeviceDetailsResponse> responses = new java.util.ArrayList<>();
+
+        for (com.campuscompute.entity.Device device : devices) {
+            // Get active container count
+            Long containerCount = containerRepository.countByDeviceIdAndStatus(
+                device.getId(), 
+                com.campuscompute.entity.Container.ContainerStatus.RUNNING
+            );
+
+            com.campuscompute.dto.DeviceDetailsResponse response = 
+                com.campuscompute.dto.DeviceDetailsResponse.fromDevice(device, containerCount.intValue());
+
+            responses.add(response);
+        }
+
+        return responses;
+    }
+
+    /**
+     * Get organization students with statistics
+     */
+    public java.util.List<com.campuscompute.dto.StudentDetailsResponse> getOrganizationStudentsWithStats(Long organizationId) {
+        log.info("Getting students with stats for organization {}", organizationId);
+
+        java.util.List<com.campuscompute.entity.User> students = 
+            userRepository.findByOrganizationIdAndUserType(
+                organizationId, 
+                com.campuscompute.entity.User.UserType.STUDENT
+            );
+
+        java.util.List<com.campuscompute.dto.StudentDetailsResponse> responses = new java.util.ArrayList<>();
+
+        for (com.campuscompute.entity.User student : students) {
+            // Get container statistics
+            Long totalContainers = containerRepository.countByUserId(student.getId());
+            Long runningContainers = containerRepository.countByUserIdAndStatus(
+                student.getId(),
+                com.campuscompute.entity.Container.ContainerStatus.RUNNING
+            );
+
+            // Get resource usage
+            Long cpuUsed = containerRepository.getTotalCpuCoresByUser(student.getId());
+            Long ramUsed = containerRepository.getTotalRamBytesByUser(student.getId());
+
+            com.campuscompute.dto.StudentDetailsResponse response = 
+                com.campuscompute.dto.StudentDetailsResponse.fromUser(
+                    student,
+                    totalContainers != null ? totalContainers.intValue() : 0,
+                    runningContainers != null ? runningContainers.intValue() : 0,
+                    cpuUsed,
+                    ramUsed
+                );
+
+            responses.add(response);
+        }
+
+        return responses;
     }
 }

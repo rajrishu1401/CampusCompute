@@ -213,4 +213,95 @@ public class OrganizationController {
                 .body(ApiResponse.error("Organization not found"));
         }
     }
+
+    /**
+     * GET /api/organizations/stats
+     * Get organization statistics (ORG_ADMIN only)
+     */
+    @GetMapping("/stats")
+    @PreAuthorize("hasRole('ORG_ADMIN')")
+    public ResponseEntity<ApiResponse<com.campuscompute.dto.OrganizationStatsResponse>> getOrganizationStats(
+        HttpServletRequest request
+    ) {
+        try {
+            Long orgId = (Long) request.getAttribute("organizationId");
+
+            if (orgId == null) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ApiResponse.error("No organization associated with user"));
+            }
+
+            com.campuscompute.dto.OrganizationStatsResponse stats = organizationService.getOrganizationStats(orgId);
+            return ResponseEntity.ok(
+                ApiResponse.success("Statistics retrieved successfully", stats)
+            );
+
+        } catch (Exception e) {
+            log.error("Error fetching statistics: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error("Failed to fetch statistics"));
+        }
+    }
+
+    /**
+     * GET /api/organizations/devices
+     * Get organization's devices with details (ORG_ADMIN only)
+     */
+    @GetMapping("/devices")
+    @PreAuthorize("hasRole('ORG_ADMIN')")
+    public ResponseEntity<ApiResponse<java.util.List<com.campuscompute.dto.DeviceDetailsResponse>>> getOrganizationDevices(
+        HttpServletRequest request
+    ) {
+        try {
+            Long orgId = (Long) request.getAttribute("organizationId");
+
+            if (orgId == null) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ApiResponse.error("No organization associated with user"));
+            }
+
+            java.util.List<com.campuscompute.dto.DeviceDetailsResponse> devices = 
+                organizationService.getOrganizationDevicesWithStats(orgId);
+
+            return ResponseEntity.ok(
+                ApiResponse.success("Devices retrieved successfully", devices)
+            );
+
+        } catch (Exception e) {
+            log.error("Error fetching devices: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error("Failed to fetch devices"));
+        }
+    }
+
+    /**
+     * GET /api/organizations/students
+     * Get organization's students with details (ORG_ADMIN only)
+     */
+    @GetMapping("/students")
+    @PreAuthorize("hasRole('ORG_ADMIN')")
+    public ResponseEntity<ApiResponse<java.util.List<com.campuscompute.dto.StudentDetailsResponse>>> getOrganizationStudents(
+        HttpServletRequest request
+    ) {
+        try {
+            Long orgId = (Long) request.getAttribute("organizationId");
+
+            if (orgId == null) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ApiResponse.error("No organization associated with user"));
+            }
+
+            java.util.List<com.campuscompute.dto.StudentDetailsResponse> students = 
+                organizationService.getOrganizationStudentsWithStats(orgId);
+
+            return ResponseEntity.ok(
+                ApiResponse.success("Students retrieved successfully", students)
+            );
+
+        } catch (Exception e) {
+            log.error("Error fetching students: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error("Failed to fetch students"));
+        }
+    }
 }

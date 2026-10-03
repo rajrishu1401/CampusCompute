@@ -81,6 +81,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Long countByOrganizationIdAndUserType(Long organizationId, User.UserType userType);
 
     /**
+     * Count approved students in organization
+     */
+    Long countByOrganizationIdAndUserTypeAndApprovedTrue(Long organizationId, User.UserType userType);
+
+    /**
      * Find unapproved students in organization
      */
     List<User> findByOrganizationIdAndApprovedFalse(Long organizationId);
