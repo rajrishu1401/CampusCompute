@@ -6,12 +6,17 @@ broker:
   reconnect_interval: 5  # seconds
   max_reconnect_attempts: -1  # -1 for infinite
   
+  # Enrollment token for first-time device registration
+  # Get this from organization admin dashboard
+  enrollment_token: ""  # Leave empty if device is already registered
+  
 # Device information
 device:
   id: 1  # Device ID from database (MUST be registered in backend first!)
   device_id: "LAB-PC-001"  # Unique identifier (change per machine)
   lab_name: "Computer Science Lab"  # Lab location
   hostname: ""  # Auto-detected if empty
+  organization_id: null  # Set during enrollment, or manually configure
   
 # mTLS Authentication (optional - not implemented yet)
 mtls:

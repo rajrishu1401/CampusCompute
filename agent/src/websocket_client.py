@@ -16,7 +16,8 @@ logger = logging.getLogger(__name__)
 class BrokerWebSocketClient:
     """WebSocket client for broker communication"""
     
-    def __init__(self, broker_url: str, device_id: int, message_handler: Callable):
+    def __init__(self, broker_url: str, device_id: int, message_handler: Callable, 
+                 enrollment_token: Optional[str] = None, organization_id: Optional[int] = None):
         """
         Initialize WebSocket client
         
@@ -24,12 +25,17 @@ class BrokerWebSocketClient:
             broker_url: WebSocket URL (e.g., ws://localhost:8081/ws/agent)
             device_id: Device ID for this agent
             message_handler: Async function to handle incoming messages
+            enrollment_token: Optional enrollment token for first-time registration
+            organization_id: Optional organization ID
         """
         self.broker_url = broker_url
         self.device_id = device_id
         self.message_handler = message_handler
+        self.enrollment_token = enrollment_token
+        self.organization_id = organization_id
         self.websocket: Optional[websockets.WebSocketClientProtocol] = None
         self.connected = False
+        self.enrolled = False  # Track if device is enrolled
         self.reconnect_interval = 5  # seconds
         self.running = False
     
@@ -42,7 +48,16 @@ class BrokerWebSocketClient:
                 # Build URL with deviceId query param
                 url = f"{self.broker_url}?deviceId={self.device_id}"
                 
-                logger.info(f"Connecting to broker: {url}")
+                # Add enrollment token if present
+                if self.enrollment_token and not self.enrolled:
+                    url += f"&enrollmentToken={self.enrollment_token}"
+                    logger.info(f"Connecting with enrollment token: {self.enrollment_token[:8]}...")
+                
+                # Add organization ID if present
+                if self.organization_id:
+                    url += f"&organizationId={self.organization_id}"
+                
+                logger.info(f"Connecting to broker: {self.broker_url}")
                 
                 async with websockets.connect(
                     url,
@@ -54,6 +69,11 @@ class BrokerWebSocketClient:
                     self.connected = True
                     
                     logger.info("✅ Connected to broker successfully")
+                    
+                    # If we had an enrollment token, mark as enrolled after successful connection
+                    if self.enrollment_token and not self.enrolled:
+                        self.enrolled = True
+                        logger.info("✅ Device enrolled successfully")
                     
                     # Start receiving messages
                     await self._receive_loop()
@@ -110,6 +130,10 @@ class BrokerWebSocketClient:
                 'timestamp': datetime.utcnow().isoformat(),
                 'payload': payload or {},
             }
+            
+            # Add organization ID if present
+            if self.organization_id:
+                message['organizationId'] = self.organization_id
             
             if request_id:
                 message['requestId'] = request_id

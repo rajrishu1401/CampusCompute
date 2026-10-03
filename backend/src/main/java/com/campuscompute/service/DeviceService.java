@@ -21,6 +21,8 @@ import java.util.Optional;
 public class DeviceService {
 
     private final DeviceRepository deviceRepository;
+    private final com.campuscompute.service.OrganizationService organizationService;
+    private final com.campuscompute.repository.OrganizationRepository organizationRepository;
 
     /**
      * Register a new device (agent enrollment)
@@ -53,6 +55,93 @@ public class DeviceService {
         device.setStatus(Device.DeviceStatus.ONLINE);
         device.setLastHeartbeat(LocalDateTime.now());
         return deviceRepository.save(device);
+    }
+
+    /**
+     * Register device with enrollment token (Phase 2: Multi-org support)
+     * 
+     * @param enrollmentToken The enrollment token from organization
+     * @param queryString WebSocket query string with device info
+     * @return Registered device
+     */
+    public Device registerDeviceWithToken(String enrollmentToken, String queryString) {
+        log.info("Registering device with enrollment token: {}...", enrollmentToken.substring(0, Math.min(8, enrollmentToken.length())));
+        
+        // TODO: Validate token with Redis or OrganizationService
+        // For now, we'll extract organization info from token
+        // In production, tokens should be stored in Redis with expiration
+        
+        // Parse query string for device info
+        String deviceId = extractParamFromQuery(queryString, "deviceId");
+        if (deviceId == null) {
+            throw new IllegalArgumentException("Device ID required for enrollment");
+        }
+        
+        // Check if device already exists
+        Optional<Device> existing = deviceRepository.findByDeviceId(deviceId);
+        if (existing.isPresent()) {
+            log.info("Device already registered: {}, updating status", deviceId);
+            Device device = existing.get();
+            device.setStatus(Device.DeviceStatus.ONLINE);
+            device.setLastHeartbeat(LocalDateTime.now());
+            return deviceRepository.save(device);
+        }
+        
+        // For Phase 2, we'll allow enrollment without full validation
+        // In Phase 3, add proper token validation
+        log.warn("⚠️  Enrollment token validation not fully implemented yet - device registered without org assignment");
+        log.warn("⚠️  To assign organization, update device manually in database");
+        
+        // Create new device
+        Device newDevice = new Device();
+        newDevice.setDeviceId(deviceId);
+        newDevice.setHostname(extractParamFromQuery(queryString, "hostname", deviceId));
+        newDevice.setLabName("Unassigned");
+        newDevice.setStatus(Device.DeviceStatus.ONLINE);
+        newDevice.setEnabled(true);
+        newDevice.setLastHeartbeat(LocalDateTime.now());
+        
+        // Default hardware specs (will be updated on first heartbeat)
+        newDevice.setTotalCpuCores(4);
+        newDevice.setTotalRamBytes(8L * 1024 * 1024 * 1024);  // 8GB
+        newDevice.setTotalDiskBytes(100L * 1024 * 1024 * 1024); // 100GB
+        newDevice.setUsedCpuCores(0);
+        newDevice.setUsedRamBytes(0L);
+        newDevice.setUsedDiskBytes(0L);
+        newDevice.setCpuLoadPercent(0.0);
+        newDevice.setRamLoadPercent(0.0);
+        newDevice.setReliabilityScore(1.0);
+        
+        Device saved = deviceRepository.save(newDevice);
+        log.info("✅ New device registered: {} (ID: {})", deviceId, saved.getId());
+        
+        return saved;
+    }
+    
+    /**
+     * Helper to extract parameter from query string
+     */
+    private String extractParamFromQuery(String query, String paramName) {
+        return extractParamFromQuery(query, paramName, null);
+    }
+    
+    /**
+     * Helper to extract parameter from query string with default value
+     */
+    private String extractParamFromQuery(String query, String paramName, String defaultValue) {
+        if (query == null || query.isEmpty()) {
+            return defaultValue;
+        }
+        
+        String[] params = query.split("&");
+        for (String param : params) {
+            String[] keyValue = param.split("=");
+            if (keyValue.length == 2 && paramName.equals(keyValue[0])) {
+                return keyValue[1];
+            }
+        }
+        
+        return defaultValue;
     }
 
     /**

@@ -6,7 +6,7 @@ import os
 import yaml
 import socket
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 
 class Config:
@@ -53,8 +53,16 @@ class Config:
         return self.get('broker.url')
     
     @property
+    def enrollment_token(self) -> Optional[str]:
+        return self.get('broker.enrollment_token')
+    
+    @property
     def device_id(self) -> str:
         return self.get('device.device_id')
+    
+    @property
+    def organization_id(self) -> Optional[int]:
+        return self.get('device.organization_id')
     
     @property
     def lab_name(self) -> str:

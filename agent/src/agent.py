@@ -57,6 +57,8 @@ class CampusComputeAgent:
         # Initialize WebSocket client
         broker_url = self.config.get('broker.url', 'ws://localhost:8081/ws/agent')
         device_id = self.config.get('device.id')
+        enrollment_token = self.config.enrollment_token
+        organization_id = self.config.organization_id
         
         if not device_id:
             logger.error("Device ID not configured! Please set device.id in config.yaml")
@@ -64,10 +66,18 @@ class CampusComputeAgent:
         
         logger.info(f"Connecting to broker: {broker_url} (Device ID: {device_id})")
         
+        if enrollment_token:
+            logger.info("🔑 Enrollment token found - Will register device on first connection")
+        
+        if organization_id:
+            logger.info(f"🏢 Organization ID: {organization_id}")
+        
         self.ws_client = BrokerWebSocketClient(
             broker_url=broker_url,
             device_id=device_id,
-            message_handler=self._handle_broker_message
+            message_handler=self._handle_broker_message,
+            enrollment_token=enrollment_token,
+            organization_id=organization_id
         )
         
         # Start background tasks
@@ -245,6 +255,10 @@ class CampusComputeAgent:
             'docker_version': self.docker_manager.get_docker_version(),
             'agent_version': '1.0.0',
         }
+        
+        # Add organization ID if present
+        if self.config.organization_id:
+            payload['organization_id'] = self.config.organization_id
         
         await self.ws_client.send_message('HEARTBEAT', payload)
         

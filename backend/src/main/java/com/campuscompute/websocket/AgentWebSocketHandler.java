@@ -54,14 +54,36 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.info("New WebSocket connection established: {}", session.getId());
         
-        // Extract device ID from query params or headers
-        // Format: ws://broker:8081/ws/agent?deviceId=123
+        // Extract device ID and enrollment token from query params
+        // Format: ws://broker:8081/ws/agent?deviceId=123&enrollmentToken=xxx&organizationId=1
         String query = session.getUri().getQuery();
         Long deviceId = extractDeviceId(query);
+        String enrollmentToken = extractEnrollmentToken(query);
+        Long organizationId = extractOrganizationId(query);
+        
+        // If enrollment token is provided, this is a new device registration
+        if (enrollmentToken != null && !enrollmentToken.isEmpty()) {
+            log.info("Enrollment token provided, attempting device registration");
+            
+            try {
+                // Register device with enrollment token
+                Device device = deviceService.registerDeviceWithToken(enrollmentToken, query);
+                deviceId = device.getId();
+                organizationId = device.getOrganization() != null ? device.getOrganization().getId() : null;
+                
+                log.info("✅ Device registered successfully: {} (ID: {}, Org: {})", 
+                    device.getHostname(), deviceId, organizationId);
+                
+            } catch (Exception e) {
+                log.error("Failed to register device with token: {}", e.getMessage());
+                session.close(CloseStatus.BAD_DATA.withReason("Invalid enrollment token: " + e.getMessage()));
+                return;
+            }
+        }
         
         if (deviceId == null) {
             log.error("No deviceId provided in connection, closing");
-            session.close(CloseStatus.BAD_DATA.withReason("Missing deviceId"));
+            session.close(CloseStatus.BAD_DATA.withReason("Missing deviceId or enrollmentToken"));
             return;
         }
         
@@ -73,6 +95,16 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
             return;
         }
         
+        // Verify organization context if provided
+        if (organizationId != null && device.getOrganization() != null) {
+            if (!organizationId.equals(device.getOrganization().getId())) {
+                log.error("Organization ID mismatch for device {}: expected {}, got {}", 
+                    deviceId, device.getOrganization().getId(), organizationId);
+                session.close(CloseStatus.BAD_DATA.withReason("Organization mismatch"));
+                return;
+            }
+        }
+        
         // Register session
         sessionManager.registerSession(deviceId, session);
         
@@ -80,9 +112,11 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
         deviceService.updateDeviceStatus(deviceId, Device.DeviceStatus.ONLINE);
         deviceService.updateLastHeartbeat(deviceId);
         
-        log.info("Agent connected for device {}: {}", deviceId, device.getHostname());
+        log.info("✅ Agent connected for device {}: {} (Org: {})", 
+            deviceId, device.getHostname(), 
+            device.getOrganization() != null ? device.getOrganization().getCode() : "NONE");
         
-        // Send ACK
+        // Send ACK with device info
         AgentMessage ack = AgentMessage.ack(null);
         sendMessage(session, ack);
     }
@@ -365,6 +399,50 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
                     return Long.parseLong(keyValue[1]);
                 } catch (NumberFormatException e) {
                     log.error("Invalid deviceId format: {}", keyValue[1]);
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Extract enrollment token from query string
+     */
+    private String extractEnrollmentToken(String query) {
+        if (query == null || query.isEmpty()) {
+            return null;
+        }
+        
+        // Parse enrollmentToken=xxx
+        String[] params = query.split("&");
+        for (String param : params) {
+            String[] keyValue = param.split("=");
+            if (keyValue.length == 2 && "enrollmentToken".equals(keyValue[0])) {
+                return keyValue[1];
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Extract organization ID from query string
+     */
+    private Long extractOrganizationId(String query) {
+        if (query == null || query.isEmpty()) {
+            return null;
+        }
+        
+        // Parse organizationId=1
+        String[] params = query.split("&");
+        for (String param : params) {
+            String[] keyValue = param.split("=");
+            if (keyValue.length == 2 && "organizationId".equals(keyValue[0])) {
+                try {
+                    return Long.parseLong(keyValue[1]);
+                } catch (NumberFormatException e) {
+                    log.error("Invalid organizationId format: {}", keyValue[1]);
                 }
             }
         }
