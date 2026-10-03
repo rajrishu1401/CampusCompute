@@ -28,14 +28,23 @@ public class JwtUtil {
     private Long expiration;
 
     /**
-     * Generate JWT token for user
+     * Generate JWT token for user (with organization context)
      */
-    public String generateToken(String username, Long userId, String role) {
+    public String generateToken(String username, Long userId, String role, Long organizationId, String userType) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         claims.put("role", role);
+        claims.put("organizationId", organizationId);
+        claims.put("userType", userType);
         
         return createToken(claims, username);
+    }
+
+    /**
+     * Generate JWT token for user (backward compatibility)
+     */
+    public String generateToken(String username, Long userId, String role) {
+        return generateToken(username, userId, role, null, "STUDENT");
     }
 
     /**
@@ -75,6 +84,20 @@ public class JwtUtil {
      */
     public String extractRole(String token) {
         return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
+    /**
+     * Extract organization ID from token
+     */
+    public Long extractOrganizationId(String token) {
+        return extractClaim(token, claims -> claims.get("organizationId", Long.class));
+    }
+
+    /**
+     * Extract user type from token
+     */
+    public String extractUserType(String token) {
+        return extractClaim(token, claims -> claims.get("userType", String.class));
     }
 
     /**

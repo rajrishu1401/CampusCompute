@@ -207,4 +207,94 @@ public class UserService {
         return cpuCores <= user.getMaxCpuCores() && 
                ramBytes <= (user.getMaxRamGb() * 1_000_000_000L);
     }
+
+    /**
+     * Get organization code by organization ID (helper method)
+     */
+    public String getOrganizationByCode(String code) {
+        // This is a placeholder - will be properly implemented with OrganizationRepository injection
+        return code;
+    }
+
+    /**
+     * Find student by student ID, email and organization code
+     */
+    public Optional<User> findByStudentIdEmailAndOrg(String studentId, String email, String orgCode) {
+        log.info("Finding student: {} in org: {}", studentId, orgCode);
+        
+        // Find all users by email
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        
+        if (userOpt.isEmpty()) {
+            return Optional.empty();
+        }
+        
+        User user = userOpt.get();
+        
+        // Verify student ID matches and organization code matches
+        if (user.getStudentId() != null && 
+            user.getStudentId().equals(studentId) &&
+            user.getOrganization() != null &&
+            user.getOrganization().getCode().equalsIgnoreCase(orgCode)) {
+            return Optional.of(user);
+        }
+        
+        return Optional.empty();
+    }
+
+    /**
+     * Update password and approve student account
+     */
+    public void updatePasswordAndApprove(Long userId, String newPassword) {
+        log.info("Updating password and approving user ID: {}", userId);
+        
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+        
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        user.setApproved(true);
+        
+        userRepository.save(user);
+    }
+
+    /**
+     * Get all students in an organization
+     */
+    public List<User> getStudentsByOrganization(Long organizationId) {
+        return userRepository.findByOrganizationIdAndUserType(organizationId, User.UserType.STUDENT);
+    }
+
+    /**
+     * Get all users in an organization
+     */
+    public List<User> getUsersByOrganization(Long organizationId) {
+        return userRepository.findByOrganizationId(organizationId);
+    }
+
+    /**
+     * Count students in organization
+     */
+    public Long countStudentsByOrganization(Long organizationId) {
+        return userRepository.countByOrganizationIdAndUserType(organizationId, User.UserType.STUDENT);
+    }
+
+    /**
+     * Get unapproved students in organization
+     */
+    public List<User> getUnapprovedStudents(Long organizationId) {
+        return userRepository.findByOrganizationIdAndApprovedFalse(organizationId);
+    }
+
+    /**
+     * Approve student account
+     */
+    public void approveStudent(Long studentId) {
+        log.info("Approving student ID: {}", studentId);
+        
+        User student = userRepository.findById(studentId)
+            .orElseThrow(() -> new IllegalArgumentException("Student not found: " + studentId));
+        
+        student.setApproved(true);
+        userRepository.save(student);
+    }
 }

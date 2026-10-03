@@ -77,3 +77,17 @@ logging:
     org.hibernate.SQL: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# Application Configuration
+app:
+  backend-url: ${BACKEND_URL:http://localhost:8081}
+  frontend-url: ${FRONTEND_URL:http://localhost:5173}
+  
+  # Organization settings
+  organization:
+    default-max-devices: 10
+    default-max-students: 100
+    default-student-containers: 3
+    default-student-cpu-cores: 4
+    default-student-ram-gb: 8
+

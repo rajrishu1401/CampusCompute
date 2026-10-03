@@ -51,4 +51,24 @@ public interface LabRepository extends JpaRepository<Lab, Long> {
            "AND (d.totalCpuCores - d.usedCpuCores) >= :cpuCores " +
            "AND (d.totalRamBytes - d.usedRamBytes) >= :ramBytes")
     List<Lab> findLabsWithAvailableResources(int cpuCores, long ramBytes);
+
+    /**
+     * Find all labs by organization
+     */
+    List<Lab> findByOrganizationId(Long organizationId);
+
+    /**
+     * Find active labs by organization
+     */
+    List<Lab> findByOrganizationIdAndIsActiveTrue(Long organizationId);
+
+    /**
+     * Find lab by name and organization
+     */
+    Optional<Lab> findByNameAndOrganizationId(String name, Long organizationId);
+
+    /**
+     * Count labs by organization
+     */
+    Long countByOrganizationId(Long organizationId);
 }

@@ -59,4 +59,29 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * Find active users by role
      */
     List<User> findByRoleAndActiveTrue(User.UserRole role);
+
+    /**
+     * Find all users by organization
+     */
+    List<User> findByOrganizationId(Long organizationId);
+
+    /**
+     * Find user by student ID and organization
+     */
+    Optional<User> findByStudentIdAndOrganizationId(String studentId, Long organizationId);
+
+    /**
+     * Find students by organization
+     */
+    List<User> findByOrganizationIdAndUserType(Long organizationId, User.UserType userType);
+
+    /**
+     * Count students in organization
+     */
+    Long countByOrganizationIdAndUserType(Long organizationId, User.UserType userType);
+
+    /**
+     * Find unapproved students in organization
+     */
+    List<User> findByOrganizationIdAndApprovedFalse(Long organizationId);
 }

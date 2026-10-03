@@ -162,4 +162,48 @@ public interface ContainerRepository extends JpaRepository<Container, Long> {
            "c.status IN ('STOPPED', 'DELETED', 'FAILED') AND " +
            "c.updatedAt < :threshold")
     void deleteOldStoppedContainers(@Param("threshold") LocalDateTime threshold);
+
+    /**
+     * Find containers by organization (through user)
+     */
+    @Query("SELECT c FROM Container c WHERE c.user.organization.id = :organizationId")
+    List<Container> findByOrganizationId(@Param("organizationId") Long organizationId);
+
+    /**
+     * Find containers by organization and status
+     */
+    @Query("SELECT c FROM Container c WHERE " +
+           "c.user.organization.id = :organizationId AND " +
+           "c.status = :status")
+    List<Container> findByOrganizationIdAndStatus(
+        @Param("organizationId") Long organizationId,
+        @Param("status") Container.ContainerStatus status
+    );
+
+    /**
+     * Count containers in organization by status
+     */
+    @Query("SELECT COUNT(c) FROM Container c WHERE " +
+           "c.user.organization.id = :organizationId AND " +
+           "c.status = :status")
+    Long countByOrganizationIdAndStatus(
+        @Param("organizationId") Long organizationId,
+        @Param("status") Container.ContainerStatus status
+    );
+
+    /**
+     * Get total CPU cores used in organization
+     */
+    @Query("SELECT SUM(c.allocatedCpuCores) FROM Container c WHERE " +
+           "c.user.organization.id = :organizationId AND " +
+           "c.status = 'RUNNING'")
+    Long getTotalCpuCoresByOrganization(@Param("organizationId") Long organizationId);
+
+    /**
+     * Get total RAM used in organization
+     */
+    @Query("SELECT SUM(c.allocatedRamBytes) FROM Container c WHERE " +
+           "c.user.organization.id = :organizationId AND " +
+           "c.status = 'RUNNING'")
+    Long getTotalRamBytesByOrganization(@Param("organizationId") Long organizationId);
 }

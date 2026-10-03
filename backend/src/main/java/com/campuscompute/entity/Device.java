@@ -30,6 +30,10 @@ public class Device {
     private String hostname;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_id")
+    private Organization organization;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lab_id")
     private Lab lab;
 

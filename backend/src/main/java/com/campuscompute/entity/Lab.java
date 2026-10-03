@@ -25,6 +25,10 @@ public class Lab {
     @Column(nullable = false)
     private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_id")
+    private Organization organization;
+
     @Column(length = 100)
     private String building;
 

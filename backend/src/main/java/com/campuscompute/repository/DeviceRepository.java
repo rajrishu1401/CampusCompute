@@ -110,4 +110,43 @@ public interface DeviceRepository extends JpaRepository<Device, Long> {
     @Query("SELECT SUM(d.totalRamBytes - d.usedRamBytes) FROM Device d WHERE " +
            "d.status = 'ONLINE' AND d.enabled = true")
     Long getTotalAvailableRamBytes();
+
+    /**
+     * Find all devices by organization
+     */
+    List<Device> findByOrganizationId(Long organizationId);
+
+    /**
+     * Find online devices by organization
+     */
+    List<Device> findByOrganizationIdAndStatus(Long organizationId, Device.DeviceStatus status);
+
+    /**
+     * Find available devices in organization with sufficient resources
+     */
+    @Query("SELECT d FROM Device d WHERE " +
+           "d.organization.id = :organizationId AND " +
+           "d.status = 'ONLINE' AND " +
+           "d.enabled = true AND " +
+           "(d.totalCpuCores - d.usedCpuCores) >= :cpuCores AND " +
+           "(d.totalRamBytes - d.usedRamBytes) >= :ramBytes AND " +
+           "d.cpuLoadPercent < :maxCpuLoad AND " +
+           "d.ramLoadPercent < :maxRamLoad")
+    List<Device> findAvailableDevicesByOrganization(
+        @Param("organizationId") Long organizationId,
+        @Param("cpuCores") Integer cpuCores,
+        @Param("ramBytes") Long ramBytes,
+        @Param("maxCpuLoad") Double maxCpuLoad,
+        @Param("maxRamLoad") Double maxRamLoad
+    );
+
+    /**
+     * Count devices by organization
+     */
+    Long countByOrganizationId(Long organizationId);
+
+    /**
+     * Count online devices by organization
+     */
+    Long countByOrganizationIdAndStatus(Long organizationId, Device.DeviceStatus status);
 }

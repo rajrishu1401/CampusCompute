@@ -36,6 +36,20 @@ public class User {
     @Column(nullable = false, length = 20)
     private UserRole role;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organization_id")
+    private Organization organization;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private UserType userType = UserType.STUDENT;
+
+    @Column(length = 50)
+    private String studentId; // Roll number for students
+
+    @Column(nullable = false)
+    private Boolean approved = false; // For first-time login
+
     @Column(length = 100)
     private String fullName;
 
@@ -72,6 +86,13 @@ public class User {
     public enum UserRole {
         STUDENT,
         FACULTY,
-        ADMIN
+        ADMIN,
+        ORG_ADMIN,
+        ROOT
+    }
+
+    public enum UserType {
+        STUDENT,
+        ORG_ADMIN
     }
 }

@@ -41,6 +41,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = jwtUtil.extractUsername(jwt);
                 Long userId = jwtUtil.extractUserId(jwt);
                 String role = jwtUtil.extractRole(jwt);
+                Long organizationId = jwtUtil.extractOrganizationId(jwt);
+                String userType = jwtUtil.extractUserType(jwt);
 
                 // Create authentication token
                 UsernamePasswordAuthenticationToken authentication =
@@ -52,14 +54,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // Set user ID in request attribute for easy access in controllers
+                // Set user context in request attributes for easy access in controllers
                 request.setAttribute("userId", userId);
                 request.setAttribute("role", role);
+                request.setAttribute("organizationId", organizationId);
+                request.setAttribute("userType", userType);
 
                 // Set authentication in security context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                log.debug("JWT authentication successful for user: {}", username);
+                log.debug("JWT authentication successful for user: {} (org: {})", username, organizationId);
             }
         } catch (Exception e) {
             log.error("Cannot set user authentication: {}", e.getMessage());
