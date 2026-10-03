@@ -1,245 +1,317 @@
 # CampusCompute - Campus-Aware Cloud Resource Pooling System
 
-**Institution**: UPES Dehradun  
-**Academic Year**: 2026-27  
-**Project Type**: B.Tech Major Project  
+[![React](https://img.shields.io/badge/React-18.3.1-blue.svg)](https://reactjs.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green.svg)](https://spring.io/projects/spring-boot)
+[![Python](https://img.shields.io/badge/Python-3.13-yellow.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
+
+**A novel multi-tenant cloud platform for educational institutions to pool idle lab computing resources and provide on-demand container access to students.**
 
 ---
 
-## 🎯 Project Overview
+## 📖 Table of Contents
 
-CampusCompute transforms underutilized college lab computers into a shared cloud platform, enabling students to access containerized environments on-demand. The system features an **adaptive scheduler with reservation-aware scoring** to avoid scheduling conflicts with lab classes.
-
-### Novel Research Contribution
-**Adaptive Scheduling Algorithm** with multi-factor scoring that considers:
-- CPU & RAM availability (60%)
-- System load (20%)
-- **Reservation proximity** (15%) - Avoids PCs with upcoming classes
-- Reliability score (5%)
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Novel Contributions](#novel-contributions)
+- [Architecture](#architecture)
+- [Technology Stack](#technology-stack)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [API Documentation](#api-documentation)
+- [Screenshots](#screenshots)
+- [Academic Context](#academic-context)
+- [License](#license)
 
 ---
 
-## 🚀 Current Status
+## 🎯 Overview
 
-### ✅ Completed Features (MVP)
+CampusCompute transforms idle lab computers into a powerful cloud computing platform. Instead of letting campus resources sit unused outside lab hours, CampusCompute pools them together to provide students with on-demand Docker containers for coursework, projects, and experimentation.
 
-1. **Authentication & Authorization**
-   - JWT-based authentication
-   - User registration and login
-   - Secure password hashing (BCrypt)
+### The Problem
 
-2. **Container Lifecycle Management**
-   - Create containers with resource limits
-   - Stop/Start containers
-   - Delete containers with cleanup
-   - Real-time status tracking
+- **Underutilized Resources**: Campus lab computers remain idle 60-80% of the time
+- **Limited Student Access**: Students can't access computing resources remotely
+- **Scalability Issues**: Existing solutions don't scale across multiple organizations
+- **Manual Management**: No intelligent resource allocation
 
-3. **Quota Management**
-   - Per-user resource quotas
-   - CPU, RAM, container count limits
-   - Quota validation before allocation
+### The Solution
 
-4. **Intelligent Scheduling**
-   - Adaptive scheduler with reservation awareness
-   - Multi-factor device selection
-   - Resource availability checking
-   - First-fit fallback strategy
+CampusCompute provides:
+- **Resource Pooling**: Aggregate idle lab computers into a compute pool
+- **Multi-Tenancy**: Support multiple colleges/universities on one platform
+- **Smart Scheduling**: Adaptive algorithm for container placement
+- **Student Self-Service**: On-demand container creation with web terminal
+- **Admin Dashboard**: Real-time monitoring and management
 
-5. **Lab & Reservation Management**
-   - Lab creation and device assignment
-   - Class schedule reservations
-   - Conflict detection
-   - Reservation proximity scoring
+---
 
-6. **WebSocket Communication**
-   - Real-time agent-broker communication
-   - Container lifecycle events
-   - System metrics streaming
-   - **Interactive terminal access** (NEW)
+## ✨ Key Features
 
-7. **Docker Integration**
-   - Automatic container creation
-   - Resource limit enforcement
-   - Image management
-   - Container monitoring
+### For Organizations (Colleges/Universities)
 
-8. **Terminal Access** (NEW)
-   - WebSocket-based interactive shell
-   - Real-time bidirectional I/O
-   - PTY session management
-   - Multi-session support
+- **Organization Registration**: Self-service registration with admin account
+- **Device Management**: Add lab machines via enrollment tokens
+- **Student Management**: Bulk upload students via CSV
+- **Real-time Monitoring**: Dashboard with resource utilization stats
+- **Multi-tier Support**: FREE, BASIC, PREMIUM subscription tiers
+
+### For Students
+
+- **Container Management**: Create, start, stop, delete Docker containers
+- **Image Flexibility**: Support for any Docker image (Ubuntu, Python, Node, etc.)
+- **Resource Quotas**: CPU and RAM allocation per student
+- **Web Terminal**: xterm.js-based browser terminal with real-time access
+- **Usage Tracking**: Monitor personal resource consumption
+
+### For System
+
+- **Adaptive Scheduling**: Novel reservation-aware container placement algorithm
+- **Load Balancing**: Distribute containers across available devices
+- **Health Monitoring**: Automatic device health checks via heartbeat
+- **Fault Tolerance**: Handle device failures gracefully
+- **Security**: JWT authentication, role-based access control, Docker isolation
+
+---
+
+## 🚀 Novel Contributions
+
+### 1. Adaptive Scheduling Algorithm
+
+**Reservation-Aware Scoring System**:
+```
+Device Score = Base Score + Reservation Penalty
+- Considers upcoming lab reservations
+- Penalizes devices with near-term reservations
+- Balances load and availability
+```
+
+**Dynamic Resource Allocation**:
+- Real-time resource availability tracking
+- Intelligent device selection based on current load
+- Predictive scheduling for long-running containers
+
+### 2. Multi-Organization Architecture
+
+**True Multi-Tenancy**:
+- Organization-level isolation
+- Per-organization quotas and policies
+- Shared infrastructure, isolated data
+- Role-based access control (ROOT, ORG_ADMIN, STUDENT)
+
+**Scalable Design**:
+- Support for unlimited organizations
+- Per-organization device pools
+- Independent admin dashboards
+- Cross-organization security guarantees
+
+### 3. Agent-Based Device Management
+
+**Lightweight Python Agent**:
+- Automatic device enrollment via tokens
+- Real-time heartbeat and metrics
+- Docker container lifecycle management
+- WebSocket-based bidirectional communication
+
+**Zero-Config Deployment**:
+- Single enrollment token
+- Auto-registration on first connection
+- Dynamic configuration updates
+- Self-healing reconnection logic
 
 ---
 
 ## 🏗️ Architecture
 
+### System Components
+
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Frontend (Planned)                    │
-│              React Dashboard + Terminal UI               │
-└────────────────────┬────────────────────────────────────┘
-                     │ HTTPS + WebSocket
-┌────────────────────┴────────────────────────────────────┐
-│                  Backend (Spring Boot)                   │
-│  ┌──────────────┬──────────────┬─────────────────────┐  │
-│  │  Auth/JWT    │   Scheduler  │  Container Service  │  │
-│  │  Quota Mgmt  │   Websocket  │  Terminal Handler   │  │
-│  └──────────────┴──────────────┴─────────────────────┘  │
-└────────────────────┬──────────┬─────────────────────────┘
-                     │          │
-         ┌───────────┴─┐    ┌───┴──────────┐
-         │ PostgreSQL  │    │    Redis     │
-         │  (Database) │    │   (Cache)    │
-         └─────────────┘    └──────────────┘
-                     │
-              WebSocket (Agent)
-                     │
-    ┌────────────────┴────────────────────────┐
-    │         Python Agent (Lab PCs)          │
-    │  ┌──────────┬──────────┬─────────────┐  │
-    │  │  Docker  │  System  │  Terminal   │  │
-    │  │ Manager  │ Monitor  │  Manager    │  │
-    │  └──────────┴──────────┴─────────────┘  │
-    └────────────────┬────────────────────────┘
-                     │
-              ┌──────┴──────┐
-              │   Docker    │
-              │  Containers │
-              └─────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                         Frontend (React)                     │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │ Public Pages │  │ Admin Panel  │  │Student Panel │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            │ HTTP/WebSocket
+                            │
+┌─────────────────────────────────────────────────────────────┐
+│                   Backend (Spring Boot)                      │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │ REST API     │  │ WebSocket    │  │ Scheduler    │      │
+│  │ Controllers  │  │ Handlers     │  │ Service      │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+│                                                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │ Auth Service │  │ Container    │  │Organization  │      │
+│  │ (JWT)        │  │ Service      │  │ Service      │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+└─────────────────────────────────────────────────────────────┘
+           │                    │                    │
+           │                    │                    │
+    ┌──────▼──────┐      ┌─────▼─────┐      ┌──────▼──────┐
+    │ PostgreSQL  │      │   Redis   │      │  WebSocket  │
+    │  Database   │      │   Cache   │      │   Broker    │
+    └─────────────┘      └───────────┘      └──────┬──────┘
+                                                    │
+                                                    │
+                    ┌───────────────────────────────┴────────┐
+                    │                                        │
+            ┌───────▼──────┐                        ┌───────▼──────┐
+            │ Agent (LAB-1)│                        │ Agent (LAB-2)│
+            │  - Heartbeat │                        │  - Heartbeat │
+            │  - Metrics   │                        │  - Metrics   │
+            │  - Docker    │                        │  - Docker    │
+            └──────────────┘                        └──────────────┘
 ```
+
+### Data Flow
+
+**Container Creation**:
+1. Student submits container request via frontend
+2. Backend validates quotas and permissions
+3. Scheduler selects optimal device
+4. Backend sends creation command via WebSocket
+5. Agent pulls image and starts container
+6. Agent reports status back to backend
+7. Frontend displays running container
+
+**Terminal Access**:
+1. Student clicks terminal icon
+2. Frontend opens WebSocket to backend
+3. Backend proxies to agent WebSocket
+4. Agent attaches to container TTY
+5. Bidirectional data streaming
+6. Real-time terminal interaction
 
 ---
 
-## 📦 Tech Stack
+## 🛠️ Technology Stack
+
+### Frontend
+- **React 18.3** - UI library
+- **Redux Toolkit** - State management
+- **Material-UI 6** - Component library
+- **React Router 6** - Routing
+- **Axios** - HTTP client
+- **xterm.js** - Terminal emulator
+- **Vite** - Build tool
 
 ### Backend
-- **Framework**: Spring Boot 3.2.0
-- **Language**: Java 17
-- **Database**: PostgreSQL 15
-- **Cache**: Redis 7
-- **WebSocket**: Spring WebSocket
-- **Security**: Spring Security + JWT
-- **Build Tool**: Maven
+- **Spring Boot 3.2** - Java framework
+- **Spring Security** - Authentication & authorization
+- **Spring WebSocket** - Real-time communication
+- **PostgreSQL 15** - Relational database
+- **Redis 7** - Caching & session storage
+- **JJWT** - JWT token handling
+- **Docker Java API** - Container management
 
 ### Agent
-- **Language**: Python 3.11+
-- **Docker SDK**: docker-py
-- **WebSocket**: websockets library
-- **Async**: asyncio
-- **System Monitoring**: psutil
-
-### Frontend (Planned)
-- **Framework**: React 18 + Vite
-- **UI Library**: Material-UI / Ant Design
-- **State Management**: Redux Toolkit
-- **Terminal**: xterm.js
-- **Charts**: Recharts
-- **HTTP**: Axios
+- **Python 3.13** - Programming language
+- **asyncio** - Asynchronous I/O
+- **websockets** - WebSocket client
+- **docker-py** - Docker SDK
+- **psutil** - System monitoring
 
 ### Infrastructure
-- **Containerization**: Docker
-- **Database**: PostgreSQL 15
-- **Cache**: Redis 7
-- **Orchestration**: Docker Compose
+- **Docker 24+** - Containerization
+- **Docker Compose** - Multi-container orchestration
+- **Git** - Version control
 
 ---
 
-## 🎓 Next Phase: Multi-Organization Platform
+## 📚 Documentation
 
-### Status: ✅ Phase 1 Complete - Backend Foundation Ready
+Comprehensive guides are available in the `/docs` directory:
 
-**What's Implemented** (October 2026):
-
-#### Backend Changes:
-- ✅ **Organization Entity**: Complete multi-tenant data model
-- ✅ **Updated Entities**: User, Device, Lab with organization relationships
-- ✅ **Organization Service**: Registration, enrollment tokens, student bulk upload
-- ✅ **Organization Controller**: 7 new endpoints for org management
-- ✅ **JWT Updates**: Token includes organizationId and userType
-- ✅ **Security Filter**: Organization context automatically set in requests
-- ✅ **Repositories**: Organization-aware queries for all entities
-- ✅ **First-Time Login**: Student password setup flow
-- ✅ **Agent Install Script**: Auto-generated with enrollment token
-
-#### New API Endpoints:
-- `POST /api/organizations/register` - Register organization + admin
-- `GET /api/organizations/me` - Get organization details
-- `PUT /api/organizations/me` - Update organization (ORG_ADMIN)
-- `POST /api/organizations/devices/token` - Generate enrollment token
-- `POST /api/organizations/students/upload` - Bulk upload students
-- `POST /api/auth/first-login` - Student first-time password setup
-- `GET /api/organizations` - List all orgs (ROOT only)
-- `GET /api/organizations/{id}` - Get org by ID (ROOT only)
-
-#### Data Isolation:
-- All devices scoped to organization
-- All labs scoped to organization
-- All containers scoped via user's organization
-- Students can only see their own resources
-- Org admins can only manage their org's resources
-
-See [MULTI_ORG_IMPLEMENTATION_PHASE1.md](MULTI_ORG_IMPLEMENTATION_PHASE1.md) for complete details.
+- **[Admin User Guide](docs/ADMIN_GUIDE.md)** - Organization setup, device management, student management
+- **[Student User Guide](docs/STUDENT_GUIDE.md)** - Container creation, terminal usage, best practices
+- **[Installation Guide](docs/INSTALLATION.md)** - Production deployment, security, monitoring
 
 ---
 
-### Coming Soon (Phase 2-4):
+## 🚀 Getting Started
 
-#### Phase 2: Agent Updates
-- Enrollment token authentication
-- Organization context in device registration
-- WebSocket message updates
+### Prerequisites
 
-#### Phase 3: Statistics & Monitoring
-- Organization dashboard stats
-- Resource usage tracking per org
-- Student activity logs
-- Admin analytics endpoints
+- **Java Development Kit (JDK)**: 17 or higher
+- **Node.js**: 18+ and npm
+- **Python**: 3.11+
+- **Docker**: 24+ with Docker Compose
+- **PostgreSQL**: 15+ (or use Docker)
+- **Redis**: 7+ (or use Docker)
 
-#### Phase 4: Frontend Application
-- React + Vite setup
-- Landing page + org registration
-- Admin dashboard (devices, students, stats)
-- Student dashboard (containers, terminal)
-- Material-UI/Ant Design components
+### Quick Start with Docker Compose
 
----
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/rajrishu1401/CampusCompute.git
+   cd CampusCompute
+   ```
 
-### Platform Features (Multi-Org)
+2. **Start Database Services**
+   ```bash
+   docker-compose up -d
+   ```
+   This starts PostgreSQL and Redis in containers.
 
-CampusCompute as a multi-tenant SaaS platform where multiple educational institutions can:
-- Self-register their organization
-- Add their lab machines by installing agents
-- Manage student accounts (bulk CSV upload)
-- Set organization-level quotas and policies
-- Monitor usage and generate reports
+3. **Start Backend**
+   ```bash
+   cd backend
+   ./mvnw spring-boot:run
+   ```
+   Backend runs on http://localhost:8081
 
-### Planned User Roles
+4. **Start Frontend**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   Frontend runs on http://localhost:3000
 
-1. **Organization Admin**
-   - Register organization
-   - Add/manage lab machines
-   - Upload student lists
-   - Configure quotas and policies
-   - View analytics
+5. **Configure Agent** (on lab machines)
+   ```bash
+   cd agent
+   pip install -r requirements.txt
+   
+   # Edit config.yaml with enrollment token
+   # Get token from admin dashboard
+   
+   python src/main.py
+   ```
 
-2. **Student**
-   - Login with organization credentials
-   - Create/manage containers
-   - Access terminal
-   - View usage statistics
+### Environment Configuration
 
-3. **Super Admin** (Future)
-   - Platform-wide administration
-   - Monitor all organizations
-   - Manage subscriptions
+**Backend** (`backend/src/main/resources/application.properties`):
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/campuscompute
+spring.datasource.username=campuscompute
+spring.datasource.password=campuscompute123
 
-### Database Changes
-- Add `organizations` table
-- Update `users` table with `organization_id` and `user_type`
-- Update `devices` and `labs` with `organization_id`
-- Add `student_uploads` table for bulk registration
+spring.data.redis.host=localhost
+spring.data.redis.port=6379
 
-See [MULTI_ORG_ARCHITECTURE.md](MULTI_ORG_ARCHITECTURE.md) for complete design.
+jwt.secret=your-secret-key-here
+jwt.expiration=86400000
+```
+
+**Agent** (`agent/config.yaml`):
+```yaml
+broker:
+  url: "ws://localhost:8081/ws/agent"
+  enrollment_token: "your-token-here"
+  organization_id: 1
+
+device:
+  device_id: "LAB-PC-001"
+  hostname: "Lab Computer 1"
+
+docker:
+  socket: "unix:///var/run/docker.sock"  # Linux/Mac
+  # socket: "npipe:////./pipe/docker_engine"  # Windows
+```
 
 ---
 
@@ -247,191 +319,334 @@ See [MULTI_ORG_ARCHITECTURE.md](MULTI_ORG_ARCHITECTURE.md) for complete design.
 
 ```
 CampusCompute/
-├── backend/                    # Spring Boot application
+├── backend/                    # Spring Boot backend
 │   ├── src/main/java/com/campuscompute/
-│   │   ├── config/            # Configuration classes
-│   │   ├── controller/        # REST controllers
-│   │   ├── dto/               # Data transfer objects
+│   │   ├── config/            # Security, CORS, WebSocket config
+│   │   ├── controller/        # REST API controllers
+│   │   ├── dto/               # Data Transfer Objects
 │   │   ├── entity/            # JPA entities
-│   │   ├── exception/         # Custom exceptions
-│   │   ├── repository/        # Data repositories
-│   │   ├── scheduler/         # Scheduling strategies
-│   │   ├── security/          # JWT & security
+│   │   ├── repository/        # Database repositories
 │   │   ├── service/           # Business logic
-│   │   └── websocket/         # WebSocket handlers
-│   └── pom.xml                # Maven dependencies
+│   │   ├── security/          # JWT utilities
+│   │   ├── websocket/         # WebSocket handlers
+│   │   └── exception/         # Custom exceptions
+│   ├── src/main/resources/
+│   │   └── application.properties
+│   └── pom.xml
+│
+├── frontend/                   # React frontend
+│   ├── src/
+│   │   ├── components/        # Reusable components
+│   │   ├── pages/             # Page components
+│   │   │   ├── admin/         # Admin pages
+│   │   │   └── student/       # Student pages
+│   │   ├── services/          # API services
+│   │   ├── store/             # Redux store
+│   │   ├── App.jsx            # Main app
+│   │   └── main.jsx           # Entry point
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.js
 │
 ├── agent/                      # Python agent
 │   ├── src/
 │   │   ├── agent.py           # Main agent logic
-│   │   ├── config.py          # Configuration
 │   │   ├── docker_manager.py  # Docker operations
+│   │   ├── websocket_client.py # WebSocket connection
 │   │   ├── system_monitor.py  # System metrics
-│   │   ├── websocket_client.py# WebSocket client
-│   │   └── terminal_manager.py# Terminal sessions (NEW)
-│   ├── config.yaml            # Agent configuration
-│   └── requirements.txt       # Python dependencies
+│   │   └── main.py            # Entry point
+│   ├── config.yaml
+│   └── requirements.txt
 │
-├── docker-compose.yml          # Infrastructure setup
-├── MULTI_ORG_ARCHITECTURE.md   # Multi-tenant design
-└── README.md                   # This file
+├── docker-compose.yml          # Database services
+├── .gitignore
+└── README.md
 ```
 
 ---
 
-## 🚦 Getting Started
+## 📚 API Documentation
 
-### Prerequisites
-- Java 17+
-- Python 3.11+
-- Docker Desktop
-- PostgreSQL 15
-- Redis 7
-- Maven 3.8+
+### Authentication
 
-### 1. Start Infrastructure
+#### POST `/api/auth/login`
+Login with username and password.
+```json
+Request:
+{
+  "username": "admin",
+  "password": "password"
+}
 
-```bash
-docker-compose up -d
+Response:
+{
+  "success": true,
+  "data": {
+    "token": "jwt-token-here",
+    "user": {
+      "id": 1,
+      "username": "admin",
+      "role": "ORG_ADMIN",
+      "organizationId": 1
+    }
+  }
+}
 ```
 
-This starts PostgreSQL and Redis.
+### Organization Management (Admin)
 
-### 2. Start Backend
-
-```bash
-cd backend
-mvn clean install
-mvn spring-boot:run
+#### GET `/api/organizations/stats`
+Get organization statistics (requires ORG_ADMIN role).
+```json
+Response:
+{
+  "success": true,
+  "data": {
+    "organizationName": "UPES Dehradun",
+    "devices": { "total": 10, "online": 8, "offline": 2, "busy": 3 },
+    "students": { "total": 150, "approved": 145, "pending": 5 },
+    "containers": { "total": 45, "running": 32, "stopped": 10 },
+    "resources": {
+      "cpuTotal": 40,
+      "cpuUsed": 28,
+      "cpuAvailable": 12,
+      "cpuUtilizationPercent": 70.0,
+      "ramTotal": 160,
+      "ramUsed": 112,
+      "ramAvailable": 48,
+      "ramUtilizationPercent": 70.0
+    }
+  }
+}
 ```
 
-Backend runs on http://localhost:8081
+#### GET `/api/organizations/devices`
+List all devices for organization.
 
-### 3. Configure Agent
+#### POST `/api/organizations/devices/token`
+Generate device enrollment token.
 
-Edit `agent/config.yaml`:
-```yaml
-broker:
-  url: "ws://localhost:8081/ws/agent"
+#### GET `/api/organizations/students`
+List all students for organization.
 
-device:
-  id: 1  # Must match database device ID
-  device_id: "LAB-PC-001"
-  
-docker:
-  socket: "npipe:////./pipe/docker_engine"  # Windows
-  # socket: "unix:///var/run/docker.sock"  # Linux/Mac
+#### POST `/api/organizations/students/upload`
+Bulk upload students via CSV.
+
+### Container Management (Student)
+
+#### POST `/api/containers`
+Create a new container.
+```json
+Request:
+{
+  "imageName": "ubuntu:latest",
+  "cpuCores": 2,
+  "ramGb": 4
+}
+
+Response:
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "imageName": "ubuntu:latest",
+    "status": "PENDING",
+    "cpuCores": 2,
+    "ramGb": 4,
+    "userId": 5
+  }
+}
 ```
 
-### 4. Start Agent
+#### GET `/api/containers`
+List user's containers.
 
-```bash
-cd agent
-pip install -r requirements.txt
-python src/main.py
-```
+#### POST `/api/containers/{id}/stop`
+Stop a running container.
 
-### 5. Test API
-
-```bash
-# Register user
-curl -X POST http://localhost:8081/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "student1",
-    "email": "student1@example.com",
-    "password": "password123",
-    "fullName": "Test Student"
-  }'
-
-# Login
-curl -X POST http://localhost:8081/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "student1",
-    "password": "password123"
-  }'
-
-# Create container
-curl -X POST http://localhost:8081/api/containers \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <token>" \
-  -d '{
-    "image": "alpine:latest",
-    "cpuCores": 1,
-    "ramBytes": 1073741824,
-    "diskBytes": 5368709120,
-    "lifetimeMs": 14400000
-  }'
-```
+#### DELETE `/api/containers/{id}`
+Delete a container.
 
 ---
 
-## 📊 Testing Results
+## 📸 Screenshots
 
-### Container Lifecycle
-- ✅ Create: 4 seconds (including image pull)
-- ✅ Stop: < 10 seconds with resource release
-- ✅ Delete: < 1 second with Docker cleanup
-- ✅ Status Tracking: All transitions logged
+### Landing Page
+Modern hero section with features showcase and call-to-action.
 
-### Scheduler Performance
-- ✅ Device Selection: < 100ms
-- ✅ Reservation Awareness: Working correctly
-- ✅ Multi-factor Scoring: Validated
+### Admin Dashboard
+Real-time statistics with resource utilization charts and device/student counts.
 
-### WebSocket Communication
-- ✅ Agent Connection: Auto-reconnect working
-- ✅ Message Delivery: < 50ms latency
-- ✅ Terminal I/O: Real-time streaming
+### Device Management
+List of all devices with status, resources, and enrollment token generation.
+
+### Student Dashboard
+Overview of containers, resource quotas, and quick actions.
+
+### Container Management
+Create, start, stop, and delete containers with resource allocation.
+
+### Web Terminal
+Full xterm.js terminal emulator with real-time container access.
 
 ---
 
-## 📈 Project Timeline
+## 🎓 Academic Context
 
-### Completed (Sep 2026)
-- ✅ Week 1-2: Backend foundation, authentication
-- ✅ Week 3-4: Container service, Docker integration
-- ✅ Week 5-6: Scheduler, WebSocket communication
-- ✅ Week 7-8: Terminal access, lifecycle testing
+### Institution
+**University of Petroleum and Energy Studies (UPES), Dehradun**  
+**B.Tech Computer Science - Major Project**  
+**Academic Year**: 2026-27 (7th Semester)
 
-### Planned (Oct-Nov 2026)
-- 🔄 Week 9-10: Multi-org backend (database, API)
-- 🔄 Week 11-12: Frontend foundation (React setup)
-- 🔄 Week 13-14: Admin dashboard
-- 🔄 Week 15-16: Student dashboard
-- 🔄 Week 17-18: Testing, polish, deployment
+### Project Objectives
+
+1. **Resource Optimization**: Maximize utilization of campus computing infrastructure
+2. **Cloud Computing**: Demonstrate practical cloud computing concepts
+3. **Multi-Tenancy**: Implement true multi-tenant SaaS architecture
+4. **Novel Algorithm**: Develop adaptive scheduling algorithm
+5. **Full-Stack Development**: Complete end-to-end system implementation
+
+### Learning Outcomes
+
+- Microservices architecture design
+- RESTful API development
+- WebSocket real-time communication
+- React frontend development
+- Database design and optimization
+- Docker containerization
+- JWT authentication and authorization
+- Role-based access control
+- Agent-based distributed systems
+- Scheduling algorithms
+
+---
+
+## 📊 Project Phases
+
+### Phase 1: Multi-Organization Backend ✅
+- Organization entity and multi-tenancy
+- User types and roles
+- Device and lab management
+- JWT authentication
+- **Completion**: September 2026
+
+### Phase 2: Agent Integration ✅
+- Python agent development
+- WebSocket communication
+- Enrollment token system
+- Docker management
+- **Completion**: September 2026
+
+### Phase 3: Statistics & Analytics ✅
+- Dashboard statistics API
+- Device monitoring
+- Student usage tracking
+- Resource utilization
+- **Completion**: October 2026
+
+### Phase 4: Frontend Development ✅
+- React application
+- Admin dashboard
+- Student portal
+- Web terminal (xterm.js)
+- **Completion**: October 2026
+
+### Phase 4.5: Windows Installer ✅
+- Professional GUI installer
+- Automatic dependency detection
+- Windows service integration
+- PyInstaller build system
+- **Completion**: October 2026
+
+### Phase 5: Documentation & Testing 🔄
+- ✅ Admin User Guide (complete)
+- ✅ Student User Guide (complete)
+- ✅ Installation Guide (complete)
+- 🔄 End-to-end testing (in progress)
+- ⏳ Performance optimization
+- ⏳ Cloud deployment
+- **Target**: Mid-October 2026
 
 ---
 
 ## 🤝 Contributing
 
-This is an academic project. For questions or suggestions, please open an issue.
+This is an academic project. Contributions, suggestions, and feedback are welcome!
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
 ## 📄 License
 
-This project is developed as part of B.Tech curriculum at UPES Dehradun.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 👥 Team
+## 👥 Authors
 
-**Project Lead**: [Your Name]  
-**Institution**: UPES Dehradun  
-**Supervisor**: [Supervisor Name]  
-**Academic Year**: 2026-27
-
----
-
-## 📞 Contact
-
-- **Email**: [your.email@example.com]
-- **GitHub**: [https://github.com/rajrishu1401/CampusCompute](https://github.com/rajrishu1401/CampusCompute)
+**Rishu Raj**  
+B.Tech Computer Science, UPES Dehradun  
+Email: [your-email@example.com](mailto:your-email@example.com)  
+GitHub: [@rajrishu1401](https://github.com/rajrishu1401)
 
 ---
 
-**Last Updated**: September 27, 2026  
-**Version**: 0.5.0 (MVP Complete, Multi-org Design Phase)  
-**Status**: ✅ Core Features Operational, Ready for Multi-org Implementation
+## 🙏 Acknowledgments
+
+- UPES Faculty for guidance and support
+- Spring Boot and React communities
+- Docker team for excellent documentation
+- Material-UI for beautiful components
+- xterm.js for terminal emulation
+
+---
+
+## 📞 Support
+
+For issues, questions, or suggestions:
+- **GitHub Issues**: [Report an issue](https://github.com/rajrishu1401/CampusCompute/issues)
+- **Email**: [your-email@example.com](mailto:your-email@example.com)
+- **Documentation**: See `/docs` directory
+
+---
+
+## 🗺️ Roadmap
+
+### Current Version: 1.0.0 (✅ Feature Complete + Documentation)
+
+**Completed:**
+- ✅ Multi-organization backend architecture
+- ✅ Python agent with enrollment system
+- ✅ Statistics and analytics APIs
+- ✅ React frontend with Material-UI
+- ✅ Windows installer with GUI
+- ✅ Complete user documentation
+- ✅ Installation & deployment guides
+
+**In Progress:**
+- 🔄 End-to-end system testing
+- 🔄 Performance optimization
+- 🔄 Bug fixes and polish
+
+### Future Enhancements (v2.0+)
+- [ ] Container snapshots and backups
+- [ ] GPU support for ML workloads
+- [ ] Kubernetes integration
+- [ ] Cost tracking per student
+- [ ] Email notifications
+- [ ] Mobile app (React Native)
+- [ ] Advanced analytics dashboard
+- [ ] API rate limiting
+- [ ] Container templates library
+- [ ] Automated scaling policies
+
+---
+
+**Built with ❤️ for educational institutions**
+
+⭐ Star this repository if you find it helpful!
