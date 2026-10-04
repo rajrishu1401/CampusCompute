@@ -19,6 +19,7 @@ def build_exe():
         '--onefile',
         '--windowed',
         # '--icon=icon.ico',  # Icon optional
+        '--manifest=installer.manifest',  # Request admin privileges
         '--add-data=../agent;agent',  # Include agent files
         '--hidden-import=win32timezone',
         '--hidden-import=pywintypes',
