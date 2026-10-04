@@ -16,9 +16,31 @@ import shutil
 from pathlib import Path
 import threading
 import socket
+import ctypes
+from ctypes import wintypes
+
+# Single instance check using mutex
+class SingleInstance:
+    def __init__(self, mutex_name):
+        self.mutex_name = mutex_name
+        self.mutex = ctypes.windll.kernel32.CreateMutexW(None, False, mutex_name)
+        self.last_error = ctypes.windll.kernel32.GetLastError()
+        
+    def is_already_running(self):
+        return self.last_error == 183  # ERROR_ALREADY_EXISTS
 
 class AgentInstaller:
     def __init__(self):
+        # Check for single instance
+        self.single_instance = SingleInstance("CampusComputeAgentInstaller_Mutex")
+        if self.single_instance.is_already_running():
+            messagebox.showerror(
+                "Already Running",
+                "CampusCompute Agent Installer is already running.\n\n"
+                "Please close the existing installer window first."
+            )
+            sys.exit(1)
+        
         self.root = tk.Tk()
         self.root.title("CampusCompute Agent Installer")
         self.root.geometry("600x550")
@@ -132,7 +154,7 @@ class AgentInstaller:
         
         tk.Checkbutton(
             content_frame,
-            text="Install Python 3.11 (if not installed)",
+            text="Install Python 3.13 (if not installed)",
             variable=self.install_python_var,
             font=("Arial", 9)
         ).grid(row=9, column=0, sticky=tk.W, pady=(0, 15))
@@ -210,21 +232,25 @@ class AgentInstaller:
             
     def check_python(self):
         """Check if Python is installed"""
-        try:
-            result = subprocess.run(
-                ["python", "--version"],
-                capture_output=True,
-                text=True
-            )
-            return result.returncode == 0
-        except FileNotFoundError:
-            return False
+        # Try multiple Python commands
+        for cmd in ["py", "python", "python3"]:
+            try:
+                result = subprocess.run(
+                    [cmd, "--version"],
+                    capture_output=True,
+                    text=True
+                )
+                if result.returncode == 0:
+                    return True
+            except FileNotFoundError:
+                continue
+        return False
             
     def install_docker(self):
         """Download and install Docker Desktop"""
         self.update_status("Downloading Docker Desktop...", 20)
         
-        docker_installer = Path("Docker-Desktop-Installer.exe")
+        docker_installer = self.install_dir.parent / "Docker-Desktop-Installer.exe"
         docker_url = "https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe"
         
         try:
@@ -232,9 +258,16 @@ class AgentInstaller:
             
             self.update_status("Installing Docker Desktop (this may take a few minutes)...", 30)
             
+            # Use hidden window to prevent spawning issues
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = subprocess.SW_HIDE
+            
             subprocess.run(
                 [str(docker_installer), "install", "--quiet"],
-                check=True
+                check=True,
+                startupinfo=startupinfo,
+                creationflags=subprocess.CREATE_NO_WINDOW
             )
             
             docker_installer.unlink()
@@ -253,30 +286,62 @@ class AgentInstaller:
         
     def install_python(self):
         """Download and install Python"""
-        self.update_status("Downloading Python 3.11...", 20)
+        self.update_status("Downloading Python 3.13...", 20)
         
-        python_installer = Path("python-3.11.exe")
-        python_url = "https://www.python.org/ftp/python/3.11.0/python-3.11.0-amd64.exe"
+        python_installer = self.install_dir.parent / "python-3.13-installer.exe"
+        # Python 3.13.3 (latest stable as of Oct 2026)
+        python_url = "https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.exe"
         
         try:
+            # Download with progress
+            self.update_status("Downloading Python 3.13... (30 MB)", 20)
             urllib.request.urlretrieve(python_url, python_installer)
             
-            self.update_status("Installing Python...", 30)
+            self.update_status("Installing Python 3.13... This may take 2-3 minutes", 30)
             
-            subprocess.run(
+            # Install Python with all features
+            # Use CREATE_NEW_CONSOLE to prevent spawning issues
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = subprocess.SW_HIDE
+            
+            result = subprocess.run(
                 [
                     str(python_installer),
-                    "/quiet",
-                    "InstallAllUsers=1",
-                    "PrependPath=1"
+                    "/quiet",                    # Silent installation
+                    "InstallAllUsers=1",         # Install for all users
+                    "PrependPath=1",             # Add to PATH
+                    "Include_pip=1",             # Include pip
+                    "Include_test=0",            # Skip tests
+                    "Include_doc=0",             # Skip docs
+                    "Include_dev=0",             # Skip dev files
+                    "AssociateFiles=1",          # Associate .py files
                 ],
-                check=True
+                capture_output=True,
+                text=True,
+                startupinfo=startupinfo,
+                creationflags=subprocess.CREATE_NO_WINDOW
             )
             
-            python_installer.unlink()
+            # Clean up installer
+            if python_installer.exists():
+                python_installer.unlink()
+            
+            if result.returncode != 0:
+                raise Exception(f"Python installer returned code {result.returncode}")
+                
+            # Verify installation
+            self.update_status("Verifying Python installation...", 40)
+            if not self.check_python():
+                raise Exception("Python was installed but cannot be found. You may need to restart.")
+            
+            messagebox.showinfo(
+                "Python Installed",
+                "Python 3.13 has been installed successfully!"
+            )
             
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to install Python: {e}")
+            messagebox.showerror("Error", f"Failed to install Python: {e}\n\nPlease install Python manually from python.org")
             return False
             
         return True
@@ -310,44 +375,81 @@ logging:
         (self.install_dir / "agent").mkdir(parents=True, exist_ok=True)
         (self.install_dir / "logs").mkdir(parents=True, exist_ok=True)
         
-        # Copy agent files (assuming installer is run from project root)
-        agent_src = Path("agent/src")
+        # Get the bundled agent files from PyInstaller temp directory
+        if getattr(sys, 'frozen', False):
+            # Running as compiled exe - use PyInstaller's temp directory
+            bundle_dir = Path(sys._MEIPASS)
+            agent_src_dir = bundle_dir / "agent" / "src"
+            requirements_src = bundle_dir / "agent" / "requirements.txt"
+        else:
+            # Running as script - use relative path from project
+            agent_src_dir = Path("agent/src")
+            requirements_src = Path("agent/requirements.txt")
+        
+        # Copy agent source files
         agent_dst = self.install_dir / "agent" / "src"
         
-        if agent_src.exists():
-            shutil.copytree(agent_src, agent_dst, dirs_exist_ok=True)
+        if agent_src_dir.exists():
+            shutil.copytree(agent_src_dir, agent_dst, dirs_exist_ok=True)
         else:
-            # Download from GitHub release
-            messagebox.showinfo(
-                "Manual Setup Required",
-                "Please copy the agent/src folder to:\n" + str(self.install_dir / "agent")
+            messagebox.showerror(
+                "Installation Error",
+                f"Agent source files not found!\n\nExpected at: {agent_src_dir}\n\n"
+                "Please contact support or download the full installer package."
             )
+            return False
             
         # Copy requirements.txt
-        requirements_src = Path("agent/requirements.txt")
         requirements_dst = self.install_dir / "agent" / "requirements.txt"
         
         if requirements_src.exists():
             shutil.copy(requirements_src, requirements_dst)
+        else:
+            messagebox.showerror(
+                "Installation Error",
+                f"Requirements file not found!\n\nExpected at: {requirements_src}"
+            )
+            return False
+            
+        return True
             
     def install_dependencies(self):
         """Install Python dependencies"""
         self.update_status("Installing dependencies...", 60)
         
-        try:
-            subprocess.run(
-                [
-                    "python", "-m", "pip", "install", "-r",
-                    str(self.install_dir / "agent" / "requirements.txt")
-                ],
-                check=True,
-                capture_output=True
-            )
-        except subprocess.CalledProcessError as e:
-            messagebox.showerror("Error", f"Failed to install dependencies: {e}")
-            return False
-            
-        return True
+        requirements_file = self.install_dir / "agent" / "requirements.txt"
+        
+        # Try different Python commands
+        python_commands = ["py", "python", sys.executable]
+        
+        for python_cmd in python_commands:
+            try:
+                result = subprocess.run(
+                    [
+                        python_cmd, "-m", "pip", "install", "-r",
+                        str(requirements_file)
+                    ],
+                    check=True,
+                    capture_output=True,
+                    text=True
+                )
+                # Success!
+                return True
+            except (subprocess.CalledProcessError, FileNotFoundError) as e:
+                # Try next command
+                continue
+        
+        # All attempts failed - offer manual installation
+        response = messagebox.askyesno(
+            "Dependency Installation",
+            "Automatic dependency installation failed.\n\n"
+            "Would you like to continue anyway?\n\n"
+            "You can manually install dependencies later by running:\n"
+            f"pip install -r {requirements_file}\n\n"
+            "Click YES to continue, NO to cancel installation."
+        )
+        
+        return response
         
     def create_windows_service(self):
         """Create Windows service for agent"""
@@ -473,7 +575,9 @@ if __name__ == '__main__':
                     return
                     
             # Install agent
-            self.install_agent_files()
+            if not self.install_agent_files():
+                self.install_button.config(state=tk.NORMAL)
+                return
             
             # Create configuration
             self.update_status("Creating configuration...", 55)

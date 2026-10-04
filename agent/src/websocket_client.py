@@ -68,12 +68,12 @@ class BrokerWebSocketClient:
                     self.websocket = websocket
                     self.connected = True
                     
-                    logger.info("✅ Connected to broker successfully")
+                    logger.info("[SUCCESS] Connected to broker successfully")
                     
                     # If we had an enrollment token, mark as enrolled after successful connection
                     if self.enrollment_token and not self.enrolled:
                         self.enrolled = True
-                        logger.info("✅ Device enrolled successfully")
+                        logger.info("[SUCCESS] Device enrolled successfully")
                     
                     # Start receiving messages
                     await self._receive_loop()

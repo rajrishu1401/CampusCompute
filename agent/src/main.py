@@ -9,18 +9,18 @@ import logging
 import signal
 import sys
 from pathlib import Path
+import os
 
 from config import load_config
 from agent import CampusComputeAgent
 
 
-# Configure logging
+# Configure logging (basic console logging first, will be updated after config load)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler('logs/agent.log', mode='a'),
     ]
 )
 
@@ -30,14 +30,12 @@ logger = logging.getLogger(__name__)
 def print_banner():
     """Print startup banner"""
     banner = """
-╔═══════════════════════════════════════════════════════╗
-║                                                       ║
-║          CampusCompute Agent Started                 ║
-║     Campus-Aware Cloud Resource Pooling System       ║
-║                                                       ║
-║     Agent v1.0.0                                     ║
-║                                                       ║
-╚═══════════════════════════════════════════════════════╝
+====================================================
+          CampusCompute Agent Started                 
+     Campus-Aware Cloud Resource Pooling System       
+                                                       
+     Agent v1.0.0                                     
+====================================================
 """
     print(banner)
 
@@ -46,12 +44,23 @@ async def main():
     """Main entry point"""
     print_banner()
     
-    # Create logs directory
-    Path('logs').mkdir(exist_ok=True)
-    
     # Load configuration
     try:
         config = load_config()
+        
+        # Setup file logging now that we have config
+        log_file = config.get('logging', {}).get('file', 'logs/agent.log')
+        log_file_path = Path(log_file)
+        log_file_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Add file handler
+        file_handler = logging.FileHandler(log_file_path, mode='a')
+        file_handler.setLevel(logging.INFO)
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        ))
+        logging.getLogger().addHandler(file_handler)
+        
         logger.info(f"Configuration loaded from config.yaml")
         logger.info(f"Device ID: {config.device_id}")
         logger.info(f"Lab Name: {config.lab_name}")

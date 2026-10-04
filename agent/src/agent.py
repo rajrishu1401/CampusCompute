@@ -88,7 +88,7 @@ class CampusComputeAgent:
         # Connect to broker (this will run in background and auto-reconnect)
         asyncio.create_task(self.ws_client.connect())
         
-        logger.info("✅ Agent started successfully")
+        logger.info("[SUCCESS] Agent started successfully")
     
     async def _handle_broker_message(self, message_type: str, payload: Dict[str, Any], 
                                      request_id: Optional[str]) -> Optional[Dict[str, Any]]:
@@ -343,7 +343,7 @@ class CampusComputeAgent:
                 'created_at': datetime.utcnow().isoformat(),
             }
             
-            logger.info(f"✅ Container created successfully: {result['container_id'][:12]}")
+            logger.info(f"[SUCCESS] Container created successfully: {result['container_id'][:12]}")
             
             return {
                 'success': True,

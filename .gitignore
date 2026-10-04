@@ -1,6 +1,16 @@
 # CampusCompute - Campus-Aware Cloud Resource Pooling System
 
 # ============================================
+# Agent Installer (PyInstaller)
+# ============================================
+
+# PyInstaller build artifacts
+agent-installer/build/
+agent-installer/dist/*.exe
+agent-installer/__pycache__/
+agent-installer/*.spec
+
+# ============================================
 # Backend (Java/Spring Boot)
 # ============================================
 
