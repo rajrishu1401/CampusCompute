@@ -18,7 +18,7 @@ def build_exe():
         '--name=CampusCompute-Agent-Installer',
         '--onefile',
         '--windowed',
-        '--icon=icon.ico',  # Add an icon file
+        # '--icon=icon.ico',  # Icon optional
         '--add-data=../agent;agent',  # Include agent files
         '--hidden-import=win32timezone',
         '--hidden-import=pywintypes',

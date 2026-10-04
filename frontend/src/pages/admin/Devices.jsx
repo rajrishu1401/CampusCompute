@@ -19,7 +19,7 @@ import {
   DialogActions,
   TextField,
 } from '@mui/material';
-import { Add, ContentCopy } from '@mui/icons-material';
+import { Add, ContentCopy, Download } from '@mui/icons-material';
 import AdminLayout from '../../components/AdminLayout';
 import { organizationService } from '../../services/organization';
 
@@ -75,6 +75,17 @@ function Devices() {
     }
   };
 
+  const handleDownloadInstaller = () => {
+    // Download the installer from backend
+    const downloadUrl = '/api/installer/download';
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = 'CampusCompute-Agent-Installer.exe';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const getStatusColor = (status) => {
     const colors = {
       ONLINE: 'success',
@@ -106,13 +117,22 @@ function Devices() {
             Manage your organization's devices
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={handleGenerateToken}
-        >
-          Add Device
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<Download />}
+            onClick={handleDownloadInstaller}
+          >
+            Download Installer
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={handleGenerateToken}
+          >
+            Add Device
+          </Button>
+        </Box>
       </Box>
 
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -235,9 +255,19 @@ function Devices() {
             } and can only be used once.
           </Alert>
 
+          <Alert severity="info" sx={{ mt: 2 }}>
+            <Typography variant="subtitle2" gutterBottom>
+              💡 Recommended: Use Windows Installer
+            </Typography>
+            <Typography variant="body2">
+              Click the "Download Installer" button on the Devices page to get our Windows installer. 
+              Just run the installer, paste this token when prompted, and the agent will be set up automatically!
+            </Typography>
+          </Alert>
+
           <Box sx={{ mt: 3, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
             <Typography variant="subtitle2" gutterBottom>
-              Manual Configuration:
+              Manual Configuration (Advanced):
             </Typography>
             <Typography variant="body2" component="pre" sx={{ fontFamily: 'monospace', fontSize: '0.75rem', whiteSpace: 'pre-wrap' }}>
 {`1. Edit agent/config.yaml:
@@ -252,6 +282,9 @@ function Devices() {
           </Box>
         </DialogContent>
         <DialogActions>
+          <Button onClick={handleDownloadInstaller} startIcon={<Download />} variant="outlined">
+            Download Installer
+          </Button>
           <Button onClick={() => setTokenDialog(false)}>Close</Button>
         </DialogActions>
       </Dialog>

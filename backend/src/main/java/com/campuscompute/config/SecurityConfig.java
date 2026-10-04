@@ -72,6 +72,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/organizations/register").permitAll()
                 .requestMatchers("/api/health", "/api/ping").permitAll()
+                .requestMatchers("/api/installer/**").permitAll()  // Installer download
                 
                 // WebSocket endpoints (for agent connections)
                 .requestMatchers("/ws/**").permitAll()
