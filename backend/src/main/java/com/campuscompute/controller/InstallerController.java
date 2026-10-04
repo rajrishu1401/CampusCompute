@@ -19,13 +19,15 @@ import java.nio.file.Paths;
 @RequestMapping("/api/installer")
 public class InstallerController {
 
-    private static final String INSTALLER_PATH = "agent-installer/dist/CampusCompute-Agent-Installer.exe";
+    private static final String INSTALLER_RELATIVE_PATH = "agent-installer/dist/CampusCompute-Agent-Installer.exe";
 
     @GetMapping("/download")
     public ResponseEntity<Resource> downloadInstaller() {
         try {
-            // Get the installer file from the project directory
-            Path filePath = Paths.get(INSTALLER_PATH).toAbsolutePath().normalize();
+            // Get the installer file from the project root (one level up from backend/)
+            Path projectRoot = Paths.get(System.getProperty("user.dir")).getParent();
+            Path filePath = projectRoot.resolve(INSTALLER_RELATIVE_PATH).normalize();
+            
             Resource resource = new UrlResource(filePath.toUri());
 
             if (resource.exists() && resource.isReadable()) {
@@ -45,7 +47,10 @@ public class InstallerController {
     @GetMapping("/info")
     public ResponseEntity<?> getInstallerInfo() {
         try {
-            Path filePath = Paths.get(INSTALLER_PATH).toAbsolutePath().normalize();
+            // Get the installer file from the project root (one level up from backend/)
+            Path projectRoot = Paths.get(System.getProperty("user.dir")).getParent();
+            Path filePath = projectRoot.resolve(INSTALLER_RELATIVE_PATH).normalize();
+            
             Resource resource = new UrlResource(filePath.toUri());
 
             if (resource.exists()) {
