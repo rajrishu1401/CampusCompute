@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,6 +63,7 @@ public class ContainerController {
      * Get all containers for current user
      */
     @GetMapping
+    @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse<List<Container>>> getUserContainers(HttpServletRequest httpRequest) {
         Long userId = (Long) httpRequest.getAttribute("userId");
         log.info("Fetching containers for user {}", userId);
@@ -133,6 +135,7 @@ public class ContainerController {
      * Stop a running container
      */
     @PostMapping("/{id}/stop")
+    @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse<Container>> stopContainer(
         @PathVariable Long id,
         HttpServletRequest httpRequest
@@ -154,6 +157,40 @@ public class ContainerController {
             
             return ResponseEntity.ok(
                 ApiResponse.success("Container stopped", stoppedContainer)
+            );
+            
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest()
+                .body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    /**
+     * POST /api/containers/{id}/restart
+     * Restart a stopped container
+     */
+    @PostMapping("/{id}/restart")
+    public ResponseEntity<ApiResponse<Container>> restartContainer(
+        @PathVariable Long id,
+        HttpServletRequest httpRequest
+    ) {
+        Long userId = (Long) httpRequest.getAttribute("userId");
+        log.info("Restarting container {} by user {}", id, userId);
+        
+        try {
+            Container container = containerService.getContainerById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Container not found"));
+            
+            // Check ownership
+            if (!container.getUser().getId().equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ApiResponse.error("Access denied"));
+            }
+            
+            Container restartedContainer = containerService.restartContainer(id);
+            
+            return ResponseEntity.ok(
+                ApiResponse.success("Container restarted", restartedContainer)
             );
             
         } catch (IllegalArgumentException | IllegalStateException e) {

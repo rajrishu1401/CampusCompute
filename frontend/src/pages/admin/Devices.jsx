@@ -108,8 +108,15 @@ function Devices() {
 
   return (
     <AdminLayout>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Box>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'flex-start',
+        mb: 3,
+        flexWrap: 'wrap',
+        gap: 2
+      }}>
+        <Box sx={{ flex: 1, minWidth: '250px' }}>
           <Typography variant="h4" gutterBottom fontWeight="bold">
             Devices
           </Typography>
@@ -117,11 +124,17 @@ function Devices() {
             Manage your organization's devices
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 2,
+          flexShrink: 0,
+          flexWrap: 'wrap'
+        }}>
           <Button
             variant="outlined"
             startIcon={<Download />}
             onClick={handleDownloadInstaller}
+            sx={{ whiteSpace: 'nowrap' }}
           >
             Download Installer
           </Button>
@@ -129,6 +142,7 @@ function Devices() {
             variant="contained"
             startIcon={<Add />}
             onClick={handleGenerateToken}
+            sx={{ whiteSpace: 'nowrap' }}
           >
             Add Device
           </Button>

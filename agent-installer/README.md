@@ -6,11 +6,19 @@ One-click Windows installer for enrolling devices to CampusCompute platform.
 
 ## 🎯 Features
 
-- **User-Friendly GUI**: Simple tkinter interface
-- **Automatic Dependencies**: Installs Docker Desktop and Python if needed
+- **✨ Fully Automated Installation**: Zero manual configuration required
+- **User-Friendly GUI**: Simple tkinter interface with progress tracking
+- **Automatic Dependencies**: 
+  - Automatically downloads and installs Docker Desktop (500 MB) if needed
+  - Automatically downloads and installs Python 3.13 (25 MB) if needed
+  - Downloads with real-time progress indicators
+- **Smart Error Handling**: 
+  - Gracefully handles failures with clear messages
+  - Offers fallback options if service creation fails
+  - Validates prerequisites before starting
 - **Windows Service**: Runs agent as a background service
 - **Auto-Start**: Agent starts automatically on system boot
-- **Error Handling**: Clear error messages and validation
+- **One-Click Enrollment**: Just paste token and click Install
 
 ---
 

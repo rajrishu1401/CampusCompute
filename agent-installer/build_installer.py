@@ -30,7 +30,7 @@ def build_exe():
         '--clean',
     ])
     
-    print("\n✅ Build complete!")
+    print("\n[SUCCESS] Build complete!")
     print("Installer created: dist/CampusCompute-Agent-Installer.exe")
     print("\nYou can now distribute this .exe file to administrators.")
 

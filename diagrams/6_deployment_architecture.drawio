@@ -1,0 +1,277 @@
+<mxfile host="app.diagrams.net" modified="2026-10-05T00:00:00.000Z" agent="draw.io" version="22.0.0">
+  <diagram name="Deployment Architecture" id="deployment-architecture">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="Production Deployment Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="334.5" y="20" width="500" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Internet -->
+        <mxCell id="internet" value="🌐 INTERNET" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fillColor=#b1ddf0;strokeColor=#10739e;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="460" y="80" width="250" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Firewall -->
+        <mxCell id="firewall" value="🔥 FIREWALL / Load Balancer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="440" y="200" width="290" height="50" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="firewall-details" value="• HTTPS (443) → Frontend&lt;br&gt;• WSS (8081) → Backend&lt;br&gt;• DDoS Protection&lt;br&gt;• Rate Limiting" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="750" y="195" width="200" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- DMZ Zone -->
+        <mxCell id="dmz-zone" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1f5fe;strokeColor=#01579B;verticalAlign=top;fontSize=14;fontStyle=1;dashed=1;dashPattern=8 8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="290" width="1000" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="dmz-label" value="DMZ (Public-Facing Zone)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#01579B;" vertex="1" parent="1">
+          <mxGeometry x="80" y="295" width="220" height="25" as="geometry" />
+        </mxCell>
+        
+        <!-- Frontend Servers -->
+        <mxCell id="frontend-container" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="120" y="330" width="180" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend-label" value="Frontend Servers (Nginx)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="120" y="335" width="180" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend-server1" value="🖥️ Web Server 1&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;React Build&lt;br&gt;Nginx 1.24&lt;br&gt;Port 80/443&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="135" y="365" width="150" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend-server2" value="🖥️ Web Server 2&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;React Build&lt;br&gt;Nginx 1.24&lt;br&gt;Port 80/443&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="135" y="415" width="150" height="45" as="geometry" />
+        </mxCell>
+        
+        <!-- Backend Servers -->
+        <mxCell id="backend-container" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="370" y="330" width="180" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="backend-label" value="Backend Servers" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="370" y="335" width="180" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="backend-server1" value="☕ App Server 1&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;Spring Boot 3.2&lt;br&gt;Java 17 JVM&lt;br&gt;Port 8081&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="385" y="365" width="150" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="backend-server2" value="☕ App Server 2&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;Spring Boot 3.2&lt;br&gt;Java 17 JVM&lt;br&gt;Port 8081&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="385" y="415" width="150" height="45" as="geometry" />
+        </mxCell>
+        
+        <!-- WebSocket Gateway -->
+        <mxCell id="ws-gateway" value="🔌 WebSocket Gateway&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;Agent Connections&lt;br&gt;Sticky Sessions&lt;br&gt;Connection Pool&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="620" y="330" width="150" height="70" as="geometry" />
+        </mxCell>
+        
+        <!-- Cache -->
+        <mxCell id="redis" value="💾 Redis Cluster&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;Session Storage&lt;br&gt;WebSocket State&lt;br&gt;3 Nodes (HA)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="620" y="420" width="150" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Monitoring -->
+        <mxCell id="monitoring" value="📊 Monitoring&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;Prometheus&lt;br&gt;Grafana&lt;br&gt;Alerts&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="860" y="330" width="180" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Logs -->
+        <mxCell id="logs" value="📝 Centralized Logs&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;ELK Stack&lt;br&gt;Log Aggregation&lt;br&gt;Search &amp; Analytics&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="860" y="410" width="180" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Internal Network Zone -->
+        <mxCell id="internal-zone" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9e6;strokeColor=#CC9900;verticalAlign=top;fontSize=14;fontStyle=1;dashed=1;dashPattern=8 8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="520" width="1000" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="internal-label" value="Internal Network (Database Zone)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#CC6600;" vertex="1" parent="1">
+          <mxGeometry x="80" y="525" width="280" height="25" as="geometry" />
+        </mxCell>
+        
+        <!-- Database Primary -->
+        <mxCell id="db-primary" value="🗄️ PostgreSQL Primary&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;Master Database&lt;br&gt;Write Operations&lt;br&gt;4 cores, 16GB RAM&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="150" y="570" width="150" height="70" as="geometry" />
+        </mxCell>
+        
+        <!-- Database Replica -->
+        <mxCell id="db-replica" value="🗄️ PostgreSQL Replica&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;Read Replica&lt;br&gt;Read Operations&lt;br&gt;4 cores, 16GB RAM&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffcccc;strokeColor=#CC0000;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="360" y="570" width="150" height="70" as="geometry" />
+        </mxCell>
+        
+        <!-- Backup -->
+        <mxCell id="backup" value="💾 Automated Backups&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;Daily Full Backup&lt;br&gt;Point-in-time Recovery&lt;br&gt;30 Days Retention&lt;/font&gt;" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="570" y="570" width="150" height="70" as="geometry" />
+        </mxCell>
+        
+        <!-- Network Attached Storage -->
+        <mxCell id="nas" value="📦 Network Storage&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;Container Volumes&lt;br&gt;Persistent Data&lt;br&gt;NFS/CIFS&lt;/font&gt;" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="780" y="570" width="140" height="70" as="geometry" />
+        </mxCell>
+        
+        <!-- Agent Network -->
+        <mxCell id="agent-zone" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffebcc;strokeColor=#d79b00;verticalAlign=top;fontSize=14;fontStyle=1;dashed=1;dashPattern=8 8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="690" width="1000" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="agent-label" value="Lab Network (Agent Zone) - Multiple Locations" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#CC6600;" vertex="1" parent="1">
+          <mxGeometry x="80" y="695" width="380" height="25" as="geometry" />
+        </mxCell>
+        
+        <!-- Lab 1 -->
+        <mxCell id="lab1" value="🏫 CS Lab 1&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;50 Computers&lt;br&gt;50 Agents&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="120" y="730" width="120" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Lab 2 -->
+        <mxCell id="lab2" value="🏫 CS Lab 2&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;50 Computers&lt;br&gt;50 Agents&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="280" y="730" width="120" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Lab 3 -->
+        <mxCell id="lab3" value="🏫 EE Lab&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;30 Computers&lt;br&gt;30 Agents&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="440" y="730" width="120" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Lab N -->
+        <mxCell id="labn" value="🏫 Library Lab&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;20 Computers&lt;br&gt;20 Agents&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="600" y="730" width="120" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Total -->
+        <mxCell id="total" value="Total: 150 Devices" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="780" y="730" width="250" height="50" as="geometry" />
+        </mxCell>
+        
+        <!-- Connections -->
+        <!-- Internet to Firewall -->
+        <mxCell id="conn1" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;strokeWidth=3;strokeColor=#0066CC;" edge="1" parent="1" source="internet" target="firewall">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="400" as="sourcePoint" />
+            <mxPoint x="610" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Firewall to Frontend -->
+        <mxCell id="conn2" value="HTTPS" style="endArrow=classic;startArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1" source="firewall" target="frontend-container">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="400" as="sourcePoint" />
+            <mxPoint x="610" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Firewall to Backend -->
+        <mxCell id="conn3" value="API" style="endArrow=classic;startArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1" source="firewall" target="backend-container">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="400" as="sourcePoint" />
+            <mxPoint x="610" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Firewall to WebSocket -->
+        <mxCell id="conn4" value="WSS" style="endArrow=classic;startArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#9673a6;" edge="1" parent="1" source="firewall" target="ws-gateway">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="400" as="sourcePoint" />
+            <mxPoint x="610" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Backend to Database -->
+        <mxCell id="conn5" value="SQL" style="endArrow=classic;startArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#b85450;dashed=1;" edge="1" parent="1" source="backend-container" target="db-primary">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="400" as="sourcePoint" />
+            <mxPoint x="610" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Backend to Redis -->
+        <mxCell id="conn6" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#d79b00;dashed=1;" edge="1" parent="1" source="backend-container" target="redis">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="400" as="sourcePoint" />
+            <mxPoint x="610" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- WebSocket to Agents -->
+        <mxCell id="conn7" value="Persistent WebSocket" style="endArrow=classic;startArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#CC0000;" edge="1" parent="1" source="ws-gateway" target="agent-zone">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="600" as="sourcePoint" />
+            <mxPoint x="610" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- DB Replication -->
+        <mxCell id="conn8" value="Replication" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#CC0000;dashed=1;" edge="1" parent="1" source="db-primary" target="db-replica">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="600" as="sourcePoint" />
+            <mxPoint x="610" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Specs Box -->
+        <mxCell id="specs-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=top;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1120" y="80" width="260" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="specs-title" value="Infrastructure Specifications" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1120" y="85" width="260" height="25" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="spec1" value="Frontend Servers (2×)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1130" y="120" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="spec1-detail" value="• CPU: 2 cores&lt;br&gt;• RAM: 4GB&lt;br&gt;• Storage: 50GB SSD" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="140" width="230" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="spec2" value="Backend Servers (2×)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1130" y="185" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="spec2-detail" value="• CPU: 4 cores&lt;br&gt;• RAM: 8GB&lt;br&gt;• Storage: 100GB SSD" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="205" width="230" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="spec3" value="Database (Primary + Replica)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1130" y="250" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="spec3-detail" value="• CPU: 4 cores each&lt;br&gt;• RAM: 16GB each&lt;br&gt;• Storage: 500GB SSD" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="270" width="230" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="spec4" value="Redis Cluster (3 nodes)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1130" y="315" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="spec4-detail" value="• CPU: 2 cores each&lt;br&gt;• RAM: 4GB each&lt;br&gt;• High Availability" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="335" width="230" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="spec5" value="Lab Computers (150×)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1130" y="380" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="spec5-detail" value="• CPU: 4-8 cores each&lt;br&gt;• RAM: 8-16GB each&lt;br&gt;• Total: 900+ cores, 1.5TB RAM" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="400" width="230" height="45" as="geometry" />
+        </mxCell>
+        
+        <!-- Cost Box -->
+        <mxCell id="cost-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9e6;strokeColor=#CC9900;verticalAlign=top;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1120" y="480" width="260" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="cost-title" value="💰 Estimated Costs (Annual)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#CC6600;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="485" width="260" height="25" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="cost-infra" value="Infrastructure" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1130" y="520" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cost-infra-detail" value="• Cloud Hosting: ₹80,000&lt;br&gt;• Or On-premise: ₹1,50,000 (one-time)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="540" width="230" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="cost-savings" value="Savings vs Cloud" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1130" y="575" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cost-savings-detail" value="• AWS for 200 students: ₹12,00,000/yr&lt;br&gt;• CampusCompute: ₹80,000/yr&lt;br&gt;• Savings: ₹11,20,000/yr (93%)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontColor=#00CC00;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1140" y="595" width="230" height="50" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

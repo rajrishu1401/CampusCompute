@@ -1,0 +1,280 @@
+<mxfile host="app.diagrams.net" modified="2026-10-05T00:00:00.000Z" agent="draw.io" version="22.0.0">
+  <diagram name="Container Creation Flow" id="container-creation-flow">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="Container Creation - Sequence Flow" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="384.5" y="20" width="400" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Actors (Vertical Lines) -->
+        <!-- Student -->
+        <mxCell id="actor-student" value="Student&lt;br&gt;(Browser)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="80" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="lifeline-student" value="" style="endArrow=none;dashed=1;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="115" y="750" as="sourcePoint" />
+            <mxPoint x="115" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Frontend -->
+        <mxCell id="actor-frontend" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="230" y="80" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-frontend-label" value="Frontend&lt;br&gt;(React)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="230" y="95" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lifeline-frontend" value="" style="endArrow=none;dashed=1;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="270" y="750" as="sourcePoint" />
+            <mxPoint x="270" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Backend -->
+        <mxCell id="actor-backend" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="410" y="80" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-backend-label" value="Backend&lt;br&gt;(Spring Boot)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="410" y="95" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lifeline-backend" value="" style="endArrow=none;dashed=1;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="450" y="750" as="sourcePoint" />
+            <mxPoint x="450" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Scheduler -->
+        <mxCell id="actor-scheduler" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="590" y="80" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-scheduler-label" value="Scheduler&lt;br&gt;Service" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="590" y="95" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lifeline-scheduler" value="" style="endArrow=none;dashed=1;html=1;rounded=0;strokeWidth=2;strokeColor=#d6b656;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="630" y="750" as="sourcePoint" />
+            <mxPoint x="630" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Agent -->
+        <mxCell id="actor-agent" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="800" y="80" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-agent-label" value="Agent&lt;br&gt;(Python)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="800" y="95" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lifeline-agent" value="" style="endArrow=none;dashed=1;html=1;rounded=0;strokeWidth=2;strokeColor=#d79b00;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="840" y="750" as="sourcePoint" />
+            <mxPoint x="840" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Docker -->
+        <mxCell id="actor-docker" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0066CC;strokeColor=#001DBC;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="970" y="80" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-docker-label" value="Docker&lt;br&gt;Engine" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1;fontColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="970" y="95" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lifeline-docker" value="" style="endArrow=none;dashed=1;html=1;rounded=0;strokeWidth=2;strokeColor=#001DBC;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1010" y="750" as="sourcePoint" />
+            <mxPoint x="1010" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Sequence Messages -->
+        <!-- 1. Student submits request -->
+        <mxCell id="msg1" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="115" y="170" as="sourcePoint" />
+            <mxPoint x="270" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg1-label" value="1. Submit Create Container Request" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="115" y="145" width="155" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 2. Frontend sends to backend -->
+        <mxCell id="msg2" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="270" y="200" as="sourcePoint" />
+            <mxPoint x="450" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg2-label" value="2. POST /api/containers" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="270" y="175" width="180" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 3. Create PENDING container -->
+        <mxCell id="box3" value="Create PENDING&lt;br&gt;container in DB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="390" y="220" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- 4. Check quota -->
+        <mxCell id="box4" value="Check User&lt;br&gt;Quota" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="390" y="275" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- 5. Call scheduler -->
+        <mxCell id="msg5" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="450" y="330" as="sourcePoint" />
+            <mxPoint x="630" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg5-label" value="5. Select Best Device" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="450" y="305" width="180" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 6. Scheduler calculates -->
+        <mxCell id="box6" value="Calculate Scores&lt;br&gt;Return Best Device" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9e6;strokeColor=#CC9900;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="570" y="350" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- 7. Return device -->
+        <mxCell id="msg7" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="630" y="410" as="sourcePoint" />
+            <mxPoint x="450" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg7-label" value="7. Device ID: 5" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="450" y="385" width="180" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 8. Update to CREATING -->
+        <mxCell id="box8" value="Update Status:&lt;br&gt;PENDING → CREATING" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="390" y="430" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- 9. Send to agent -->
+        <mxCell id="msg9" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#CC0000;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="450" y="490" as="sourcePoint" />
+            <mxPoint x="840" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg9-label" value="9. CREATE_CONTAINER (WebSocket)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1;fontColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="480" y="465" width="330" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 10. Agent pulls image -->
+        <mxCell id="msg10" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="840" y="520" as="sourcePoint" />
+            <mxPoint x="1010" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg10-label" value="10. Pull Image" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="840" y="495" width="170" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 11. Docker returns -->
+        <mxCell id="msg11" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1010" y="550" as="sourcePoint" />
+            <mxPoint x="840" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg11-label" value="11. Image Ready" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="840" y="525" width="170" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 12. Agent creates container -->
+        <mxCell id="msg12" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="840" y="580" as="sourcePoint" />
+            <mxPoint x="1010" y="580" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg12-label" value="12. Create Container" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="840" y="555" width="170" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 13. Docker returns -->
+        <mxCell id="msg13" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1010" y="610" as="sourcePoint" />
+            <mxPoint x="840" y="610" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg13-label" value="13. Container ID" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="840" y="585" width="170" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 14. Agent confirms -->
+        <mxCell id="msg14" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#00CC00;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="840" y="640" as="sourcePoint" />
+            <mxPoint x="450" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg14-label" value="14. CONTAINER_CREATED (WebSocket)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1;fontColor=#00CC00;" vertex="1" parent="1">
+          <mxGeometry x="480" y="615" width="330" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 15. Update to RUNNING -->
+        <mxCell id="box15" value="Update Status:&lt;br&gt;CREATING → RUNNING" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="390" y="660" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- 16. Return success -->
+        <mxCell id="msg16" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="450" y="720" as="sourcePoint" />
+            <mxPoint x="270" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg16-label" value="16. Container Running" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="270" y="695" width="180" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- 17. Display to student -->
+        <mxCell id="msg17" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#000000;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="270" y="750" as="sourcePoint" />
+            <mxPoint x="115" y="750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg17-label" value="17. Show RUNNING" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="115" y="725" width="155" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Time indicators -->
+        <mxCell id="time1" value="~1s" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="30" y="170" width="60" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="time2" value="~3s" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="30" y="330" width="60" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="time3" value="~5-8s" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="30" y="550" width="60" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="time4" value="~1s" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="30" y="660" width="60" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Total time -->
+        <mxCell id="total-time" value="⏱ Total Time: 10-13 seconds" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff9e6;strokeColor=#CC9900;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="780" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <!-- Note -->
+        <mxCell id="note" value="⚠️ Note: Status changes only after&lt;br&gt;agent confirmation (AWS-style)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=2;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="280" y="780" width="200" height="50" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

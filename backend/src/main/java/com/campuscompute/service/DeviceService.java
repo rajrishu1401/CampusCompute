@@ -1,6 +1,7 @@
 package com.campuscompute.service;
 
 import com.campuscompute.entity.Device;
+import com.campuscompute.entity.Organization;
 import com.campuscompute.repository.DeviceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,14 +68,31 @@ public class DeviceService {
     public Device registerDeviceWithToken(String enrollmentToken, String queryString) {
         log.info("Registering device with enrollment token: {}...", enrollmentToken.substring(0, Math.min(8, enrollmentToken.length())));
         
-        // TODO: Validate token with Redis or OrganizationService
-        // For now, we'll extract organization info from token
-        // In production, tokens should be stored in Redis with expiration
-        
         // Parse query string for device info
         String deviceId = extractParamFromQuery(queryString, "deviceId");
         if (deviceId == null) {
             throw new IllegalArgumentException("Device ID required for enrollment");
+        }
+        
+        // Extract organization ID from query string
+        String orgIdStr = extractParamFromQuery(queryString, "organizationId");
+        Long organizationId = null;
+        if (orgIdStr != null) {
+            try {
+                organizationId = Long.parseLong(orgIdStr);
+                log.info("Organization ID from query: {}", organizationId);
+            } catch (NumberFormatException e) {
+                log.warn("Invalid organization ID in query: {}", orgIdStr);
+            }
+        }
+        
+        // Verify organization exists
+        Organization organization = null;
+        if (organizationId != null) {
+            organization = organizationRepository.findById(organizationId).orElse(null);
+            if (organization == null) {
+                log.warn("Organization {} not found, device will be unassigned", organizationId);
+            }
         }
         
         // Check if device already exists
@@ -84,13 +102,15 @@ public class DeviceService {
             Device device = existing.get();
             device.setStatus(Device.DeviceStatus.ONLINE);
             device.setLastHeartbeat(LocalDateTime.now());
+            
+            // Update organization if provided and different
+            if (organization != null && !organization.equals(device.getOrganization())) {
+                log.info("Updating device organization to: {}", organization.getCode());
+                device.setOrganization(organization);
+            }
+            
             return deviceRepository.save(device);
         }
-        
-        // For Phase 2, we'll allow enrollment without full validation
-        // In Phase 3, add proper token validation
-        log.warn("⚠️  Enrollment token validation not fully implemented yet - device registered without org assignment");
-        log.warn("⚠️  To assign organization, update device manually in database");
         
         // Create new device
         Device newDevice = new Device();
@@ -100,6 +120,14 @@ public class DeviceService {
         newDevice.setStatus(Device.DeviceStatus.ONLINE);
         newDevice.setEnabled(true);
         newDevice.setLastHeartbeat(LocalDateTime.now());
+        
+        // Assign organization
+        if (organization != null) {
+            newDevice.setOrganization(organization);
+            log.info("✅ Device will be assigned to organization: {}", organization.getCode());
+        } else {
+            log.warn("⚠️  Device registered without organization assignment");
+        }
         
         // Default hardware specs (will be updated on first heartbeat)
         newDevice.setTotalCpuCores(4);

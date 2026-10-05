@@ -1,0 +1,92 @@
+\documentclass[border=10pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, shadows}
+
+\begin{document}
+
+\tikzstyle{frontend} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm, text centered, draw=blue!60, fill=blue!20, thick, drop shadow]
+\tikzstyle{backend} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm, text centered, draw=green!60, fill=green!20, thick, drop shadow]
+\tikzstyle{agent} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm, text centered, draw=orange!60, fill=orange!20, thick, drop shadow]
+\tikzstyle{database} = [cylinder, shape border rotate=90, draw=red!60, fill=red!20, minimum height=1.2cm, minimum width=2cm, thick, drop shadow]
+\tikzstyle{container} = [rectangle, rounded corners, minimum width=1.5cm, minimum height=0.8cm, text centered, draw=purple!60, fill=purple!15, thick]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+\tikzstyle{bigarrow} = [ultra thick,->,>=stealth,blue]
+
+\begin{tikzpicture}[node distance=2cm]
+
+% Frontend Layer
+\node (student) [frontend] {Student Portal};
+\node (admin) [frontend, right of=student, xshift=3cm] {Admin Dashboard};
+\node (faculty) [frontend, right of=admin, xshift=3cm] {Faculty Portal};
+
+% Box around frontend
+\begin{scope}[on background layer]
+\node [draw=blue!60, fill=blue!5, thick, fit=(student) (faculty), inner sep=0.3cm, label=above:\textbf{Frontend Layer (React)}] (frontendbox) {};
+\end{scope}
+
+% Backend Layer
+\node (restapi) [backend, below of=admin, yshift=-2cm] {REST API};
+\node (websocket) [backend, left of=restapi, xshift=-3cm] {WebSocket Handler};
+\node (scheduler) [backend, right of=restapi, xshift=3cm] {Scheduler};
+\node (auth) [backend, below of=restapi, yshift=-1.5cm] {Auth Service (JWT)};
+\node (container-service) [backend, left of=auth, xshift=-3cm] {Container Service};
+\node (org-service) [backend, right of=auth, xshift=3cm] {Organization Service};
+
+% Box around backend
+\begin{scope}[on background layer]
+\node [draw=green!60, fill=green!5, thick, fit=(websocket) (scheduler) (container-service) (org-service), inner sep=0.3cm, label=above:\textbf{Backend Layer (Spring Boot)}] (backendbox) {};
+\end{scope}
+
+% Database Layer
+\node (postgres) [database, below of=auth, yshift=-2.5cm, xshift=-3cm] {PostgreSQL};
+\node (redis) [database, right of=postgres, xshift=3cm] {Redis Cache};
+
+% Agent Layer
+\node (agent1) [agent, below of=postgres, yshift=-2.5cm, xshift=-2cm] {Agent 1\\Python};
+\node (agent2) [agent, right of=agent1, xshift=4cm] {Agent 2\\Python};
+
+% Containers
+\node (docker1) [container, below of=agent1, yshift=-1.5cm, xshift=-1cm] {Docker};
+\node (cont1) [container, below of=docker1, yshift=-1cm, xshift=-0.7cm, minimum width=0.8cm] {C1};
+\node (cont2) [container, right of=cont1, xshift=0.5cm, minimum width=0.8cm] {C2};
+
+\node (docker2) [container, below of=agent2, yshift=-1.5cm, xshift=1cm] {Docker};
+\node (cont3) [container, below of=docker2, yshift=-1cm, xshift=-0.7cm, minimum width=0.8cm] {C3};
+\node (cont4) [container, right of=cont3, xshift=0.5cm, minimum width=0.8cm] {C4};
+
+% Arrows - Frontend to Backend
+\draw [bigarrow] (student) -- (restapi);
+\draw [bigarrow] (admin) -- (restapi);
+\draw [bigarrow] (faculty) -- (restapi);
+
+% Arrows - Backend to Database
+\draw [arrow] (auth) -- (postgres);
+\draw [arrow] (container-service) -- (postgres);
+\draw [arrow] (org-service) -- (postgres);
+\draw [arrow] (restapi) -- (redis);
+
+% Arrows - Backend to Agents
+\draw [arrow, red, very thick] (websocket) -- node[midway, left, text=red] {WebSocket} (agent1);
+\draw [arrow, red, very thick] (websocket) -- node[midway, right, text=red] {WebSocket} (agent2);
+
+% Arrows - Agents to Docker
+\draw [arrow] (agent1) -- (docker1);
+\draw [arrow] (docker1) -- (cont1);
+\draw [arrow] (docker1) -- (cont2);
+
+\draw [arrow] (agent2) -- (docker2);
+\draw [arrow] (docker2) -- (cont3);
+\draw [arrow] (docker2) -- (cont4);
+
+% Labels
+\node at (-5, 5) [text=blue, font=\Large\bfseries] {Users};
+\node at (-5, -1) [text=green, font=\Large\bfseries] {Broker};
+\node at (-5, -7) [text=orange, font=\Large\bfseries] {Lab PCs};
+
+% Protocol labels
+\node at (2, 3.5) [text=blue!70, font=\small] {HTTPS/WSS};
+\node at (-3, -5.5) [text=red!70, font=\small] {WSS (Persistent)};
+
+\end{tikzpicture}
+
+\end{document}

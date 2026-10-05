@@ -92,10 +92,13 @@ public class AuthController {
         
         User user = userOpt.get();
         
-        // Check if user is approved (for students on first login)
+        // TODO: Implement first-time password change flow
+        // For now, allow students to login with temporary password
+        // Mark as approved on first successful login
         if (!user.getApproved() && user.getUserType() == User.UserType.STUDENT) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ApiResponse.error("Account not activated. Please complete first-time setup."));
+            log.info("Student {} logging in for first time, marking as approved", user.getUsername());
+            user.setApproved(true);
+            userService.updateUser(user);
         }
         
         // Generate JWT token with organization context

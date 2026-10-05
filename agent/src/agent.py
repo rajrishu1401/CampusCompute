@@ -56,21 +56,27 @@ class CampusComputeAgent:
         
         # Initialize WebSocket client
         broker_url = self.config.get('broker.url', 'ws://localhost:8081/ws/agent')
-        device_id = self.config.get('device.id')
+        device_id = self.config.get('device.device_id') or self.config.get('device.id')
         enrollment_token = self.config.enrollment_token
         organization_id = self.config.organization_id
+        lab_name = self.config.lab_name
         
         if not device_id:
-            logger.error("Device ID not configured! Please set device.id in config.yaml")
+            logger.error("Device ID not configured! Please set device.device_id in config.yaml")
+            return
+        
+        if not lab_name:
+            logger.error("Lab name not configured! Please set device.lab_name in config.yaml")
             return
         
         logger.info(f"Connecting to broker: {broker_url} (Device ID: {device_id})")
+        logger.info(f"Lab: {lab_name}")
         
         if enrollment_token:
-            logger.info("🔑 Enrollment token found - Will register device on first connection")
+            logger.info("Enrollment token found - Will register device on first connection")
         
         if organization_id:
-            logger.info(f"🏢 Organization ID: {organization_id}")
+            logger.info(f"Organization ID: {organization_id}")
         
         self.ws_client = BrokerWebSocketClient(
             broker_url=broker_url,
@@ -138,6 +144,24 @@ class CampusComputeAgent:
                     'payload': result
                 }
             
+            elif message_type == 'RESTART_CONTAINER':
+                result = await self.handle_restart_container(payload)
+                
+                if result['success']:
+                    return {
+                        'type': 'CONTAINER_RESTARTED',
+                        'payload': {
+                            'container_id': result['container_id'],
+                            'status': 'running'
+                        }
+                    }
+                else:
+                    return {
+                        'type': 'CONTAINER_RESTART_FAILED',
+                        'payload': {},
+                        'error': result.get('error', 'Unknown error')
+                    }
+            
             elif message_type == 'TERMINAL_ATTACH':
                 result = await self.handle_terminal_attach(payload)
                 return None  # Terminal outputs sent separately
@@ -162,6 +186,15 @@ class CampusComputeAgent:
             
             elif message_type == 'ACK':
                 logger.debug("Received ACK from broker")
+                return None
+            
+            elif message_type == 'ERROR':
+                # Handle ERROR messages from broker (don't send ERROR back)
+                if payload:
+                    error_msg = payload.get('message') or payload.get('error', 'Unknown error')
+                else:
+                    error_msg = 'Unknown error (no payload)'
+                logger.error(f"Received ERROR from broker: {error_msg}")
                 return None
             
             else:
@@ -351,7 +384,7 @@ class CampusComputeAgent:
             }
             
         except Exception as e:
-            logger.error(f"❌ Failed to create container: {e}", exc_info=True)
+            logger.error(f"Failed to create container: {e}", exc_info=True)
             return {
                 'success': False,
                 'error': str(e)
@@ -394,6 +427,31 @@ class CampusComputeAgent:
             
         except Exception as e:
             logger.error(f"Failed to delete container: {e}")
+            return {
+                'success': False,
+                'error': str(e)
+            }
+
+    async def handle_restart_container(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """Handle RESTART_CONTAINER command from broker"""
+        try:
+            container_id = data['container_id']
+            
+            logger.info(f"Restarting container: {container_id[:12]}")
+            
+            # Docker restart command
+            result = self.docker_manager.restart_container(container_id)
+            
+            if result and container_id in self.containers:
+                self.containers[container_id]['status'] = 'running'
+            
+            return {
+                'success': result,
+                'container_id': container_id
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to restart container: {e}")
             return {
                 'success': False,
                 'error': str(e)

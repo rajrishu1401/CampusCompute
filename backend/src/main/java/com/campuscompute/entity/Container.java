@@ -90,7 +90,9 @@ public class Container {
         PENDING,
         CREATING,
         RUNNING,
+        STOPPING,
         STOPPED,
+        RESTARTING,
         FAILED,
         DELETED
     }

@@ -45,6 +45,18 @@ public interface ContainerRepository extends JpaRepository<Container, Long> {
     List<Container> findByUserId(Long userId);
 
     /**
+     * Find all containers by user ID with device eagerly loaded
+     */
+    @Query("SELECT c FROM Container c LEFT JOIN FETCH c.device LEFT JOIN FETCH c.user u LEFT JOIN FETCH u.organization WHERE c.user.id = :userId")
+    List<Container> findByUserIdWithDevice(@Param("userId") Long userId);
+
+    /**
+     * Find container by ID with all relationships eagerly loaded
+     */
+    @Query("SELECT c FROM Container c LEFT JOIN FETCH c.device LEFT JOIN FETCH c.user u LEFT JOIN FETCH u.organization WHERE c.id = :id")
+    Optional<Container> findByIdWithRelationships(@Param("id") Long id);
+
+    /**
      * Count all containers by user ID
      */
     Long countByUserId(Long userId);

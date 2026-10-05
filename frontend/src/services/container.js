@@ -25,6 +25,12 @@ export const containerService = {
     return response.data;
   },
 
+  // Restart container
+  restartContainer: async (id) => {
+    const response = await api.post(`/containers/${id}/restart`);
+    return response.data;
+  },
+
   // Delete container
   deleteContainer: async (id) => {
     const response = await api.delete(`/containers/${id}`);

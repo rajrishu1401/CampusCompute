@@ -66,7 +66,7 @@ class Config:
     
     @property
     def lab_name(self) -> str:
-        return self.get('device.lab_name')
+        return self.get('device.lab_name', 'Default Lab')
     
     @property
     def hostname(self) -> str:

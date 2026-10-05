@@ -19,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -260,13 +262,13 @@ public class OrganizationService {
      * Bulk register students from CSV
      */
     @Transactional
-    public List<User> bulkRegisterStudents(Long organizationId, StudentBulkUploadRequest request) {
+    public List<Map<String, Object>> bulkRegisterStudents(Long organizationId, StudentBulkUploadRequest request) {
         log.info("Bulk registering {} students for organization {}", 
             request.getStudents().size(), organizationId);
 
         Organization org = getOrganizationById(organizationId);
 
-        List<User> createdStudents = new ArrayList<>();
+        List<Map<String, Object>> createdStudents = new ArrayList<>();
 
         for (StudentBulkUploadRequest.StudentData data : request.getStudents()) {
             try {
@@ -282,13 +284,16 @@ public class OrganizationService {
                     continue;
                 }
 
+                // Generate temporary password BEFORE encoding
+                String temporaryPassword = generateTemporaryPassword();
+
                 User student = new User();
                 student.setUsername(data.getStudentId()); // Use student ID as username
                 student.setStudentId(data.getStudentId());
                 student.setEmail(data.getEmail());
                 student.setFullName(data.getFullName());
                 student.setDepartment(data.getDepartment());
-                student.setPasswordHash(passwordEncoder.encode(generateTemporaryPassword()));
+                student.setPasswordHash(passwordEncoder.encode(temporaryPassword));
                 student.setRole(User.UserRole.STUDENT);
                 student.setUserType(User.UserType.STUDENT);
                 student.setOrganization(org);
@@ -301,9 +306,19 @@ public class OrganizationService {
                 student.setMaxRamGb(org.getMaxRamGbPerStudent());
 
                 User saved = userRepository.save(student);
-                createdStudents.add(saved);
+                
+                // Return student info WITH temporary password
+                Map<String, Object> studentInfo = new HashMap<>();
+                studentInfo.put("id", saved.getId());
+                studentInfo.put("studentId", saved.getStudentId());
+                studentInfo.put("username", saved.getUsername());
+                studentInfo.put("email", saved.getEmail());
+                studentInfo.put("fullName", saved.getFullName());
+                studentInfo.put("temporaryPassword", temporaryPassword);
+                
+                createdStudents.add(studentInfo);
 
-                log.info("Student created: {}", data.getStudentId());
+                log.info("Student created: {} (password will be displayed to admin)", data.getStudentId());
 
             } catch (Exception e) {
                 log.error("Failed to create student {}: {}", data.getStudentId(), e.getMessage());

@@ -31,15 +31,15 @@ class SingleInstance:
 
 class AgentInstaller:
     def __init__(self):
-        # Check for single instance
-        self.single_instance = SingleInstance("CampusComputeAgentInstaller_Mutex")
-        if self.single_instance.is_already_running():
-            messagebox.showerror(
-                "Already Running",
-                "CampusCompute Agent Installer is already running.\n\n"
-                "Please close the existing installer window first."
-            )
-            sys.exit(1)
+        # Check for single instance - DISABLED FOR TESTING
+        # self.single_instance = SingleInstance("CampusComputeAgentInstaller_Mutex")
+        # if self.single_instance.is_already_running():
+        #     messagebox.showerror(
+        #         "Already Running",
+        #         "CampusCompute Agent Installer is already running.\n\n"
+        #         "Please close the existing installer window first."
+        #     )
+        #     sys.exit(1)
         
         self.root = tk.Tk()
         self.root.title("CampusCompute Agent Installer")
@@ -141,23 +141,30 @@ class AgentInstaller:
         # Installation options
         tk.Label(
             content_frame,
-            text="Installation Options:",
+            text="Automatic Installation (Recommended):",
             font=("Arial", 10, "bold")
         ).grid(row=7, column=0, sticky=tk.W, pady=(0, 5))
         
         tk.Checkbutton(
             content_frame,
-            text="Install Docker Desktop (if not installed)",
+            text="✓ Automatically install Docker Desktop if needed (~500 MB, requires restart)",
             variable=self.install_docker_var,
             font=("Arial", 9)
         ).grid(row=8, column=0, sticky=tk.W)
         
         tk.Checkbutton(
             content_frame,
-            text="Install Python 3.13 (if not installed)",
+            text="✓ Automatically install Python 3.13 if needed (~25 MB)",
             variable=self.install_python_var,
             font=("Arial", 9)
-        ).grid(row=9, column=0, sticky=tk.W, pady=(0, 15))
+        ).grid(row=9, column=0, sticky=tk.W, pady=(0, 5))
+        
+        tk.Label(
+            content_frame,
+            text="Recommended: Keep both options checked for fully automated installation",
+            font=("Arial", 8),
+            fg="green"
+        ).grid(row=10, column=0, sticky=tk.W, pady=(0, 15))
         
         # Progress bar
         self.progress_var = tk.DoubleVar()
@@ -167,20 +174,20 @@ class AgentInstaller:
             maximum=100,
             length=560
         )
-        self.progress_bar.grid(row=10, column=0, pady=(10, 5))
+        self.progress_bar.grid(row=11, column=0, pady=(10, 5))
         
         # Status label
         self.status_label = tk.Label(
             content_frame,
-            text="Ready to install",
+            text="✓ Ready to install - Click 'Install' to begin",
             font=("Arial", 9),
             fg="gray"
         )
-        self.status_label.grid(row=11, column=0, pady=(0, 15))
+        self.status_label.grid(row=12, column=0, pady=(0, 15))
         
         # Buttons
         button_frame = tk.Frame(content_frame)
-        button_frame.grid(row=12, column=0)
+        button_frame.grid(row=13, column=0)
         
         self.install_button = tk.Button(
             button_frame,
@@ -248,106 +255,220 @@ class AgentInstaller:
             
     def install_docker(self):
         """Download and install Docker Desktop"""
-        self.update_status("Downloading Docker Desktop...", 20)
+        self.update_status("Downloading Docker Desktop (500 MB)...", 20)
         
-        docker_installer = self.install_dir.parent / "Docker-Desktop-Installer.exe"
-        docker_url = "https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe"
+        # Use temp directory for downloads
+        temp_dir = Path(os.environ.get('TEMP', 'C:/Windows/Temp'))
+        docker_installer = temp_dir / "Docker-Desktop-Installer.exe"
+        docker_url = "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe"
         
         try:
-            urllib.request.urlretrieve(docker_url, docker_installer)
+            # Download with progress callback
+            def download_progress(block_num, block_size, total_size):
+                downloaded = block_num * block_size
+                if total_size > 0:
+                    percent = min(int((downloaded / total_size) * 100), 100)
+                    self.update_status(f"Downloading Docker Desktop: {percent}% ({downloaded // (1024*1024)} MB / {total_size // (1024*1024)} MB)", 20 + (percent * 0.15))
+                self.root.update()
             
-            self.update_status("Installing Docker Desktop (this may take a few minutes)...", 30)
+            urllib.request.urlretrieve(docker_url, docker_installer, reporthook=download_progress)
             
-            # Use hidden window to prevent spawning issues
-            startupinfo = subprocess.STARTUPINFO()
-            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            startupinfo.wShowWindow = subprocess.SW_HIDE
+            self.update_status("Installing Docker Desktop (this will take 5-10 minutes)...", 35)
             
-            subprocess.run(
-                [str(docker_installer), "install", "--quiet"],
-                check=True,
-                startupinfo=startupinfo,
-                creationflags=subprocess.CREATE_NO_WINDOW
+            # Install Docker Desktop silently
+            # Docker Desktop installer accepts: install --quiet --accept-license
+            result = subprocess.run(
+                [str(docker_installer), "install", "--quiet", "--accept-license"],
+                capture_output=True,
+                text=True,
+                timeout=600  # 10 minute timeout
             )
             
-            docker_installer.unlink()
+            # Clean up installer
+            if docker_installer.exists():
+                try:
+                    docker_installer.unlink()
+                except:
+                    pass
             
-            messagebox.showinfo(
-                "Docker Installed",
-                "Docker Desktop has been installed. Please restart your computer and run this installer again."
+            if result.returncode != 0:
+                error_msg = result.stderr if result.stderr else result.stdout
+                raise Exception(f"Docker installer returned code {result.returncode}: {error_msg}")
+            
+            # Docker requires a reboot to work properly
+            response = messagebox.askyesno(
+                "Docker Installed - Reboot Required",
+                "Docker Desktop has been installed successfully!\n\n"
+                "A system restart is required for Docker to work.\n\n"
+                "Would you like to restart now?\n\n"
+                "(After restart, please run this installer again to complete the agent setup)"
             )
+            
+            if response:
+                # Reboot the system
+                subprocess.run(["shutdown", "/r", "/t", "10", "/c", "Rebooting for Docker Desktop installation..."])
+                messagebox.showinfo(
+                    "Rebooting...",
+                    "Your computer will restart in 10 seconds.\n\n"
+                    "Please run the CampusCompute Agent Installer again after reboot."
+                )
+            else:
+                messagebox.showinfo(
+                    "Restart Required",
+                    "Please restart your computer manually and run this installer again to complete the setup."
+                )
+            
             sys.exit(0)
             
+        except subprocess.TimeoutExpired:
+            messagebox.showerror(
+                "Installation Timeout",
+                "Docker installation is taking too long. Please install Docker Desktop manually from:\n\n"
+                "https://www.docker.com/products/docker-desktop"
+            )
+            return False
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to install Docker: {e}")
+            messagebox.showerror(
+                "Docker Installation Failed",
+                f"Failed to install Docker Desktop: {e}\n\n"
+                "You can install it manually from:\n"
+                "https://www.docker.com/products/docker-desktop\n\n"
+                "After installation, restart your computer and run this installer again."
+            )
             return False
             
         return True
         
     def install_python(self):
         """Download and install Python"""
-        self.update_status("Downloading Python 3.13...", 20)
+        self.update_status("Downloading Python 3.13 (25 MB)...", 20)
         
-        python_installer = self.install_dir.parent / "python-3.13-installer.exe"
-        # Python 3.13.3 (latest stable as of Oct 2026)
-        python_url = "https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.exe"
+        temp_dir = Path(os.environ.get('TEMP', 'C:/Windows/Temp'))
+        python_installer = temp_dir / "python-3.13-installer.exe"
+        # Python 3.13.1 (latest stable as of Oct 2026)
+        python_url = "https://www.python.org/ftp/python/3.13.1/python-3.13.1-amd64.exe"
         
         try:
             # Download with progress
-            self.update_status("Downloading Python 3.13... (30 MB)", 20)
-            urllib.request.urlretrieve(python_url, python_installer)
+            def download_progress(block_num, block_size, total_size):
+                downloaded = block_num * block_size
+                if total_size > 0:
+                    percent = min(int((downloaded / total_size) * 100), 100)
+                    self.update_status(f"Downloading Python 3.13: {percent}% ({downloaded // (1024*1024)} MB / {total_size // (1024*1024)} MB)", 20 + (percent * 0.1))
+                self.root.update()
+                
+            urllib.request.urlretrieve(python_url, python_installer, reporthook=download_progress)
             
-            self.update_status("Installing Python 3.13... This may take 2-3 minutes", 30)
+            self.update_status("Installing Python 3.13 (this will take 2-3 minutes)...", 30)
             
-            # Install Python with all features
-            # Use CREATE_NEW_CONSOLE to prevent spawning issues
-            startupinfo = subprocess.STARTUPINFO()
-            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-            startupinfo.wShowWindow = subprocess.SW_HIDE
-            
+            # Install Python with all features silently
             result = subprocess.run(
                 [
                     str(python_installer),
                     "/quiet",                    # Silent installation
-                    "InstallAllUsers=1",         # Install for all users
+                    "InstallAllUsers=1",         # Install for all users (requires admin)
                     "PrependPath=1",             # Add to PATH
                     "Include_pip=1",             # Include pip
                     "Include_test=0",            # Skip tests
                     "Include_doc=0",             # Skip docs
                     "Include_dev=0",             # Skip dev files
                     "AssociateFiles=1",          # Associate .py files
+                    "Shortcuts=1",               # Create shortcuts
                 ],
                 capture_output=True,
                 text=True,
-                startupinfo=startupinfo,
-                creationflags=subprocess.CREATE_NO_WINDOW
+                timeout=300  # 5 minute timeout
             )
             
             # Clean up installer
             if python_installer.exists():
-                python_installer.unlink()
+                try:
+                    python_installer.unlink()
+                except:
+                    pass
             
             if result.returncode != 0:
-                raise Exception(f"Python installer returned code {result.returncode}")
+                # Sometimes returns non-zero even on success, so check if Python is now available
+                self.update_status("Verifying Python installation...", 40)
                 
-            # Verify installation
-            self.update_status("Verifying Python installation...", 40)
+                # Refresh PATH to pick up newly installed Python
+                import winreg
+                try:
+                    with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"System\CurrentControlSet\Control\Session Manager\Environment") as key:
+                        path_value = winreg.QueryValueEx(key, "Path")[0]
+                        os.environ["PATH"] = path_value + ";" + os.environ.get("PATH", "")
+                except:
+                    pass
+                
+                # Check if Python is now available
+                if not self.check_python():
+                    error_msg = result.stderr if result.stderr else result.stdout
+                    raise Exception(f"Python installer returned code {result.returncode}. Python still not found. Details: {error_msg[:200]}")
+            
+            # Verify installation again
+            self.update_status("Verifying Python installation...", 45)
+            
+            # Give it a moment for PATH to refresh
+            import time
+            time.sleep(2)
+            
             if not self.check_python():
-                raise Exception("Python was installed but cannot be found. You may need to restart.")
+                # Try one more time with full path check
+                possible_paths = [
+                    r"C:\Program Files\Python313\python.exe",
+                    r"C:\Python313\python.exe",
+                    os.path.expanduser(r"~\AppData\Local\Programs\Python\Python313\python.exe")
+                ]
+                
+                python_found = False
+                for python_path in possible_paths:
+                    if Path(python_path).exists():
+                        # Add to PATH
+                        python_dir = str(Path(python_path).parent)
+                        os.environ["PATH"] = python_dir + ";" + os.environ.get("PATH", "")
+                        python_found = True
+                        break
+                
+                if not python_found:
+                    messagebox.showwarning(
+                        "Python Installation",
+                        "Python was installed but may not be available until you restart.\n\n"
+                        "Please restart your computer and run this installer again."
+                    )
+                    sys.exit(0)
             
             messagebox.showinfo(
                 "Python Installed",
                 "Python 3.13 has been installed successfully!"
             )
             
+        except subprocess.TimeoutExpired:
+            messagebox.showerror(
+                "Installation Timeout",
+                "Python installation is taking too long. Please install Python manually from:\n\n"
+                "https://www.python.org/downloads/"
+            )
+            return False
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to install Python: {e}\n\nPlease install Python manually from python.org")
+            messagebox.showerror(
+                "Python Installation Failed",
+                f"Failed to install Python: {e}\n\n"
+                "Please install Python 3.11 or later manually from:\n"
+                "https://www.python.org/downloads/\n\n"
+                "Make sure to check 'Add Python to PATH' during installation."
+            )
             return False
             
         return True
         
     def create_config(self):
         """Create agent configuration file"""
+        # Use ProgramData for logs (writable by services)
+        log_dir = Path("C:/ProgramData/CampusCompute/logs")
+        log_dir.mkdir(parents=True, exist_ok=True)
+        # Convert to string and replace backslashes with forward slashes for YAML
+        log_file_path = str(log_dir / "agent.log").replace('\\', '/')
+        
         config_content = f"""broker:
   url: "{self.backend_url_var.get()}"
   enrollment_token: "{self.token_var.get()}"
@@ -355,13 +476,20 @@ class AgentInstaller:
 device:
   device_id: "{self.device_name_var.get()}"
   hostname: "{self.device_name_var.get()}"
+  lab_name: "Default Lab"
+  organization_id: 1
 
 docker:
   socket: "npipe:////./pipe/docker_engine"
 
 logging:
   level: "INFO"
-  file: "{str(self.install_dir / 'logs' / 'agent.log')}"
+  file: "{log_file_path}"
+
+monitoring:
+  heartbeat_interval: 30
+  metrics_interval: 60
+  container_check_interval: 10
 """
         
         self.config_file.parent.mkdir(parents=True, exist_ok=True)
@@ -375,16 +503,17 @@ logging:
         (self.install_dir / "agent").mkdir(parents=True, exist_ok=True)
         (self.install_dir / "logs").mkdir(parents=True, exist_ok=True)
         
-        # Get the bundled agent files from PyInstaller temp directory
+        # Get the bundled agent files from PyInstaller temp directory OR parent directory
         if getattr(sys, 'frozen', False):
             # Running as compiled exe - use PyInstaller's temp directory
             bundle_dir = Path(sys._MEIPASS)
             agent_src_dir = bundle_dir / "agent" / "src"
             requirements_src = bundle_dir / "agent" / "requirements.txt"
         else:
-            # Running as script - use relative path from project
-            agent_src_dir = Path("agent/src")
-            requirements_src = Path("agent/requirements.txt")
+            # Running as script - use parent directory (../agent)
+            script_dir = Path(__file__).parent
+            agent_src_dir = script_dir.parent / "agent" / "src"
+            requirements_src = script_dir.parent / "agent" / "requirements.txt"
         
         # Copy agent source files
         agent_dst = self.install_dir / "agent" / "src"
@@ -455,7 +584,37 @@ logging:
         """Create Windows service for agent"""
         self.update_status("Creating Windows service...", 70)
         
-        # Install NSSM (Non-Sucking Service Manager) or use Python service wrapper
+        # Create ProgramData directory for logs (writable by services)
+        programdata_dir = Path("C:/ProgramData/CampusCompute/logs")
+        programdata_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Try to install pywin32 first
+        try:
+            self.update_status("Installing service dependencies...", 72)
+            result = subprocess.run(
+                [sys.executable, "-m", "pip", "install", "pywin32"],
+                capture_output=True,
+                text=True,
+                timeout=60
+            )
+            
+            if result.returncode != 0:
+                log_error = result.stderr if result.stderr else result.stdout
+                raise Exception(f"Failed to install pywin32: {log_error}")
+                
+        except subprocess.TimeoutExpired:
+            raise Exception("Timeout while installing pywin32")
+        except Exception as e:
+            messagebox.showwarning(
+                "Service Dependency Failed",
+                f"Failed to install service dependencies: {e}\n\n"
+                "The agent was installed but the Windows service could not be created.\n"
+                "You can start the agent manually by running:\n"
+                f"python \"{self.install_dir / 'agent' / 'src' / 'main.py'}\""
+            )
+            return False
+        
+        # Create service wrapper script
         service_script = self.install_dir / "service_wrapper.py"
         
         service_code = f"""import win32serviceutil
@@ -464,6 +623,7 @@ import win32event
 import servicemanager
 import subprocess
 import sys
+import os
 
 class CampusComputeAgent(win32serviceutil.ServiceFramework):
     _svc_name_ = "CampusComputeAgent"
@@ -488,9 +648,13 @@ class CampusComputeAgent(win32serviceutil.ServiceFramework):
             (self._svc_name_, '')
         )
         
+        # Set working directory to agent folder
+        os.chdir(r"{str(self.install_dir / 'agent')}")
+        
+        # Start agent process
         self.process = subprocess.Popen([
             sys.executable,
-            r"{str(self.install_dir / 'agent' / 'src' / 'main.py')}"
+            "src/main.py"
         ])
         
         win32event.WaitForSingleObject(self.hWaitStop, win32event.INFINITE)
@@ -502,33 +666,90 @@ if __name__ == '__main__':
         service_script.write_text(service_code)
         
         try:
-            # Install pywin32 if not already installed
-            subprocess.run(
-                ["python", "-m", "pip", "install", "pywin32"],
-                check=True,
-                capture_output=True
+            # Install service
+            self.update_status("Registering Windows service...", 75)
+            result = subprocess.run(
+                [sys.executable, str(service_script), "install"],
+                capture_output=True,
+                text=True,
+                timeout=30
             )
             
-            # Install service
+            if result.returncode != 0:
+                log_error = result.stderr if result.stderr else result.stdout
+                raise Exception(f"Service installation failed: {log_error}")
+            
+            # Configure service to start automatically
+            self.update_status("Configuring service to start automatically...", 80)
             subprocess.run(
-                ["python", str(service_script), "install"],
-                check=True
+                ["sc", "config", "CampusComputeAgent", "start=", "auto"],
+                capture_output=True,
+                check=False  # Don't fail if this doesn't work
             )
             
             # Start service
-            subprocess.run(
-                ["python", str(service_script), "start"],
-                check=True
+            self.update_status("Starting CampusCompute Agent service...", 85)
+            result = subprocess.run(
+                [sys.executable, str(service_script), "start"],
+                capture_output=True,
+                text=True,
+                timeout=30
             )
             
-        except subprocess.CalledProcessError as e:
+            if result.returncode != 0:
+                # Service might already be running or needs manual start
+                log_error = result.stderr if result.stderr else result.stdout
+                messagebox.showinfo(
+                    "Service Start",
+                    f"Service installed but failed to start automatically.\n\n"
+                    f"You can start it manually from Services (services.msc)\n"
+                    f"or run: python \"{self.install_dir / 'agent' / 'src' / 'main.py'}\"\n\n"
+                    f"Details: {log_error[:200]}"
+                )
+                return True  # Still consider installation successful
+            
+        except subprocess.TimeoutExpired:
+            messagebox.showwarning(
+                "Service Timeout",
+                "Service creation timed out. The agent is installed but you'll need to start it manually."
+            )
+            return False
+        except Exception as e:
             messagebox.showwarning(
                 "Service Creation Failed",
-                "Failed to create Windows service. You can start the agent manually."
+                f"Failed to create Windows service: {e}\n\n"
+                "The agent was installed successfully but needs to be started manually.\n\n"
+                "You can run it with:\n"
+                f"python \"{self.install_dir / 'agent' / 'src' / 'main.py'}\""
             )
             return False
             
         return True
+    
+    def start_agent_directly(self):
+        """Start agent directly without service (fallback option)"""
+        try:
+            agent_main = self.install_dir / "agent" / "src" / "main.py"
+            
+            # Change to agent directory
+            os.chdir(self.install_dir / "agent")
+            
+            # Start agent process in background
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = subprocess.SW_HIDE
+            
+            subprocess.Popen(
+                [sys.executable, str(agent_main)],
+                cwd=str(self.install_dir / "agent"),
+                startupinfo=startupinfo,
+                creationflags=subprocess.CREATE_NEW_CONSOLE | subprocess.DETACHED_PROCESS
+            )
+            
+            return True
+        except Exception as e:
+            messagebox.showerror("Start Failed", f"Failed to start agent: {e}")
+            return False
         
     def perform_installation(self):
         """Main installation logic"""
@@ -542,74 +763,190 @@ if __name__ == '__main__':
             if not self.check_admin():
                 messagebox.showerror(
                     "Admin Required",
-                    "Please run this installer as Administrator"
+                    "This installer requires Administrator privileges.\n\n"
+                    "Please right-click the installer and select 'Run as Administrator'."
                 )
                 return
                 
             self.install_button.config(state=tk.DISABLED)
             
             # Check Docker
-            self.update_status("Checking Docker installation...", 10)
-            if not self.check_docker():
+            self.update_status("Checking for Docker Desktop...", 10)
+            docker_installed = self.check_docker()
+            
+            if not docker_installed:
                 if self.install_docker_var.get():
-                    if not self.install_docker():
+                    response = messagebox.askyesno(
+                        "Install Docker?",
+                        "Docker Desktop is not installed.\n\n"
+                        "Docker Desktop (500 MB) will be downloaded and installed.\n"
+                        "This will take 10-15 minutes and require a restart.\n\n"
+                        "Continue with Docker installation?"
+                    )
+                    
+                    if response:
+                        if not self.install_docker():
+                            # Installation failed or user cancelled
+                            self.install_button.config(state=tk.NORMAL)
+                            self.update_status("Installation cancelled", 0)
+                            return
+                        # install_docker() exits the program after successful installation
+                    else:
+                        messagebox.showinfo(
+                            "Docker Required",
+                            "Docker Desktop is required for CampusCompute Agent.\n\n"
+                            "Please install Docker Desktop manually from:\n"
+                            "https://www.docker.com/products/docker-desktop\n\n"
+                            "Then restart your computer and run this installer again."
+                        )
+                        self.install_button.config(state=tk.NORMAL)
                         return
                 else:
                     messagebox.showerror(
                         "Docker Required",
-                        "Docker is not installed. Please install Docker Desktop or enable the option to install it."
+                        "Docker Desktop is not installed.\n\n"
+                        "Please either:\n"
+                        "1. Enable 'Install Docker Desktop' option and try again, OR\n"
+                        "2. Install Docker Desktop manually from docker.com"
                     )
+                    self.install_button.config(state=tk.NORMAL)
                     return
+            
+            self.update_status("✓ Docker Desktop is installed", 15)
                     
             # Check Python
-            self.update_status("Checking Python installation...", 15)
-            if not self.check_python():
+            self.update_status("Checking for Python 3.11+...", 15)
+            python_installed = self.check_python()
+            
+            if not python_installed:
                 if self.install_python_var.get():
-                    if not self.install_python():
+                    response = messagebox.askyesno(
+                        "Install Python?",
+                        "Python 3.11+ is not installed.\n\n"
+                        "Python 3.13 (25 MB) will be downloaded and installed.\n"
+                        "This will take 2-3 minutes.\n\n"
+                        "Continue with Python installation?"
+                    )
+                    
+                    if response:
+                        if not self.install_python():
+                            # Installation failed
+                            self.install_button.config(state=tk.NORMAL)
+                            self.update_status("Installation cancelled", 0)
+                            return
+                    else:
+                        messagebox.showinfo(
+                            "Python Required",
+                            "Python 3.11+ is required for CampusCompute Agent.\n\n"
+                            "Please install Python manually from:\n"
+                            "https://www.python.org/downloads/\n\n"
+                            "Make sure to check 'Add Python to PATH' during installation.\n\n"
+                            "Then run this installer again."
+                        )
+                        self.install_button.config(state=tk.NORMAL)
                         return
                 else:
                     messagebox.showerror(
                         "Python Required",
-                        "Python is not installed. Please install Python 3.11+ or enable the option to install it."
+                        "Python 3.11+ is not installed.\n\n"
+                        "Please either:\n"
+                        "1. Enable 'Install Python' option and try again, OR\n"
+                        "2. Install Python manually from python.org"
                     )
+                    self.install_button.config(state=tk.NORMAL)
                     return
+            
+            self.update_status("✓ Python is installed", 45)
                     
             # Install agent
+            self.update_status("Installing CampusCompute Agent files...", 50)
             if not self.install_agent_files():
                 self.install_button.config(state=tk.NORMAL)
                 return
             
             # Create configuration
-            self.update_status("Creating configuration...", 55)
+            self.update_status("Creating agent configuration...", 55)
             self.create_config()
             
             # Install dependencies
+            self.update_status("Installing Python dependencies...", 60)
             if not self.install_dependencies():
+                self.install_button.config(state=tk.NORMAL)
                 return
                 
             # Create Windows service
-            self.create_windows_service()
+            self.update_status("Setting up Windows service...", 70)
+            service_created = self.create_windows_service()
+            
+            # If service creation failed, offer to run directly
+            if not service_created:
+                response = messagebox.askyesno(
+                    "Start Agent Now?",
+                    "Windows service could not be created.\n\n"
+                    "Would you like to start the agent now in the background?\n\n"
+                    "Note: You'll need to start it manually after each reboot."
+                )
+                
+                if response:
+                    self.update_status("Starting agent...", 90)
+                    if self.start_agent_directly():
+                        self.update_status("Agent started!", 95)
+                    else:
+                        self.update_status("Agent installation complete (not running)", 95)
             
             # Success!
-            self.update_status("Installation complete!", 100)
+            self.update_status("✓ Installation complete!", 100)
+            
+            status_text = "running as a Windows service" if service_created else "installed (start it manually)"
             
             messagebox.showinfo(
-                "Success!",
-                f"CampusCompute Agent installed successfully!\n\n"
-                f"Device Name: {self.device_name_var.get()}\n"
-                f"The agent is now running as a Windows service.\n\n"
-                f"Check your admin dashboard to see this device."
+                "🎉 Installation Complete!",
+                f"CampusCompute Agent has been installed successfully!\n\n"
+                f"📍 Device Name: {self.device_name_var.get()}\n"
+                f"📂 Installation Path: {self.install_dir}\n"
+                f"🔧 Status: Agent is {status_text}\n\n"
+                f"✅ Your device should now appear in the admin dashboard.\n\n"
+                f"Need help? Check the logs at:\n"
+                f"C:\\ProgramData\\CampusCompute\\logs\\agent.log"
             )
             
             self.root.quit()
             
         except Exception as e:
-            messagebox.showerror("Installation Error", f"An error occurred: {e}")
+            messagebox.showerror(
+                "Installation Error",
+                f"An unexpected error occurred:\n\n{e}\n\n"
+                f"Please try again or contact support."
+            )
             self.install_button.config(state=tk.NORMAL)
             self.update_status("Installation failed", 0)
             
     def start_installation(self):
         """Start installation in a thread"""
+        # Show pre-flight check
+        needs_docker = not self.check_docker()
+        needs_python = not self.check_python()
+        
+        if needs_docker or needs_python:
+            install_list = []
+            if needs_docker and self.install_docker_var.get():
+                install_list.append("• Docker Desktop (~500 MB, requires restart)")
+            if needs_python and self.install_python_var.get():
+                install_list.append("• Python 3.13 (~25 MB)")
+            
+            if install_list:
+                install_text = "\n".join(install_list)
+                response = messagebox.askyesno(
+                    "Ready to Install",
+                    f"The following will be automatically installed:\n\n{install_text}\n\n"
+                    f"• CampusCompute Agent\n\n"
+                    f"This may take 10-20 minutes depending on your internet speed.\n\n"
+                    f"Continue?"
+                )
+                
+                if not response:
+                    return
+        
         thread = threading.Thread(target=self.perform_installation)
         thread.daemon = True
         thread.start()

@@ -35,6 +35,7 @@ public class ContainerService {
      * Create a container request with integrated quota checking and scheduling
      * This creates a PENDING container, checks quota, schedules it, and assigns to device
      */
+    @Transactional
     public Container createContainerRequest(Long userId, String image, 
                                            Integer cpuCores, Long ramBytes, Long diskBytes,
                                            Long lifetimeMs) {
@@ -283,20 +284,77 @@ public class ContainerService {
             }
         }
         
-        container.setStatus(Container.ContainerStatus.STOPPED);
+        container.setStatus(Container.ContainerStatus.STOPPING);
         container.setStoppedAt(LocalDateTime.now());
         
-        // Release resources
-        if (container.getDevice() != null) {
-            deviceService.releaseResources(
-                container.getDevice().getId(),
-                container.getAllocatedCpuCores(),
-                container.getAllocatedRamBytes(),
-                container.getAllocatedDiskBytes()
-            );
+        // Don't release resources yet - wait for agent confirmation
+        // Resources will be released when CONTAINER_STOPPED message arrives
+        
+        containerRepository.save(container);
+        
+        // Fetch with eager loading to avoid lazy initialization exception
+        return containerRepository.findByIdWithRelationships(containerId)
+            .orElseThrow(() -> new IllegalArgumentException("Container not found after stop: " + containerId));
+    }
+
+    /**
+     * Restart a stopped container
+     */
+    public Container restartContainer(Long containerId) {
+        log.info("Restarting container ID: {}", containerId);
+        
+        Container container = containerRepository.findById(containerId)
+            .orElseThrow(() -> new IllegalArgumentException("Container not found: " + containerId));
+        
+        if (container.getStatus() != Container.ContainerStatus.STOPPED) {
+            throw new IllegalStateException("Container must be stopped to restart. Current status: " + container.getStatus());
         }
         
-        return containerRepository.save(container);
+        if (container.getDevice() == null) {
+            throw new IllegalStateException("Container has no assigned device");
+        }
+        
+        // Send RESTART_CONTAINER message to agent
+        log.info("Sending RESTART_CONTAINER message to device {} for container {}", 
+            container.getDevice().getId(), containerId);
+        
+        com.campuscompute.dto.AgentMessage message = 
+            com.campuscompute.dto.AgentMessage.restartContainer(
+                container.getDevice().getId(),
+                container.getId().toString(),
+                container.getContainerId()
+            );
+        
+        webSocketSessionManager.getSession(container.getDevice().getId()).ifPresentOrElse(
+            session -> {
+                try {
+                    agentWebSocketHandler.sendMessage(session, message);
+                    log.info("RESTART_CONTAINER message sent successfully");
+                } catch (Exception e) {
+                    log.error("Failed to send RESTART_CONTAINER to agent: {}", e.getMessage());
+                }
+            },
+            () -> log.error("No WebSocket session found for device {}", container.getDevice().getId())
+        );
+        
+        // Reserve resources again
+        deviceService.allocateResources(
+            container.getDevice().getId(),
+            container.getAllocatedCpuCores(),
+            container.getAllocatedRamBytes(),
+            container.getAllocatedDiskBytes()
+        );
+        
+        // Update status to RESTARTING (will be confirmed by agent)
+        container.setStatus(Container.ContainerStatus.RESTARTING);
+        container.setStartedAt(LocalDateTime.now());
+        container.setStoppedAt(null);
+        
+        containerRepository.save(container);
+        
+        // Fetch with eager loading to avoid lazy initialization exception
+        return containerRepository.findByIdWithRelationships(containerId)
+            .orElseThrow(() -> new IllegalArgumentException("Container not found after restart: " + containerId));
     }
 
     /**
@@ -308,8 +366,17 @@ public class ContainerService {
         Container container = containerRepository.findById(containerId)
             .orElseThrow(() -> new IllegalArgumentException("Container not found: " + containerId));
         
+        // If already DELETED, just remove from database
+        if (container.getStatus() == Container.ContainerStatus.DELETED) {
+            log.info("Container {} already DELETED, removing from database", containerId);
+            containerRepository.delete(container);
+            return;
+        }
+        
         // Send DELETE_CONTAINER message to agent if container is running or stopped
-        if (container.getDevice() != null && container.getContainerId() != null) {
+        if (container.getDevice() != null && container.getContainerId() != null &&
+            (container.getStatus() == Container.ContainerStatus.RUNNING || 
+             container.getStatus() == Container.ContainerStatus.STOPPED)) {
             try {
                 sendDeleteContainerToAgent(container);
             } catch (Exception e) {
@@ -318,9 +385,8 @@ public class ContainerService {
             }
         }
         
-        // Stop if running
+        // Release resources if running
         if (container.getStatus() == Container.ContainerStatus.RUNNING) {
-            // Release resources without sending stop message (already sent delete)
             if (container.getDevice() != null) {
                 deviceService.releaseResources(
                     container.getDevice().getId(),
@@ -331,8 +397,10 @@ public class ContainerService {
             }
         }
         
+        // Mark as DELETED (or remove from database if you prefer)
         container.setStatus(Container.ContainerStatus.DELETED);
         containerRepository.save(container);
+        log.info("Container {} marked as DELETED", containerId);
     }
 
     /**
@@ -353,7 +421,7 @@ public class ContainerService {
      * Get all containers for a user
      */
     public List<Container> getContainersByUser(Long userId) {
-        return containerRepository.findByUserId(userId);
+        return containerRepository.findByUserIdWithDevice(userId);
     }
 
     /**

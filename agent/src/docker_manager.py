@@ -141,6 +141,22 @@ class DockerManager:
             logger.error(f"Failed to delete container: {e}")
             return False
     
+    def restart_container(self, container_id: str, timeout: int = 10) -> bool:
+        """Restart a container"""
+        try:
+            container = self.client.containers.get(container_id)
+            container.restart(timeout=timeout)
+            logger.info(f"Container restarted: {container_id[:12]}")
+            return True
+            
+        except NotFound:
+            logger.warning(f"Container not found: {container_id}")
+            return False
+            
+        except Exception as e:
+            logger.error(f"Failed to restart container: {e}")
+            return False
+    
     def get_container_status(self, container_id: str) -> Optional[str]:
         """Get container status"""
         try:

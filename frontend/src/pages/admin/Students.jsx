@@ -30,6 +30,8 @@ function Students() {
   const [uploadDialog, setUploadDialog] = useState(false);
   const [csvData, setCsvData] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [passwordDialog, setPasswordDialog] = useState(false);
+  const [createdStudentsWithPasswords, setCreatedStudentsWithPasswords] = useState([]);
 
   useEffect(() => {
     fetchStudents();
@@ -52,6 +54,7 @@ function Students() {
 
   const handleUploadStudents = async () => {
     setUploading(true);
+    setError('');
     try {
       const students = csvData.split('\n').map(line => {
         const [studentId, email, fullName] = line.split(',').map(s => s.trim());
@@ -59,9 +62,17 @@ function Students() {
       }).filter(s => s.studentId && s.email);
 
       const response = await organizationService.uploadStudents({ students });
+      
       if (response.success) {
         setUploadDialog(false);
         setCsvData('');
+        
+        // Show passwords dialog
+        const studentsData = response.data?.students || [];
+        setCreatedStudentsWithPasswords(studentsData);
+        setPasswordDialog(true);
+        
+        // Refresh students list
         fetchStudents();
       } else {
         setError(response.message || 'Failed to upload students');
@@ -71,6 +82,29 @@ function Students() {
     } finally {
       setUploading(false);
     }
+  };
+
+  const downloadPasswordsCSV = () => {
+    const csvContent = [
+      'Student ID,Username,Email,Full Name,Temporary Password',
+      ...createdStudentsWithPasswords.map(s => 
+        `${s.studentId},${s.username},${s.email},${s.fullName},${s.temporaryPassword}`
+      )
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `student-passwords-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
   };
 
   if (loading) {
@@ -183,6 +217,125 @@ function Students() {
             disabled={uploading || !csvData.trim()}
           >
             {uploading ? <CircularProgress size={24} /> : 'Upload'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Password Display Dialog */}
+      <Dialog 
+        open={passwordDialog} 
+        onClose={() => setPasswordDialog(false)} 
+        maxWidth="md" 
+        fullWidth
+        disableEscapeKeyDown
+      >
+        <DialogTitle>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="h6" component="span">
+              Students Created Successfully!
+            </Typography>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Alert severity="warning" sx={{ mb: 3 }}>
+            <Typography variant="subtitle2" gutterBottom>
+              ⚠️ Save These Passwords Now!
+            </Typography>
+            <Typography variant="body2">
+              These temporary passwords will only be shown once. Please save them and distribute to students.
+              Students will use their Student ID as username.
+            </Typography>
+          </Alert>
+
+          {createdStudentsWithPasswords.length > 0 ? (
+            <TableContainer component={Paper} variant="outlined">
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ bgcolor: 'grey.50' }}>
+                    <TableCell><strong>Student ID</strong></TableCell>
+                    <TableCell><strong>Email</strong></TableCell>
+                    <TableCell><strong>Full Name</strong></TableCell>
+                    <TableCell><strong>Temporary Password</strong></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {createdStudentsWithPasswords.map((student) => (
+                    <TableRow key={student.studentId} hover>
+                      <TableCell>
+                        <Typography variant="body2" fontFamily="monospace">
+                          {student.studentId}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2">
+                          {student.email}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2">
+                          {student.fullName}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <code style={{
+                            background: '#f5f5f5',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            fontWeight: 'bold',
+                            color: '#d32f2f'
+                          }}>
+                            {student.temporaryPassword}
+                          </code>
+                          <Button
+                            size="small"
+                            onClick={() => copyToClipboard(student.temporaryPassword)}
+                            sx={{ minWidth: 'auto', p: 0.5 }}
+                          >
+                            📋
+                          </Button>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              <Typography variant="body2">
+                No password data was returned from the server. This may indicate a backend issue.
+                Please try again or contact support.
+              </Typography>
+            </Alert>
+          )}
+
+          <Box sx={{ mt: 3, p: 2, bgcolor: 'info.lighter', borderRadius: 1, border: '1px solid', borderColor: 'info.light' }}>
+            <Typography variant="subtitle2" color="info.dark" gutterBottom>
+              📝 How Students Login:
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              • <strong>Username:</strong> Their Student ID (e.g., 500101234)
+              <br />
+              • <strong>Password:</strong> The temporary password shown above
+              <br />
+              • Students should be asked to change their password on first login
+            </Typography>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button 
+            onClick={downloadPasswordsCSV}
+            variant="outlined"
+            startIcon={<Upload />}
+          >
+            Download CSV
+          </Button>
+          <Button 
+            onClick={() => setPasswordDialog(false)} 
+            variant="contained"
+          >
+            I've Saved the Passwords
           </Button>
         </DialogActions>
       </Dialog>

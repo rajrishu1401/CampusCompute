@@ -16,20 +16,20 @@ logger = logging.getLogger(__name__)
 class BrokerWebSocketClient:
     """WebSocket client for broker communication"""
     
-    def __init__(self, broker_url: str, device_id: int, message_handler: Callable, 
+    def __init__(self, broker_url: str, device_id, message_handler: Callable, 
                  enrollment_token: Optional[str] = None, organization_id: Optional[int] = None):
         """
         Initialize WebSocket client
         
         Args:
             broker_url: WebSocket URL (e.g., ws://localhost:8081/ws/agent)
-            device_id: Device ID for this agent
+            device_id: Device ID for this agent (can be string or int)
             message_handler: Async function to handle incoming messages
             enrollment_token: Optional enrollment token for first-time registration
             organization_id: Optional organization ID
         """
         self.broker_url = broker_url
-        self.device_id = device_id
+        self.device_id = device_id  # Can be string initially, will become int after enrollment
         self.message_handler = message_handler
         self.enrollment_token = enrollment_token
         self.organization_id = organization_id
@@ -127,7 +127,7 @@ class BrokerWebSocketClient:
             message = {
                 'type': message_type,
                 'deviceId': self.device_id,
-                'timestamp': datetime.utcnow().isoformat(),
+                'timestamp': None,  # Let backend set timestamp
                 'payload': payload or {},
             }
             
@@ -188,6 +188,13 @@ class BrokerWebSocketClient:
         
         logger.info(f"Received {message_type} message from broker")
         logger.debug(f"Message data: {data}")
+        
+        # Handle ACK message - may contain device ID after enrollment
+        if message_type == 'ACK' and payload and 'deviceId' in payload:
+            numeric_device_id = payload.get('deviceId')
+            if numeric_device_id and isinstance(numeric_device_id, int):
+                logger.info(f"Received numeric device ID from broker: {numeric_device_id}")
+                self.device_id = numeric_device_id
         
         # Route to message handler
         try:

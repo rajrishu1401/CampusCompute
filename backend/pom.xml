@@ -92,6 +92,13 @@
             <optional>true</optional>
         </dependency>
         
+        <!-- Jackson Hibernate Module -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-hibernate6</artifactId>
+            <version>2.15.3</version>
+        </dependency>
+        
         <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

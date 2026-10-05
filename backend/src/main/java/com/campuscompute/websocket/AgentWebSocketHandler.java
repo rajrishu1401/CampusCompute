@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -17,6 +18,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Handles WebSocket connections from agents
@@ -51,6 +53,7 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
     }
     
     @Override
+    @Transactional
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.info("New WebSocket connection established: {}", session.getId());
         
@@ -116,8 +119,9 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
             deviceId, device.getHostname(), 
             device.getOrganization() != null ? device.getOrganization().getCode() : "NONE");
         
-        // Send ACK with device info
+        // Send ACK with device info (including numeric device ID)
         AgentMessage ack = AgentMessage.ack(null);
+        ack.setPayload(Map.of("deviceId", deviceId));
         sendMessage(session, ack);
     }
     
@@ -177,6 +181,7 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
             case CONTAINER_FAILED -> handleContainerFailed(message);
             case CONTAINER_STOPPED -> handleContainerStopped(message);
             case CONTAINER_DELETED -> handleContainerDeleted(message);
+            case CONTAINER_RESTARTED -> handleContainerRestarted(message);
             case METRICS_UPDATE -> handleMetricsUpdate(deviceId, message.getPayload());
             case TERMINAL_OUTPUT -> handleTerminalOutput(message);
             case PONG -> log.debug("Received PONG from device {}", deviceId);
@@ -336,6 +341,37 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
     }
     
     /**
+     * Handle container restarted notification
+     */
+    private void handleContainerRestarted(AgentMessage message) {
+        String requestId = message.getRequestId();
+        Map<String, Object> payload = message.getPayload();
+        
+        log.info("Container restarted - requestId: {}, payload: {}", requestId, payload);
+        
+        try {
+            Long containerId = Long.parseLong(requestId);
+            
+            // Agent confirms container is restarted and running
+            if (containerService != null) {
+                containerService.getContainerById(containerId).ifPresent(container -> {
+                    if (container.getStatus() != Container.ContainerStatus.RUNNING) {
+                        container.setStatus(Container.ContainerStatus.RUNNING);
+                        container.setStartedAt(java.time.LocalDateTime.now());
+                        container.setStoppedAt(null);
+                        
+                        // Save directly to repository
+                        containerRepository.save(container);
+                        log.info("Container {} marked as RUNNING after restart", containerId);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            log.error("Error handling container restarted: {}", e.getMessage(), e);
+        }
+    }
+    
+    /**
      * Handle metrics update
      */
     private void handleMetricsUpdate(Long deviceId, Map<String, Object> metrics) {
@@ -383,22 +419,32 @@ public class AgentWebSocketHandler extends TextWebSocketHandler {
     }
     
     /**
-     * Extract device ID from query string
+     * Extract device ID from query string (supports both numeric and string device IDs)
      */
     private Long extractDeviceId(String query) {
         if (query == null || query.isEmpty()) {
             return null;
         }
         
-        // Parse deviceId=123
+        // Parse deviceId=123 or deviceId=LAPTOP-ABC
         String[] params = query.split("&");
         for (String param : params) {
             String[] keyValue = param.split("=");
             if (keyValue.length == 2 && "deviceId".equals(keyValue[0])) {
                 try {
+                    // Try parsing as Long first
                     return Long.parseLong(keyValue[1]);
                 } catch (NumberFormatException e) {
-                    log.error("Invalid deviceId format: {}", keyValue[1]);
+                    // If it's not a number, it's a string device ID - look it up in database
+                    log.info("String device ID provided: {}, looking up in database", keyValue[1]);
+                    Optional<Device> device = deviceService.getDeviceByDeviceId(keyValue[1]);
+                    if (device.isPresent()) {
+                        log.info("Found device with ID: {}", device.get().getId());
+                        return device.get().getId();
+                    } else {
+                        log.warn("Device with deviceId {} not found in database", keyValue[1]);
+                        return null;
+                    }
                 }
             }
         }

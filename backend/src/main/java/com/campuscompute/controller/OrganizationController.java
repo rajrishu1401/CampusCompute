@@ -155,12 +155,12 @@ public class OrganizationController {
                     .body(ApiResponse.error("No organization associated with user"));
             }
 
-            List<User> createdStudents = organizationService.bulkRegisterStudents(orgId, uploadRequest);
+            List<Map<String, Object>> createdStudents = organizationService.bulkRegisterStudents(orgId, uploadRequest);
 
             Map<String, Object> result = Map.of(
                 "totalRequested", uploadRequest.getStudents().size(),
                 "totalCreated", createdStudents.size(),
-                "students", createdStudents
+                "students", createdStudents  // Now includes passwords
             );
 
             return ResponseEntity.ok(

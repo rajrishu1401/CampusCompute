@@ -30,6 +30,7 @@ public class AgentMessage {
         CONTAINER_FAILED,       // Container creation failed
         CONTAINER_STOPPED,      // Container stopped
         CONTAINER_DELETED,      // Container deleted
+        CONTAINER_RESTARTED,    // Container successfully restarted
         METRICS_UPDATE,         // Resource usage metrics
         TERMINAL_OUTPUT,        // Terminal output from container
         
@@ -104,6 +105,20 @@ public class AgentMessage {
             deviceId,
             LocalDateTime.now(),
             Map.of("container_id", containerId),  // Use snake_case for Python agent
+            null
+        );
+    }
+
+    /**
+     * Create container restart request
+     */
+    public static AgentMessage restartContainer(Long deviceId, String requestId, String containerId) {
+        return new AgentMessage(
+            MessageType.RESTART_CONTAINER,
+            requestId,
+            deviceId,
+            LocalDateTime.now(),
+            Map.of("container_id", containerId),
             null
         );
     }

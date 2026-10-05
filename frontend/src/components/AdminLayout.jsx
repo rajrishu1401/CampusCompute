@@ -176,10 +176,14 @@ function AdminLayout({ children }) {
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           minHeight: '100vh',
           bgcolor: 'grey.50',
+          overflow: 'auto',
+          maxWidth: '100%',
         }}
       >
         <Toolbar />
-        {children}
+        <Box sx={{ maxWidth: '100%', overflow: 'hidden' }}>
+          {children}
+        </Box>
       </Box>
     </Box>
   );
