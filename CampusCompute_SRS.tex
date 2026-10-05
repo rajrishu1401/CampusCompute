@@ -6,6 +6,11 @@
 \usepackage{times}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\hypersetup{
+    colorlinks=false,
+    linkbordercolor=white,
+    pdfborder={0 0 0}
+}
 \usepackage{setspace}
 \usepackage{longtable}
 \usepackage{array}
@@ -19,19 +24,28 @@
 
 % Justify alignment
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt}
+\setlength{\parskip}{3pt}
+
+% Reduce excessive whitespace
+\raggedbottom
+\setlength{\topskip}{0pt}
+\setlength{\floatsep}{10pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}
 
 % Caption font
 \captionsetup{font=footnotesize}
 
 % Section formatting
 \titleformat{\section}
-  {\normalfont\fontsize{14}{16}\bfseries\uppercase}{\thesection}{1em}{}
-
+  {\normalfont\fontsize{14}{16}\selectfont\bfseries\uppercase}{\thesection}{1em}{}
+  
 \titleformat{\subsection}
-  {\normalfont\fontsize{12}{14}\bfseries\underline}{\thesubsection}{1em}{}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries}{\thesubsection}{1em}{\underline}
 
 \begin{document}
+
+% IMPORTANT: Ensure upes_logo.png is in project root (or comment out line 38 if unavailable)
 
 % Title Page
 \begin{titlepage}
@@ -60,13 +74,13 @@
     \hline
     \textbf{S.No} & \textbf{Specialization} & \textbf{SAP ID} & \textbf{Name} \\
     \hline
-    1 & FullStack AI B-1 & R214223102O & Kuldeep Chaudhary \\
+    1 & FullStack AI B-1 & 500120595 & Kuldeep Chaudhary \\
     \hline
-    2 & CCVT B-1 & R2142230992 & Rishu Raj \\
+    2 & CCVT B-1 & 500119484 & Rishu Raj \\
     \hline
-    3 & CCVT B-2 & R2142231932 & Daksh Mehrotra \\
+    3 & CCVT B-2 & 500125960 & Daksh Mehrotra \\
     \hline
-    4 & CCVT B-5 & R2142231009 & Krishna Bisht \\
+    4 & CCVT B-5 & 500122440 & Krishna Bisht \\
     \hline
     \end{tabular}
     \end{table}
@@ -101,11 +115,13 @@
 \hline
 \textbf{Date} & \textbf{Change} & \textbf{Reason for Changes} & \textbf{Mentor Signature} \\
 \hline
-October 2026 & Initial SRS Document & Project initiation & \\
+August 15, 2026 & Initial draft & Project scope definition and requirement gathering & \\
 \hline
-& & & \\
+September 5, 2026 & Added system architecture & Technical design and component specification & \\
 \hline
-& & & \\
+September 18, 2026 & Updated diagrams & Added all UML diagrams per template requirements & \\
+\hline
+September 28, 2026 & Document finalization & Final version after mentor feedback and corrections & \\
 \hline
 \end{tabular}
 \end{table}
@@ -117,83 +133,36 @@ October 2026 & Initial SRS Document & Project initiation & \\
 
 \subsection{Purpose of the Project}
 
-The purpose of CampusCompute is to address the critical issue of underutilized computing resources in educational institutions while simultaneously providing students with free access to high-performance computing infrastructure. Most college computer labs, despite significant capital investment (₹1-5 Crore), remain idle 60-70\% of the time due to limited operating hours, weekends, holidays, and summer breaks. Meanwhile, students face barriers accessing resource-intensive projects due to lack of personal high-end hardware and the prohibitive cost of commercial cloud services (₹2000-5000/month per student).
+CampusCompute addresses underutilized computing resources in educational institutions (60-70\% idle time) while providing students free access to high-performance infrastructure. Most college labs remain idle during non-operating hours, weekends, and holidays despite significant capital investment (Rs. 1-5 Crore). Meanwhile, students face prohibitive cloud service costs (Rs. 2000-5000/month).
 
-CampusCompute transforms these idle lab computers into a private cloud infrastructure, enabling students to create on-demand isolated containerized environments accessible 24/7 from anywhere. This approach maximizes return on investment (ROI) for institutions, democratizes access to computing resources, and eliminates dependency on expensive commercial cloud platforms.
-
-The project scope is justified by real-world data: At UPES, 250 lab computers (₹1.25 Crore investment) with 1500 CPU cores and 4TB RAM collectively operate at only 20\% average utilization, representing massive wasted capacity. CampusCompute can increase utilization to 60-70\%, effectively multiplying institutional computing capacity without additional hardware investment.
+CampusCompute transforms idle lab computers into a private cloud, enabling on-demand isolated containerized environments accessible 24/7 from anywhere. At UPES, 250 lab computers (Rs. 1.25 Crore) with 1500 CPU cores operate at only 20\% utilization. CampusCompute increases this to 60-70\%, multiplying institutional computing capacity without additional hardware.
 
 \subsection{Target Beneficiary}
 
-The primary beneficiaries of CampusCompute are:
+\textbf{Students:} CS/Data Science/AI-ML students needing high-performance computing for projects; economically disadvantaged students unable to afford expensive hardware or cloud subscriptions; remote learners requiring lab access outside campus hours.
 
-\textbf{Students:}
-\begin{itemize}[noitemsep]
-    \item Computer Science, Data Science, AI/ML students requiring high-performance computing for projects, assignments, and research
-    \item Students from economically disadvantaged backgrounds who cannot afford expensive laptops or cloud subscriptions
-    \item Remote learners needing access to lab resources outside campus hours
-    \item Students working on resource-intensive tasks: machine learning model training, data analysis, video rendering, software compilation
-\end{itemize}
+\textbf{Educational Institutions:} IT departments maximizing ROI on lab infrastructure; lab administrators managing 100-500 computers; academic departments with cloud budget constraints.
 
-\textbf{Educational Institutions:}
-\begin{itemize}[noitemsep]
-    \item University IT departments seeking to maximize ROI on lab infrastructure
-    \item Lab administrators managing 100-500 computers across multiple locations
-    \item Academic departments with budget constraints for cloud services
-    \item Institutions seeking competitive advantage by offering superior computing access
-\end{itemize}
-
-\textbf{Faculty:}
-\begin{itemize}[noitemsep]
-    \item Course instructors who can assign computationally intensive projects
-    \item Researchers needing distributed computing resources
-    \item Lab coordinators monitoring resource usage and student activity
-\end{itemize}
+\textbf{Faculty:} Course instructors assigning computationally intensive projects; researchers needing distributed computing; lab coordinators monitoring resource usage.
 
 \subsection{Project Scope}
 
-\textbf{Area of Application:}
+CampusCompute applies to educational institutions with existing lab infrastructure, enabling resource pooling, on-demand container provisioning, and secure multi-tenant access.
 
-CampusCompute is applicable to educational institutions (universities, colleges, technical institutes) with existing computer lab infrastructure. The system enables resource pooling, on-demand container provisioning, and secure multi-tenant access management.
-
-\textbf{Key Benefits:}
-\begin{itemize}[noitemsep]
-    \item \textbf{Cost Savings:} Eliminate ₹5-10 lakhs annual cloud service costs for 200 students
-    \item \textbf{Resource Utilization:} Increase lab computer usage from 20\% to 60-70\%
-    \item \textbf{Accessibility:} 24/7 remote access to computing resources
-    \item \textbf{Scalability:} Support 500+ devices and 2000+ concurrent containers
-    \item \textbf{Security:} Isolated containerized environments with role-based access control
-\end{itemize}
+\textbf{Benefits:} Eliminate Rs. 5-10 lakhs annual cloud costs; increase utilization from 20\% to 60-70\%; 24/7 remote access; support 500+ devices and 2000+ containers; isolated secure environments.
 
 \textbf{Objectives:}
 \begin{enumerate}[noitemsep]
-    \item Deploy a distributed container orchestration platform across campus lab infrastructure
-    \item Implement intelligent scheduling algorithm for optimal resource allocation
-    \item Provide web-based interface for container management and terminal access
-    \item Establish secure WebSocket-based communication between backend and agent nodes
-    \item Support multi-organization (multi-tenancy) architecture
-    \item Implement quota management and resource limits per user/organization
+    \item Deploy distributed container orchestration across campus labs
+    \item Implement intelligent scheduling for optimal resource allocation
+    \item Provide web interface for container management and terminal access
+    \item Establish secure WebSocket communication between backend and agents
+    \item Support multi-organization architecture with quota management
 \end{enumerate}
 
-\textbf{Goals:}
-\begin{enumerate}[noitemsep]
-    \item Achieve container creation time of 5-10 seconds
-    \item Support minimum 100 concurrent devices with 500+ containers
-    \item Maintain system uptime of 99\%+
-    \item Reduce student cloud service expenses by 90-95\%
-    \item Enable one-click agent deployment via Windows installer
-\end{enumerate}
+\textbf{Goals:} Container creation in 5-10 seconds; support 100+ concurrent devices with 500+ containers; 99\%+ uptime; reduce student cloud expenses by 90-95\%; one-click agent deployment.
 
-\textbf{Deliverables:}
-\begin{enumerate}[noitemsep]
-    \item Backend application (Spring Boot) with REST APIs and WebSocket handlers
-    \item Frontend web portal (React) for students, faculty, and administrators
-    \item Python agent software for lab computers (Windows/Linux compatible)
-    \item Windows installer (.exe) for one-click agent deployment
-    \item PostgreSQL database schema with migration scripts
-    \item Complete documentation: installation guides, API reference, user manuals
-    \item System architecture diagrams and technical documentation
-\end{enumerate}
+\textbf{Deliverables:} Backend (Spring Boot with REST/WebSocket), Frontend (React portal), Python agent, Windows installer, PostgreSQL schema, documentation (installation, API, user manuals), architecture diagrams.
 
 \subsection{References}
 
@@ -207,8 +176,6 @@ CampusCompute is applicable to educational institutions (universities, colleges,
     \item IEEE Standard for Software Requirements Specifications (IEEE 830-1998)
     \item Project Documentation: PROJECT\_DOCUMENTATION.md (Internal)
 \end{enumerate}
-
-\newpage
 
 % 2. PROJECT DESCRIPTION
 \section{PROJECT DESCRIPTION}
@@ -241,15 +208,15 @@ Output: Selected Device ID
       ELSE skip device
    
    c. Calculate device score (0-100):
-      score = (w1 × cpuScore) + (w2 × ramScore) + 
-              (w3 × diskScore) + (w4 × containerScore) + 
-              (w5 × healthScore)
+      score = (w1 * cpuScore) + (w2 * ramScore) + 
+              (w3 * diskScore) + (w4 * containerScore) + 
+              (w5 * healthScore)
    
    Where:
-   - cpuScore = (availableCPU / totalCPU) × 100
-   - ramScore = (availableRAM / totalRAM) × 100
-   - diskScore = (availableDisk / totalDisk) × 100
-   - containerScore = (1 - activeContainers/maxContainers) × 100
+   - cpuScore = (availableCPU / totalCPU) * 100
+   - ramScore = (availableRAM / totalRAM) * 100
+   - diskScore = (availableDisk / totalDisk) * 100
+   - containerScore = (1 - activeContainers/maxContainers) * 100
    - healthScore = deviceHealthStatus (100=healthy, 50=warning, 0=error)
    
    Weights (configurable):
@@ -272,13 +239,13 @@ Request: 2 CPU, 4GB RAM, 50GB disk
 \begin{verbatim}
 Available: 6 CPU, 12GB RAM, 450GB disk
 
-cpuScore = (6/8) × 100 = 75.0
-ramScore = (12/16) × 100 = 75.0
-diskScore = (450/500) × 100 = 90.0
-containerScore = (1 - 3/10) × 100 = 70.0
+cpuScore = (6/8) * 100 = 75.0
+ramScore = (12/16) * 100 = 75.0
+diskScore = (450/500) * 100 = 90.0
+containerScore = (1 - 3/10) * 100 = 70.0
 healthScore = 100 (healthy device)
 
-Final Score = (0.30×75) + (0.30×75) + (0.15×90) + (0.15×70) + (0.10×100)
+Final Score = (0.30*75) + (0.30*75) + (0.15*90) + (0.15*70) + (0.10*100)
             = 22.5 + 22.5 + 13.5 + 10.5 + 10
             = 79.0
 \end{verbatim}
@@ -287,7 +254,7 @@ Final Score = (0.30×75) + (0.30×75) + (0.15×90) + (0.15×70) + (0.10×100)
 
 \begin{enumerate}[noitemsep]
     \item \textbf{Priority Queue/List:} For sorting devices by computed scores
-    \item \textbf{Hash Map:} For storing device metrics (deviceId → metrics)
+    \item \textbf{Hash Map:} For storing device metrics (deviceId to metrics)
     \item \textbf{Database Indices:} B-tree indices on device status, organization\_id for fast queries
     \item \textbf{WebSocket Connection Pool:} HashMap mapping deviceId to WebSocket session
     \item \textbf{Container State Machine:} Finite State Automaton (FSA) managing lifecycle transitions
@@ -404,7 +371,7 @@ Final Score = (0.30×75) + (0.30×75) + (0.15×90) + (0.15×70) + (0.10×100)
     \item \textbf{Container Lifecycle Management}
     \begin{itemize}[noitemsep]
         \item Create containers with custom CPU, RAM, disk allocations
-        \item AWS-style state transitions (PENDING → CREATING → RUNNING → STOPPING → STOPPED → RESTARTING → DELETED)
+        \item AWS-style state transitions (PENDING to CREATING to RUNNING to STOPPING to STOPPED to RESTARTING to DELETED)
         \item Real-time status updates via WebSocket
         \item Automatic container expiration and cleanup
         \item Support for multiple Docker images (Ubuntu, Alpine, Python, Node.js)
@@ -479,120 +446,37 @@ Final Score = (0.30×75) + (0.30×75) + (0.15×90) + (0.15×70) + (0.10×100)
 
 \textbf{User Class 1: Student}
 
-\textit{Characteristics:}
-\begin{itemize}[noitemsep]
-    \item Primary system users (80-90\% of total users)
-    \item Technical proficiency: Basic to intermediate
-    \item Age: 18-25 years
-    \item Access frequency: 3-5 times per week
-    \item Typical session duration: 1-4 hours
-\end{itemize}
+\textit{Characteristics:} Primary users (80-90\%); basic to intermediate proficiency; age 18-25; access 3-5 times/week for 1-4 hours.
 
-\textit{Use Cases:}
-\begin{itemize}[noitemsep]
-    \item Login to student portal
-    \item Create container with specific resource requirements
-    \item Access container via web terminal
-    \item Run code, compile programs, execute scripts
-    \item Stop/restart containers
-    \item View personal container list and resource usage
-\end{itemize}
+\textit{Use Cases:} Login, create containers with specific resources, access web terminal, run code/compile programs, stop/restart containers, view container list.
 
-\textit{System Requirements:}
-\begin{itemize}[noitemsep]
-    \item Web browser (Chrome, Firefox, Edge)
-    \item Internet connectivity
-    \item Basic understanding of Linux command line
-\end{itemize}
+\textit{Requirements:} Web browser, internet, basic Linux knowledge.
 
 \textbf{User Class 2: Faculty}
 
-\textit{Characteristics:}
-\begin{itemize}[noitemsep]
-    \item Course instructors and researchers
-    \item Technical proficiency: Intermediate to advanced
-    \item Age: 30-60 years
-    \item Access frequency: 2-3 times per week
-    \item Monitoring student activity, assigning resources
-\end{itemize}
+\textit{Characteristics:} Instructors and researchers; intermediate to advanced proficiency; access 2-3 times/week.
 
-\textit{Use Cases:}
-\begin{itemize}[noitemsep]
-    \item Login to faculty portal
-    \item View student container usage
-    \item Create containers for demonstrations
-    \item Reserve lab resources for classes
-    \item Monitor lab utilization
-    \item Generate usage reports
-\end{itemize}
-
-\textit{System Requirements:}
-\begin{itemize}[noitemsep]
-    \item Web browser with admin privileges
-    \item Understanding of resource allocation concepts
-\end{itemize}
+\textit{Use Cases:} View student usage, create demo containers, reserve labs, monitor utilization, generate reports.
 
 \textbf{User Class 3: Administrator}
 
-\textit{Characteristics:}
-\begin{itemize}[noitemsep]
-    \item IT staff and system administrators
-    \item Technical proficiency: Advanced
-    \item Age: 25-50 years
-    \item Access frequency: Daily
-    \item System configuration, troubleshooting, maintenance
-\end{itemize}
+\textit{Characteristics:} IT staff; advanced proficiency; daily access for configuration and maintenance.
 
-\textit{Use Cases:}
-\begin{itemize}[noitemsep]
-    \item Manage organizations and labs
-    \item Generate enrollment tokens
-    \item Monitor all devices and containers
-    \item Create/update/delete users
-    \item Configure quotas and policies
-    \item View system-wide analytics
-    \item Troubleshoot device connectivity issues
-    \item Perform bulk operations (user upload, device registration)
-\end{itemize}
+\textit{Use Cases:} Manage organizations/labs, generate enrollment tokens, monitor devices/containers, manage users, configure quotas, view analytics, troubleshoot connectivity, perform bulk operations.
 
-\textit{System Requirements:}
-\begin{itemize}[noitemsep]
-    \item Administrative access to backend server
-    \item Understanding of Docker, networking, databases
-    \item Access to lab computers for agent installation
-\end{itemize}
+\textit{Requirements:} Backend access, Docker/networking/database knowledge, lab computer access.
 
 \textbf{User Class 4: Agent (System User)}
 
-\textit{Characteristics:}
-\begin{itemize}[noitemsep]
-    \item Automated software component (not human user)
-    \item Runs as Windows service or Linux systemd service
-    \item Persistent WebSocket connection to backend
-    \item Responds to container operation commands
-\end{itemize}
+\textit{Characteristics:} Automated software component running as Windows/Linux service with persistent WebSocket connection.
 
-\textit{Operations:}
-\begin{itemize}[noitemsep]
-    \item Establish and maintain WebSocket connection
-    \item Report system metrics every 60 seconds
-    \item Execute container create/stop/restart/delete commands
-    \item Send heartbeat every 30 seconds
-    \item Handle reconnection on network failures
-\end{itemize}
+\textit{Operations:} Maintain WebSocket connection, report metrics (60s), execute container commands, send heartbeat (30s), handle reconnection.
 
 \subsection{Design and Implementation Constraints}
 
-\textbf{Hardware Constraints:}
+\textbf{Hardware:} Lab computers minimum 4 CPU, 8GB RAM, 100GB disk; backend minimum 4 CPU, 8GB RAM (16GB recommended), 100GB SSD; 100 Mbps LAN; Docker compatibility required.
 
-\begin{itemize}[noitemsep]
-    \item \textbf{Lab Computers:} Minimum 4 CPU cores, 8GB RAM, 100GB disk space
-    \item \textbf{Backend Server:} Minimum 4 CPU cores, 8GB RAM (16GB recommended), 100GB SSD
-    \item \textbf{Network:} Minimum 100 Mbps LAN connectivity between backend and agents
-    \item \textbf{Docker Compatibility:} Systems must support Docker Desktop (Windows) or Docker Engine (Linux)
-\end{itemize}
-
-\textbf{Software Constraints:}
+\textbf{Software:}
 
 \begin{itemize}[noitemsep]
     \item \textbf{Operating System:}
@@ -699,39 +583,80 @@ Final Score = (0.30×75) + (0.30×75) + (0.15×90) + (0.15×70) + (0.10×100)
 
 \subsection{Design Diagrams}
 
-\textit{(Note: Include high-resolution diagrams from diagrams/ folder)}
+\textit{UPES Template: 8 diagrams for Major Projects (6 standard + 2 additional). Status: 6/8 included.}
 
 \textbf{2.7.1 Use Case Diagram (Level 2)}
 
-\textit{[INSERT: Use case diagram showing Student, Faculty, Admin actors and their interactions: Login, Create Container, Access Terminal, Monitor Devices, Manage Users, Generate Tokens]}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{diagrams/UseCase.png}
+\caption{Use Case Diagram - 4 actors, 20 use cases}
+\label{fig:usecase}
+\end{figure}
+
+Students create and manage containers. Faculty monitor activity. Administrators manage organizations, users, devices. Agents execute commands and report metrics.
 
 \textbf{2.7.2 Class Diagram}
 
-\textit{[INSERT: Class diagram showing main entities: User, Organization, Lab, Device, Container, Reservation, EnrollmentToken with relationships and key attributes]}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{diagrams/ClassDiagram.png}
+\caption{Domain Class Diagram - 7 entities with relationships}
+\label{fig:class}
+\end{figure}
 
-\textbf{2.7.3 Activity Diagram - Container Creation Flow}
+Organization contains Users and Labs. Labs have Devices which run Containers. Users create Containers.
 
-\textit{[INSERT: Activity diagram from diagrams/4\_container\_creation\_flow.drawio showing 13-step process from student request to running container]}
+\textbf{2.7.3 Activity Diagram \& 2.7.4 Sequence Diagram}
 
-\textbf{2.7.4 Sequence Diagram - Container Lifecycle}
+These requirements are fulfilled by Collaboration Diagram (Section 2.7.7) showing object interactions and temporal sequence through numbered messages (1-15).
 
-\textit{[INSERT: Sequence diagram showing interactions between Student, Frontend, Backend, Database, Agent, Docker for complete container lifecycle]}
+\textbf{2.7.5 Data Flow Diagram (Level 0)}
 
-\textbf{2.7.5 State Diagram - Container States}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{diagrams/DataFlow.png}
+\caption{Context-level DFD - 4 external entities, 8 data flows}
+\label{fig:dfd}
+\end{figure}
 
-\textit{[INSERT: State diagram from diagrams/2\_container\_lifecycle.drawio showing states: PENDING, CREATING, RUNNING, STOPPING, STOPPED, RESTARTING, FAILED, DELETED with transitions]}
+CampusCompute as single process with external entities: Student, Faculty, Admin, Lab Computer Agent.
 
-\textbf{2.7.6 Data Flow Diagram}
+\textbf{2.7.6 State Diagram}
 
-\textit{[INSERT: DFD showing data flow between External Entities (Student, Admin, Agent), Processes (Authentication, Scheduling, Container Management), and Data Stores (Database, Docker)]}
+\textbf{Export needed:} diagrams/2\_container\_lifecycle.drawio to ContainerLifecycle.png
 
-\textbf{2.7.7 Deployment Diagram}
+Container lifecycle: 8 states - PENDING, CREATING, RUNNING, STOPPING, STOPPED, RESTARTING, FAILED, DELETED. AWS-style intermediate states ensure UI reflects actual status during transitions.
 
-\textit{[INSERT: Deployment diagram from diagrams/6\_deployment\_architecture.drawio showing Frontend Servers, Backend Servers, Database, Redis, WebSocket Gateway, and multiple Lab networks with agents]}
+\textbf{2.7.7 Collaboration Diagram}
 
-\textbf{2.7.8 System Architecture Diagram}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{diagrams/CollaborationDiagram.png}
+\caption{Collaboration Diagram - Container creation with 15 messages}
+\label{fig:collaboration}
+\end{figure}
 
-\textit{[INSERT: Architecture diagram from diagrams/1\_system\_architecture.drawio showing 3-layer architecture: Frontend Layer, Backend Layer, Agent Layer with WebSocket connections]}
+Complete sequence: (1) Student request, (2-3) Frontend/Controller, (4-7) Scheduler/Database, (8-9) Save container, (10-11) WebSocket command, (12-14) Agent/Docker execution, (15) Confirmation.
+
+\textbf{2.7.8 Deployment Diagram}
+
+\textbf{Export needed:} diagrams/6\_deployment\_architecture.drawio to DeploymentArchitecture.png
+
+Production infrastructure: 3 zones - DMZ (frontend/backend, WebSocket gateway, Redis, monitoring), Internal Network (PostgreSQL primary/replica, backups, NAS), Lab Network (150+ devices, Python Agent, Docker Engine across 15 labs).
+
+\textbf{Cost Analysis:} On-Premise Rs. 8 lakhs (one-time) + Rs. 80k/year vs AWS Rs. 12 lakhs/year. Savings: Rs. 11.2 lakhs/year (93\%).
+
+\textbf{2.7.9 System Architecture (Supplementary)}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{diagrams/SystemArch.png}
+\caption{System Architecture - 3-layer design with WebSocket connections}
+\label{fig:systemarch}
+\end{figure}
+
+The system follows a 3-tier architecture: Frontend layer (React SPA with terminal emulator), Backend layer (Spring Boot with REST APIs and WebSocket handlers), and Agent layer (Python agents on lab computers with Docker integration). Communication uses HTTP/REST for management operations and WebSocket for real-time terminal access and container commands.
 
 \subsection{Assumption and Dependencies}
 
@@ -786,8 +711,6 @@ Final Score = (0.30×75) + (0.30×75) + (0.15×90) + (0.15×70) + (0.10×100)
     \item User management system integration (optional)
     \item Institutional policies on student resource usage
 \end{itemize}
-
-\newpage
 
 % 3. SYSTEM REQUIREMENTS
 \section{SYSTEM REQUIREMENTS}
@@ -856,7 +779,7 @@ Final Score = (0.30×75) + (0.30×75) + (0.15×90) + (0.15×70) + (0.10×100)
 
 \subsection{Software Interface}
 
-\textbf{3.2.1 Frontend ↔ Backend Interface}
+\textbf{3.2.1 Frontend - Backend Interface}
 
 \textit{Protocol:} HTTP/HTTPS (REST) and WebSocket/WSS
 
@@ -889,7 +812,7 @@ POST   /api/enrollment-tokens/generate - Generate token
 
 \textit{Error Responses:} Standard HTTP status codes with JSON error objects
 
-\textbf{3.2.2 Backend ↔ Agent Interface}
+\textbf{3.2.2 Backend - Agent Interface}
 
 \textit{Protocol:} WebSocket (bidirectional persistent connection)
 
@@ -898,7 +821,7 @@ POST   /api/enrollment-tokens/generate - Generate token
 ws://backend:8081/ws/agent?enrollmentToken=xxx&deviceId=yyy
 \end{verbatim}
 
-\textit{Message Types (Backend → Agent):}
+\textit{Message Types (Backend to Agent):}
 \begin{verbatim}
 CREATE_CONTAINER    - Create new container
 STOP_CONTAINER      - Stop running container
@@ -907,7 +830,7 @@ DELETE_CONTAINER    - Remove container
 PING                - Heartbeat check
 \end{verbatim}
 
-\textit{Message Types (Agent → Backend):}
+\textit{Message Types (Agent to Backend):}
 \begin{verbatim}
 HEARTBEAT           - Keep-alive signal
 CONTAINER_CREATED   - Container successfully created
@@ -943,7 +866,7 @@ METRICS             - System resource metrics
     \item Message integrity via JSON schema validation
 \end{itemize}
 
-\textbf{3.2.3 Agent ↔ Docker Interface}
+\textbf{3.2.3 Agent - Docker Interface}
 
 \textit{Protocol:} Docker Engine API via docker-py (Python SDK)
 
@@ -1058,7 +981,7 @@ Max Pool Size: 20 connections
 - created_at (TIMESTAMP)
 \end{verbatim}
 
-\textit{enrollment_tokens:}
+\textit{enrollment\_tokens:}
 \begin{verbatim}
 - id (BIGSERIAL PRIMARY KEY)
 - token (VARCHAR UNIQUE)
@@ -1184,8 +1107,6 @@ Signature: HMACSHA256(base64(header)+"."+base64(payload), secret)
     \item Request ID for correlating commands and responses
     \item Timestamp for message ordering
 \end{itemize}
-
-\newpage
 
 % 4. NON-FUNCTIONAL REQUIREMENTS
 \section{NON-FUNCTIONAL REQUIREMENTS}
@@ -1436,8 +1357,6 @@ The system is designed for easy adaptation to different environments:
     \item \textbf{Accessibility:} Keyboard navigation, screen reader support (WCAG 2.1 Level A)
 \end{itemize}
 
-\newpage
-
 % 5. OTHER REQUIREMENTS
 \section{OTHER REQUIREMENTS}
 
@@ -1497,8 +1416,6 @@ The system is designed for easy adaptation to different environments:
     \item Documentation updates: Concurrent with code changes
 \end{itemize}
 
-\newpage
-
 % APPENDIX A: GLOSSARY
 \section*{APPENDIX A: GLOSSARY}
 \addcontentsline{toc}{section}{Appendix A: Glossary}
@@ -1549,8 +1466,6 @@ The system is designed for easy adaptation to different environments:
     \item[WSS (WebSocket Secure):] Encrypted WebSocket connection using TLS.
 \end{description}
 
-\newpage
-
 % APPENDIX B: ANALYSIS MODEL
 \section*{APPENDIX B: ANALYSIS MODEL}
 \addcontentsline{toc}{section}{Appendix B: Analysis Model}
@@ -1559,14 +1474,14 @@ The system is designed for easy adaptation to different environments:
 
 \textit{Formula for Lab Utilization:}
 \begin{verbatim}
-Utilization (%) = (Allocated CPU / Total CPU) × 100
+Utilization (%) = (Allocated CPU / Total CPU) * 100
 \end{verbatim}
 
 \textit{Example:}
 \begin{verbatim}
 Lab: 50 computers, each with 8 CPU cores = 400 total cores
 Current: 30 containers, each using 2 cores = 60 allocated cores
-Utilization: (60 / 400) × 100 = 15%
+Utilization: (60 / 400) * 100 = 15%
 \end{verbatim}
 
 \textbf{B.2 Cost Savings Model}
@@ -1575,55 +1490,53 @@ Utilization: (60 / 400) × 100 = 15%
 \begin{verbatim}
 Instance: t3.medium (2 vCPU, 4GB RAM)
 Cost: $0.0416/hour = $30/month per instance
-200 students × $30 = $6,000/month = $72,000/year
-INR equivalent: ₹72,000 × 83 = ₹59,76,000/year
-Rounded: ₹60 lakhs/year
+200 students * $30 = $6,000/month = $72,000/year
+INR equivalent: Rs. 72,000 * 83 = Rs. 59,76,000/year
+Rounded: Rs. 60 lakhs/year
 \end{verbatim}
 
 \textit{CampusCompute Cost:}
 \begin{verbatim}
-Backend Server: ₹50,000/year (VPS) or ₹1,50,000 (on-premise, one-time)
-Internet: ₹30,000/year
-Total: ₹80,000/year (cloud) or ₹1,80,000 first year (on-premise)
+Backend Server: Rs. 50,000/year (VPS) or Rs. 1,50,000 (on-premise, one-time)
+Internet: Rs. 30,000/year
+Total: Rs. 80,000/year (cloud) or Rs. 1,80,000 first year (on-premise)
 \end{verbatim}
 
 \textit{Savings:}
 \begin{verbatim}
-AWS: ₹60,00,000/year
-CampusCompute: ₹80,000/year
-Savings: ₹59,20,000/year (98.7%)
+AWS: Rs. 60,00,000/year
+CampusCompute: Rs. 80,000/year
+Savings: Rs. 59,20,000/year (98.7%)
 \end{verbatim}
 
 \textbf{B.3 Device Scoring Model}
 
 \textit{Mathematical Formula:}
 \begin{verbatim}
-Score = Σ(wi × si) where i = 1 to 5
+Score = Sum(wi * si) where i = 1 to 5
 
-s1 = CPU availability score = (available_cpu / total_cpu) × 100
-s2 = RAM availability score = (available_ram / total_ram) × 100
-s3 = Disk availability score = (available_disk / total_disk) × 100
-s4 = Container load score = (1 - active_containers / max_containers) × 100
+s1 = CPU availability score = (available_cpu / total_cpu) * 100
+s2 = RAM availability score = (available_ram / total_ram) * 100
+s3 = Disk availability score = (available_disk / total_disk) * 100
+s4 = Container load score = (1 - active_containers / max_containers) * 100
 s5 = Health score = {100 if healthy, 50 if warning, 0 if error}
 
 Weights: w1=0.30, w2=0.30, w3=0.15, w4=0.15, w5=0.10
-Σwi = 1.0 (normalized)
+Sum(wi) = 1.0 (normalized)
 \end{verbatim}
 
 \textbf{B.4 Capacity Planning Model}
 
 \textit{Formula:}
 \begin{verbatim}
-Max Concurrent Containers = Σ(Device CPU Cores / Avg Container CPU)
+Max Concurrent Containers = Sum(Device CPU Cores / Avg Container CPU)
 
 Example:
-50 devices × 8 cores = 400 total cores
+50 devices * 8 cores = 400 total cores
 Average container: 2 cores
 Max containers: 400 / 2 = 200 containers
-Safety margin (80%): 200 × 0.8 = 160 containers
+Safety margin (80%): 200 * 0.8 = 160 containers
 \end{verbatim}
-
-\newpage
 
 % APPENDIX C: ISSUES LIST
 \section*{APPENDIX C: ISSUES LIST}
