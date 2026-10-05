@@ -1,0 +1,274 @@
+<mxfile host="app.diagrams.net" modified="2026-10-06T00:00:00.000Z" agent="draw.io" version="22.0.0">
+  <diagram name="Class Diagram" id="class-diagram">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="Class Diagram - CampusCompute Domain Model" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="284.5" y="20" width="600" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- Organization Class -->
+        <mxCell id="organization" value="" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="240" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="org-name" value="Organization" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontStyle=1;fontSize=14;" vertex="1" parent="organization">
+          <mxGeometry y="26" width="240" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="org-attrs" value="- id: Long&lt;br&gt;- name: String&lt;br&gt;- quotaCpuCores: Integer&lt;br&gt;- quotaRamGb: Integer&lt;br&gt;- createdAt: Timestamp" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="organization">
+          <mxGeometry y="52" width="240" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="org-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="organization">
+          <mxGeometry y="130" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="org-methods" value="+ getUsers(): List&amp;lt;User&amp;gt;&lt;br&gt;+ getLabs(): List&amp;lt;Lab&amp;gt;&lt;br&gt;+ getTotalDevices(): Integer" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="organization">
+          <mxGeometry y="138" width="240" height="42" as="geometry" />
+        </mxCell>
+        
+        <!-- User Class -->
+        <mxCell id="user" value="" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="420" y="100" width="240" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="user-name" value="User" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontStyle=1;fontSize=14;" vertex="1" parent="user">
+          <mxGeometry y="26" width="240" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="user-attrs" value="- id: Long&lt;br&gt;- username: String&lt;br&gt;- password: String&lt;br&gt;- email: String&lt;br&gt;- role: Role (STUDENT/FACULTY/ADMIN)&lt;br&gt;- organizationId: Long&lt;br&gt;- quotaCpuCores: Integer&lt;br&gt;- quotaRamGb: Integer&lt;br&gt;- firstTimeLogin: Boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="user">
+          <mxGeometry y="52" width="240" height="118" as="geometry" />
+        </mxCell>
+        <mxCell id="user-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="user">
+          <mxGeometry y="170" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="user-methods" value="+ getContainers(): List&amp;lt;Container&amp;gt;&lt;br&gt;+ hasQuotaAvailable(): Boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="user">
+          <mxGeometry y="178" width="240" height="42" as="geometry" />
+        </mxCell>
+        
+        <!-- Lab Class -->
+        <mxCell id="lab" value="" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="760" y="100" width="240" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="lab-name" value="Lab" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontStyle=1;fontSize=14;" vertex="1" parent="lab">
+          <mxGeometry y="26" width="240" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="lab-attrs" value="- id: Long&lt;br&gt;- name: String&lt;br&gt;- organizationId: Long&lt;br&gt;- location: String&lt;br&gt;- createdAt: Timestamp" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="lab">
+          <mxGeometry y="52" width="240" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="lab-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="lab">
+          <mxGeometry y="130" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="lab-methods" value="+ getDevices(): List&amp;lt;Device&amp;gt;&lt;br&gt;+ getTotalCapacity(): ResourceInfo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="lab">
+          <mxGeometry y="138" width="240" height="42" as="geometry" />
+        </mxCell>
+        
+        <!-- Device Class -->
+        <mxCell id="device" value="" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="80" y="360" width="260" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="device-name" value="Device" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontStyle=1;fontSize=14;" vertex="1" parent="device">
+          <mxGeometry y="26" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="device-attrs" value="- id: Long&lt;br&gt;- deviceId: String&lt;br&gt;- hostname: String&lt;br&gt;- labId: Long&lt;br&gt;- organizationId: Long&lt;br&gt;- status: DeviceStatus (ONLINE/OFFLINE)&lt;br&gt;- totalCpuCores: Integer&lt;br&gt;- totalRamBytes: Long&lt;br&gt;- totalDiskBytes: Long&lt;br&gt;- lastSeen: Timestamp" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="device">
+          <mxGeometry y="52" width="260" height="148" as="geometry" />
+        </mxCell>
+        <mxCell id="device-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="device">
+          <mxGeometry y="200" width="260" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="device-methods" value="+ getAvailableResources(): ResourceInfo&lt;br&gt;+ getContainers(): List&amp;lt;Container&amp;gt;&lt;br&gt;+ isOnline(): Boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="device">
+          <mxGeometry y="208" width="260" height="52" as="geometry" />
+        </mxCell>
+        
+        <!-- Container Class -->
+        <mxCell id="container" value="" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="420" y="360" width="280" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="container-name" value="Container" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontStyle=1;fontSize=14;" vertex="1" parent="container">
+          <mxGeometry y="26" width="280" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="container-attrs" value="- id: Long&lt;br&gt;- containerId: String&lt;br&gt;- containerName: String&lt;br&gt;- userId: Long&lt;br&gt;- deviceId: Long&lt;br&gt;- status: ContainerStatus&lt;br&gt;- image: String&lt;br&gt;- allocatedCpuCores: Integer&lt;br&gt;- allocatedRamBytes: Long&lt;br&gt;- allocatedDiskBytes: Long&lt;br&gt;- sshPort: Integer&lt;br&gt;- terminalPort: Integer&lt;br&gt;- createdAt: Timestamp&lt;br&gt;- startedAt: Timestamp&lt;br&gt;- stoppedAt: Timestamp&lt;br&gt;- expiresAt: Timestamp" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="container">
+          <mxGeometry y="52" width="280" height="218" as="geometry" />
+        </mxCell>
+        <mxCell id="container-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="container">
+          <mxGeometry y="270" width="280" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="container-methods" value="+ start(): void&lt;br&gt;+ stop(): void&lt;br&gt;+ restart(): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="container">
+          <mxGeometry y="278" width="280" height="42" as="geometry" />
+        </mxCell>
+        
+        <!-- EnrollmentToken Class -->
+        <mxCell id="token" value="" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="760" y="360" width="240" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="token-name" value="EnrollmentToken" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontStyle=1;fontSize=14;" vertex="1" parent="token">
+          <mxGeometry y="26" width="240" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="token-attrs" value="- id: Long&lt;br&gt;- token: String&lt;br&gt;- organizationId: Long&lt;br&gt;- labId: Long&lt;br&gt;- expiresAt: Timestamp&lt;br&gt;- used: Boolean&lt;br&gt;- createdAt: Timestamp" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="token">
+          <mxGeometry y="52" width="240" height="98" as="geometry" />
+        </mxCell>
+        <mxCell id="token-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="token">
+          <mxGeometry y="150" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="token-methods" value="+ isValid(): Boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="token">
+          <mxGeometry y="158" width="240" height="22" as="geometry" />
+        </mxCell>
+        
+        <!-- Reservation Class -->
+        <mxCell id="reservation" value="" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#fff4e6;strokeColor=#CC9900;" vertex="1" parent="1">
+          <mxGeometry x="760" y="580" width="240" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="reservation-name" value="Reservation" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontStyle=1;fontSize=14;" vertex="1" parent="reservation">
+          <mxGeometry y="26" width="240" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="reservation-attrs" value="- id: Long&lt;br&gt;- userId: Long&lt;br&gt;- labId: Long&lt;br&gt;- startTime: Timestamp&lt;br&gt;- endTime: Timestamp&lt;br&gt;- purpose: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="reservation">
+          <mxGeometry y="52" width="240" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="reservation-line" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="reservation">
+          <mxGeometry y="140" width="240" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="reservation-methods" value="+ isActive(): Boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="reservation">
+          <mxGeometry y="148" width="240" height="12" as="geometry" />
+        </mxCell>
+        
+        <!-- Relationships -->
+        
+        <!-- Organization has many Users -->
+        <mxCell id="rel1" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="user-attrs" target="org-attrs">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="500" y="400" as="sourcePoint" />
+            <mxPoint x="660" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel1-label" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1" vertex="1" connectable="0" parent="rel1">
+          <mxGeometry x="0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel1-label2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1" vertex="1" connectable="0" parent="rel1">
+          <mxGeometry x="-0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Organization has many Labs -->
+        <mxCell id="rel2" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="lab-attrs" target="org-attrs">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="500" y="300" as="sourcePoint" />
+            <mxPoint x="660" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel2-label" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1" vertex="1" connectable="0" parent="rel2">
+          <mxGeometry x="0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="25" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel2-label2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1" vertex="1" connectable="0" parent="rel2">
+          <mxGeometry x="-0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="-25" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Lab has many Devices -->
+        <mxCell id="rel3" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="device-attrs" target="lab-attrs">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="400" y="500" as="sourcePoint" />
+            <mxPoint x="560" y="500" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="60" y="486" />
+              <mxPoint x="60" y="300" />
+              <mxPoint x="1020" y="300" />
+              <mxPoint x="1020" y="191" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel3-label" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1" vertex="1" connectable="0" parent="rel3">
+          <mxGeometry x="0.9" y="1" relative="1" as="geometry">
+            <mxPoint x="10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel3-label2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1" vertex="1" connectable="0" parent="rel3">
+          <mxGeometry x="-0.9" y="1" relative="1" as="geometry">
+            <mxPoint x="10" y="10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- User has many Containers -->
+        <mxCell id="rel4" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="container" target="user">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="500" y="400" as="sourcePoint" />
+            <mxPoint x="660" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel4-label" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1" vertex="1" connectable="0" parent="rel4">
+          <mxGeometry x="0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="15" y="5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel4-label2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1" vertex="1" connectable="0" parent="rel4">
+          <mxGeometry x="-0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="15" y="-5" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Device has many Containers -->
+        <mxCell id="rel5" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="device-attrs" target="container-attrs">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="400" y="500" as="sourcePoint" />
+            <mxPoint x="560" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel5-label" value="1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1" vertex="1" connectable="0" parent="rel5">
+          <mxGeometry x="0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel5-label2" value="*" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1" vertex="1" connectable="0" parent="rel5">
+          <mxGeometry x="-0.7" y="1" relative="1" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- EnrollmentToken belongs to Lab -->
+        <mxCell id="rel6" value="" style="endArrow=block;endFill=0;endSize=12;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;dashed=1;" edge="1" parent="1" source="token" target="lab">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="700" y="400" as="sourcePoint" />
+            <mxPoint x="860" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel6-label" value="&amp;lt;&amp;lt;references&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="rel6">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry">
+            <mxPoint x="40" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Reservation references User and Lab -->
+        <mxCell id="rel7" value="" style="endArrow=block;endFill=0;endSize=12;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;dashed=1;" edge="1" parent="1" source="reservation-attrs" target="user-methods">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="600" y="500" as="sourcePoint" />
+            <mxPoint x="760" y="500" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="720" y="656" />
+              <mxPoint x="720" y="299" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel7-label" value="&amp;lt;&amp;lt;references&amp;gt;&amp;gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" vertex="1" connectable="0" parent="rel7">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry">
+            <mxPoint x="-10" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Legend -->
+        <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=top;fontSize=12;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="80" y="700" width="620" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="🔑 Relationships Legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="90" y="705" width="600" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-content" value="◆─── : Composition (has-many) | 1 : One | * : Many | ─ ─ ▷ : References (foreign key)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="90" y="730" width="600" height="40" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

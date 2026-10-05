@@ -1,0 +1,210 @@
+<mxfile host="app.diagrams.net" modified="2026-10-06T00:00:00.000Z" agent="draw.io" version="22.0.0">
+  <diagram name="DFD Level 0" id="dfd-level0">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="Data Flow Diagram - Level 0 (Context Diagram)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="234.5" y="20" width="700" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- External Entities -->
+        <!-- Student -->
+        <mxCell id="student" value="Student" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="200" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Faculty -->
+        <mxCell id="faculty" value="Faculty" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="340" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Admin -->
+        <mxCell id="admin" value="Admin" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="480" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Lab Computer Agent -->
+        <mxCell id="agent" value="Lab Computer&lt;br&gt;Agent" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="950" y="340" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Central Process -->
+        <mxCell id="system" value="0&lt;br&gt;&lt;br&gt;CampusCompute&lt;br&gt;System" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f5f5f5;strokeColor=#666666;fontSize=16;fontStyle=1;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="434.5" y="280" width="300" height="300" as="geometry" />
+        </mxCell>
+        
+        <!-- Data Flows -->
+        
+        <!-- Student to System -->
+        <mxCell id="flow1" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#0066CC;" edge="1" parent="1" source="student" target="system">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="400" as="sourcePoint" />
+            <mxPoint x="550" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label1" value="Container Request&lt;br&gt;Login Credentials" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fillColor=#ffffff;" vertex="1" connectable="0" parent="flow1">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry">
+            <mxPoint x="5" y="-20" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- System to Student -->
+        <mxCell id="flow2" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.33;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#00CC66;" edge="1" parent="1" source="system" target="student">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="400" as="sourcePoint" />
+            <mxPoint x="550" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label2" value="Container Details&lt;br&gt;Terminal Access&lt;br&gt;Status Updates" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fillColor=#ffffff;" vertex="1" connectable="0" parent="flow2">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry">
+            <mxPoint x="-5" y="25" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Faculty to System -->
+        <mxCell id="flow3" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#0066CC;" edge="1" parent="1" source="faculty" target="system">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="400" as="sourcePoint" />
+            <mxPoint x="550" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label3" value="Lab Reservation&lt;br&gt;Query Student Activity" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fillColor=#ffffff;" vertex="1" connectable="0" parent="flow3">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry">
+            <mxPoint x="10" y="-18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- System to Faculty -->
+        <mxCell id="flow4" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.55;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#00CC66;" edge="1" parent="1" source="system" target="faculty">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="500" as="sourcePoint" />
+            <mxPoint x="550" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label4" value="Usage Reports&lt;br&gt;Lab Utilization Data" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fillColor=#ffffff;" vertex="1" connectable="0" parent="flow4">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry">
+            <mxPoint x="-10" y="18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Admin to System -->
+        <mxCell id="flow5" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#0066CC;" edge="1" parent="1" source="admin" target="system">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="500" as="sourcePoint" />
+            <mxPoint x="550" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label5" value="User Management&lt;br&gt;Device Config&lt;br&gt;Quota Settings" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fillColor=#ffffff;" vertex="1" connectable="0" parent="flow5">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry">
+            <mxPoint x="5" y="20" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- System to Admin -->
+        <mxCell id="flow6" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.67;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#00CC66;" edge="1" parent="1" source="system" target="admin">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="500" y="500" as="sourcePoint" />
+            <mxPoint x="550" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label6" value="System Analytics&lt;br&gt;User Lists&lt;br&gt;Device Status" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fillColor=#ffffff;" vertex="1" connectable="0" parent="flow6">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry">
+            <mxPoint x="-5" y="-20" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- System to Agent -->
+        <mxCell id="flow7" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#CC00CC;" edge="1" parent="1" source="system" target="agent">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="700" y="500" as="sourcePoint" />
+            <mxPoint x="750" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label7" value="Container Commands&lt;br&gt;(Create/Stop/Restart)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fillColor=#ffffff;" vertex="1" connectable="0" parent="flow7">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry">
+            <mxPoint y="-18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Agent to System -->
+        <mxCell id="flow8" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#FF6600;" edge="1" parent="1" source="agent" target="system">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="700" y="500" as="sourcePoint" />
+            <mxPoint x="750" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label8" value="System Metrics&lt;br&gt;Container Status&lt;br&gt;Heartbeat" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=11;fillColor=#ffffff;" vertex="1" connectable="0" parent="flow8">
+          <mxGeometry x="-0.1" y="-1" relative="1" as="geometry">
+            <mxPoint y="18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Legend -->
+        <mxCell id="legend-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;verticalAlign=top;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="630" width="1010" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="🔑 DFD Legend" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="635" width="1010" height="25" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend-entity" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="100" y="675" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-entity-text" value="External Entity&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;(Source/Sink)&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="190" y="680" width="120" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend-process" value="0&lt;br&gt;Process" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="340" y="675" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-process-text" value="Process&lt;br&gt;&lt;font style=&quot;font-size: 9px&quot;&gt;(Transformation)&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="410" y="680" width="100" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend-flow1" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#0066CC;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="540" y="685" as="sourcePoint" />
+            <mxPoint x="620" y="685" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-flow1-text" value="Input Data Flow" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="630" y="675" width="100" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend-flow2" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#00CC66;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="540" y="710" as="sourcePoint" />
+            <mxPoint x="620" y="710" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-flow2-text" value="Output Data Flow" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="630" y="700" width="100" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend-flow3" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#CC00CC;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="780" y="685" as="sourcePoint" />
+            <mxPoint x="860" y="685" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-flow3-text" value="Commands" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="870" y="675" width="100" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legend-flow4" value="" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;strokeColor=#FF6600;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="780" y="710" as="sourcePoint" />
+            <mxPoint x="860" y="710" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="legend-flow4-text" value="Metrics/Status" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="870" y="700" width="100" height="20" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
